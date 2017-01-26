@@ -101,12 +101,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\hsa-dotnet-backend\hsa-dotnet-backend.csproj">
-      <Project>{E1BF57FF-EAA2-44DA-A15C-9495D0B6AAD3}</Project>
-      <Name>hsa-dotnet-backend</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
