@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsa-dotnet-backend.Tests", "hsa-dotnet-backend.Tests\hsa-dotnet-backend.Tests.csproj", "{B8440147-5820-4145-9C0F-91AA68BB1E30}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsa-dotnet-backend", "hsa-dotnet-backend\hsa-dotnet-backend.csproj", "{322DFE78-A8A6-49F9-A1A3-F49FF2B0A5B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsa-dotnet-backend.Tests", "hsa-dotnet-backend.Tests\hsa-dotnet-backend.Tests.csproj", "{89937122-C197-447C-BC32-F4B244FFFD5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B8440147-5820-4145-9C0F-91AA68BB1E30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B8440147-5820-4145-9C0F-91AA68BB1E30}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B8440147-5820-4145-9C0F-91AA68BB1E30}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B8440147-5820-4145-9C0F-91AA68BB1E30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{322DFE78-A8A6-49F9-A1A3-F49FF2B0A5B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{322DFE78-A8A6-49F9-A1A3-F49FF2B0A5B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{322DFE78-A8A6-49F9-A1A3-F49FF2B0A5B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{322DFE78-A8A6-49F9-A1A3-F49FF2B0A5B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89937122-C197-447C-BC32-F4B244FFFD5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89937122-C197-447C-BC32-F4B244FFFD5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89937122-C197-447C-BC32-F4B244FFFD5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89937122-C197-447C-BC32-F4B244FFFD5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
