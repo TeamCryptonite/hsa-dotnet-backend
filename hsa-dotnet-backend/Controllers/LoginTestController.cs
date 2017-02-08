@@ -8,10 +8,12 @@ using System.Web.Http;
 
 namespace hsa_dotnet_backend.Controllers
 {
-    [Route("/logintest/")]
+   [RoutePrefix("logintest")]
     public class LoginTestController : ApiController
     {
-        public Object test()
+        [Route("test")]
+        [HttpGet]
+        public Object Test()
         {
             return new
             {
