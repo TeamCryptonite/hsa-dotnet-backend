@@ -7,7 +7,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.ActiveDirectory;
 using Owin;
 
-namespace hsa-dotnet-backend
+namespace hsa_dotnet_backend
 {
     public partial class Startup
     {
