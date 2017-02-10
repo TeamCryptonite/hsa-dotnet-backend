@@ -1,4 +1,5 @@
-﻿using Owin;
+﻿using System;
+using Owin;
 
 namespace hsa_dotnet_backend
 {
