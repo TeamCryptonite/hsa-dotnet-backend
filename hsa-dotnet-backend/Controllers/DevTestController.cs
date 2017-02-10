@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
-namespace hsa_dotnet_backend.Controllers
+namespace HsaDotnetBackend.Controllers
 {
     [Authorize]
     public class DevTestController : ApiController
