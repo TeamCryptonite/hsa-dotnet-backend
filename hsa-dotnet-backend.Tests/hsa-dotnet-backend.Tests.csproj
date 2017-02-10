@@ -52,9 +52,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\hsa-dotnet-backend\hsa-dotnet-backend.csproj">
+    <ProjectReference Include="..\hsa-dotnet-backend\HsaDotnetBackend.csproj">
       <Project>{322DFE78-A8A6-49F9-A1A3-F49FF2B0A5B4}</Project>
-      <Name>hsa-dotnet-backend</Name>
+      <Name>HsaDotnetBackend</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

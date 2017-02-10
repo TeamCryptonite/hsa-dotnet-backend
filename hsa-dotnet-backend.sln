@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsa-dotnet-backend", "hsa-dotnet-backend\hsa-dotnet-backend.csproj", "{322DFE78-A8A6-49F9-A1A3-F49FF2B0A5B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HsaDotnetBackend", "hsa-dotnet-backend\HsaDotnetBackend.csproj", "{322DFE78-A8A6-49F9-A1A3-F49FF2B0A5B4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hsa-dotnet-backend.Tests", "hsa-dotnet-backend.Tests\hsa-dotnet-backend.Tests.csproj", "{89937122-C197-447C-BC32-F4B244FFFD5B}"
 EndProject

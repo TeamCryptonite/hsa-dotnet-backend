@@ -1,11 +1,13 @@
-﻿using System.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Owin.Security.ActiveDirectory;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.IdentityModel.Tokens;
+using System.Linq;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.ActiveDirectory;
 using Owin;
-//using TokenValidationParameters = System.IdentityModel.Tokens.TokenValidationParameters;
 
-namespace hsa_dotnet_backend
+namespace HsaDotnetBackend
 {
     public partial class Startup
     {
@@ -16,7 +18,7 @@ namespace hsa_dotnet_backend
                 new WindowsAzureActiveDirectoryBearerAuthenticationOptions
                 {
                     Tenant = ConfigurationManager.AppSettings["ida:Tenant"],
-                    TokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters
+                    TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidAudience = ConfigurationManager.AppSettings["ida:Audience"]
                     },

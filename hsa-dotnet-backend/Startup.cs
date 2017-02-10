@@ -1,7 +1,6 @@
-﻿using System;
-using Owin;
+﻿using Owin;
 
-namespace hsa_dotnet_backend
+namespace HsaDotnetBackend
 {
     public partial class Startup
     {
