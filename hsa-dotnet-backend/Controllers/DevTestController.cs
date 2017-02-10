@@ -6,9 +6,19 @@ namespace HsaDotnetBackend.Controllers
     [Authorize]
     public class DevTestController : ApiController
     {
+        [Route("")]
+        [HttpGet]
+        public object DefaultRouteTesting()
+        {
+            return new
+            {
+                msg = "Default Route Testing"
+            };
+        }
+
         [Route("devtest/")]
         [HttpGet]
-        public Object DevTest()
+        public object DevTest()
         {
             return new
             {
