@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Web.Http;
+using HsaDotnetBackend.Models;
 
 namespace HsaDotnetBackend.Controllers
-{
+{ 
     [Authorize]
     public class DevTestController : ApiController
     {
@@ -16,15 +18,11 @@ namespace HsaDotnetBackend.Controllers
             };
         }
 
-        [Route("devtest/")]
-        [HttpGet]
-        public object DevTest()
-        {
-            return new
-            {
-                Test = "First Test",
-                Success = true
-            };
-        }
+        //[Route("devtest/")]
+        //[HttpGet]
+        //public IQueryable<Product> DevTest()
+        //{
+        //    var products = context
+        //}
     }
 }

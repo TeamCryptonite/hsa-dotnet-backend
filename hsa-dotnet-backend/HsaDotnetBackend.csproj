@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
+    <ApplicationInsightsResourceId>/subscriptions/06b66885-c686-4078-a748-ec104ea0695b/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/HsaDotnetBackend</ApplicationInsightsResourceId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +45,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.7\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -123,6 +132,8 @@
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -153,6 +164,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Models\HsaServiceModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>HsaServiceModel.Context.cs</LastGenOutput>
+      <DependentUpon>HsaServiceModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\HsaServiceModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>HsaServiceModel.edmx</DependentUpon>
+      <LastGenOutput>HsaServiceModel.cs</LastGenOutput>
+    </Content>
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -160,8 +181,46 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DevTestController.cs" />
     <Compile Include="Controllers\LoginTestController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Account.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\HsaServiceContext.cs" />
+    <Compile Include="Models\HsaServiceModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HsaServiceModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\HsaServiceModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\HsaServiceModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HsaServiceModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\LineItem.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Product.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Receipt.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Reimbursement.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Store.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\User.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -172,6 +231,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Service References\AzureAD\ConnectedService.json" />
+    <Content Include="Service References\Application Insights\ConnectedService.json" />
+    <EntityDeploy Include="Models\HsaServiceModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>HsaServiceModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\HsaServiceModel.edmx.diagram">
+      <DependentUpon>HsaServiceModel.edmx</DependentUpon>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -181,10 +248,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
