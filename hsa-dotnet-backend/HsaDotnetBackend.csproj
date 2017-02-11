@@ -181,14 +181,13 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DevTestController.cs" />
     <Compile Include="Controllers\LoginTestController.cs" />
-    <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\StoresController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Account.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\HsaServiceContext.cs" />
     <Compile Include="Models\HsaServiceModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

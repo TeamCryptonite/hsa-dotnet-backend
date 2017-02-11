@@ -8,6 +8,7 @@ namespace HsaDotnetBackend.Controllers
     [Authorize]
     public class DevTestController : ApiController
     {
+
         [Route("")]
         [HttpGet]
         public object DefaultRouteTesting()
