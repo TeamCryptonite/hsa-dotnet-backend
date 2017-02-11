@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using HsaDotnetBackend.Models;
+using HsaDotnetBackend.Models.DTOs;
 
 namespace HsaDotnetBackend.Controllers
 {
@@ -18,15 +19,16 @@ namespace HsaDotnetBackend.Controllers
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
         // GET: api/Stores
-        public IQueryable<Store> GetStores()
+        public IQueryable<StoreDTO> GetStores()
         {
-            var stores = db.Stores;
-            foreach (var store in stores)
-            {
-                store.Products = null;
-            }
+            //return db.Stores;
+            return from b in db.Stores
+                   select new StoreDTO()
+                   {
+                       Id = b.Id,
+                       Name = b.Name
+                   };
 
-            return stores;
         }
 
         // GET: api/Stores/5

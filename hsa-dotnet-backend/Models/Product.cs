@@ -18,7 +18,7 @@ namespace HsaDotnetBackend.Models
         public Product()
         {
             this.LineItems = new HashSet<LineItem>();
-            this.Stores = new HashSet<Store>();
+            this.StoreProducts = new HashSet<StoreProduct>();
         }
     
         public int Id { get; set; }
@@ -29,6 +29,6 @@ namespace HsaDotnetBackend.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LineItem> LineItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Store> Stores { get; set; }
+        public virtual ICollection<StoreProduct> StoreProducts { get; set; }
     }
 }

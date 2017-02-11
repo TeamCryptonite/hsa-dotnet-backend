@@ -17,7 +17,7 @@ namespace HsaDotnetBackend.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Reimbursement()
         {
-            this.Receipts = new HashSet<Receipt>();
+            this.ReimbursementReceipts = new HashSet<ReimbursementReceipt>();
         }
     
         public int Id { get; set; }
@@ -28,6 +28,6 @@ namespace HsaDotnetBackend.Models
     
         public virtual Account Account { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Receipt> Receipts { get; set; }
+        public virtual ICollection<ReimbursementReceipt> ReimbursementReceipts { get; set; }
     }
 }
