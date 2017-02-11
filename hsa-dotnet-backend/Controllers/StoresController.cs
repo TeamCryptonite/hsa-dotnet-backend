@@ -20,7 +20,13 @@ namespace HsaDotnetBackend.Controllers
         // GET: api/Stores
         public IQueryable<Store> GetStores()
         {
-            return db.Stores;
+            var stores = db.Stores;
+            foreach (var store in stores)
+            {
+                store.Products = null;
+            }
+
+            return stores;
         }
 
         // GET: api/Stores/5
@@ -28,6 +34,8 @@ namespace HsaDotnetBackend.Controllers
         public async Task<IHttpActionResult> GetStore(int id)
         {
             Store store = await db.Stores.FindAsync(id);
+
+            
             if (store == null)
             {
                 return NotFound();
