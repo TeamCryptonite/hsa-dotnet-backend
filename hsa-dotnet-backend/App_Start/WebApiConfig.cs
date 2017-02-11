@@ -8,8 +8,8 @@ namespace HsaDotnetBackend
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-            config.Formatters.JsonFormatter.SupportedMediaTypes
-                .Add(new MediaTypeHeaderValue("text/html"));
+            //config.Formatters.JsonFormatter.SupportedMediaTypes
+            //    .Add(new MediaTypeHeaderValue("text/html"));
 
             // Web API routes
             config.MapHttpAttributeRoutes();
