@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using AutoMapper;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
 
@@ -19,32 +20,36 @@ namespace HsaDotnetBackend.Controllers
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
         // GET: api/Receipts
-        public IQueryable<ReceiptDto> GetReceipts()
+        public IEnumerable<ReceiptDto> GetReceipts()
         {
-            return db.Receipts
-                .Select(b => new ReceiptDto()
-                {
-                    Id = b.Id,
-                    UserId = b.UserId.Value,
-                    StoreId = b.StoreId,
-                    DateTime = b.DateTime.Value,
-                    IsScanned = b.IsScanned.Value,
-                    LineItems = b.LineItems
-                        .Select(s => new LineItemDto()
-                        {
-                            Id = s.Id,
-                            Price = s.Price,
-                            Quantity = s.Quantity,
-                            ReceiptId = s.ReceiptId,
-                            Product = new ProductDto()
-                            {
-                                Id = s.Product.Id,
-                                Name = s.Product.Name,
-                                Description = s.Product.Description,
-                                IsHsa = s.Product.IsHSA
-                            }
-                        }).ToList()
-                });
+            //return db.Receipts
+            //    .Select(b => new ReceiptDto()
+            //    {
+            //        Id = b.Id,
+            //        UserId = b.UserId.Value,
+            //        StoreId = b.StoreId,
+            //        DateTime = b.DateTime.Value,
+            //        IsScanned = b.IsScanned.Value,
+            //        LineItems = b.LineItems
+            //            .Select(s => new LineItemDto()
+            //            {
+            //                Id = s.Id,
+            //                Price = s.Price,
+            //                Quantity = s.Quantity,
+            //                ReceiptId = s.ReceiptId,
+            //                Product = new ProductDto()
+            //                {
+            //                    Id = s.Product.Id,
+            //                    Name = s.Product.Name,
+            //                    Description = s.Product.Description,
+            //                    IsHsa = s.Product.IsHSA
+            //                }
+            //            }).ToList()
+            //    });
+
+            var test = Mapper.Map<Receipt, ReceiptDto>(db.Receipts.First());
+
+            return Mapper.Map<IEnumerable<Receipt>, IEnumerable<ReceiptDto>>(db.Receipts);
         }
 
         // GET: api/Receipts/5

@@ -1,4 +1,8 @@
-﻿using System.Web.Http;
+﻿using System.Linq;
+using System.Web.Http;
+using AutoMapper;
+using HsaDotnetBackend.Models;
+using HsaDotnetBackend.Models.DTOs;
 
 namespace HsaDotnetBackend
 {
@@ -8,11 +12,21 @@ namespace HsaDotnetBackend
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
-            HttpConfiguration config = GlobalConfiguration.Configuration;
+            HttpConfiguration httpConfig = GlobalConfiguration.Configuration;
 
-            config.Formatters.JsonFormatter
+            httpConfig.Formatters.JsonFormatter
                 .SerializerSettings
                 .ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
+            // AutoMapper
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Receipt, ReceiptDto>();
+                cfg.CreateMap<LineItem, LineItemDto>();
+                cfg.CreateMap<Product, ProductDto>();
+            });
+            //amConfig.AssertConfigurationIsValid();
+            //Mapper.Initialize(amConfig);
         }
     }
 }
