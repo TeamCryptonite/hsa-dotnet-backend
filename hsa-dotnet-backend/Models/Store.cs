@@ -17,7 +17,7 @@ namespace HsaDotnetBackend.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Store()
         {
-            this.StoreProducts = new HashSet<StoreProduct>();
+            this.Products = new HashSet<Product>();
         }
     
         public int Id { get; set; }
@@ -25,6 +25,6 @@ namespace HsaDotnetBackend.Models
         public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StoreProduct> StoreProducts { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
     }
 }

@@ -5,22 +5,18 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="81bde2550f26406198051014b6c9a943" Name="Diagram1" ZoomLevel="52">
-        <EntityTypeShape EntityType="Model.Account" Width="1.5" PointX="5.75" PointY="2.375" />
+        <EntityTypeShape EntityType="Model.Account" Width="1.5" PointX="3.75" PointY="0.75" />
         <EntityTypeShape EntityType="Model.LineItem" Width="1.5" PointX="3" PointY="3.5" />
-        <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="0.75" PointY="3.625" />
-        <EntityTypeShape EntityType="Model.Receipt" Width="1.5" PointX="0.75" PointY="10.5" />
-        <EntityTypeShape EntityType="Model.ReimbursementReceipt" Width="1.5" PointX="10.25" PointY="6.5" />
-        <EntityTypeShape EntityType="Model.Reimbursement" Width="1.5" PointX="8" PointY="2" />
-        <EntityTypeShape EntityType="Model.StoreProduct" Width="1.5" PointX="3" PointY="0.75" />
-        <EntityTypeShape EntityType="Model.Store" Width="1.5" PointX="0.875" PointY="6.25" />
-        <EntityTypeShape EntityType="Model.User" Width="1.5" PointX="2.75" PointY="6.875" />
+        <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="0.75" PointY="8.5" />
+        <EntityTypeShape EntityType="Model.Receipt" Width="1.5" PointX="0.75" PointY="3.5" />
+        <EntityTypeShape EntityType="Model.Reimbursement" Width="1.5" PointX="6" PointY="3.5" />
+        <EntityTypeShape EntityType="Model.Store" Width="1.5" PointX="3" PointY="8.75" />
+        <EntityTypeShape EntityType="Model.User" Width="1.5" PointX="5.75" PointY="7.5" />
         <AssociationConnector Association="Model.FK_dbo_Account_dbo_Account_Id" />
         <AssociationConnector Association="Model.FK_LineItem_Product" />
         <AssociationConnector Association="Model.FK_LineItem_Receipt" />
-        <AssociationConnector Association="Model.FK_StoreProducts_Product" />
-        <AssociationConnector Association="Model.FK_ReimbursementReceipts_Receipt" />
-        <AssociationConnector Association="Model.FK_ReimbursementReceipts_Reimbursement" />
-        <AssociationConnector Association="Model.FK_StoreProducts_Store" />
+        <AssociationConnector Association="Model.ReimbursementReceipts" />
+        <AssociationConnector Association="Model.StoreProducts" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

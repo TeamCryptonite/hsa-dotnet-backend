@@ -19,16 +19,32 @@ namespace HsaDotnetBackend.Controllers
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
         // GET: api/Stores
-        public IQueryable<StoreDto> GetStores()
+        public IQueryable<StoreWithProductsDto> GetStores()
         {
             //return db.Stores;
             //return from b in db.Stores
-            //       select new StoreDto()
+            //       select new StoreWithProductsDto()
             //       {
             //           Id = b.Id,
-            //           Name = b.Name
+            //           Name = b.Name,
+            //           Location = b.Location,
+            //           Products = new List<ProductDto>() { from p in db.Products select new ProductDto() }
             //       };
-            return db.Stores.Select(b => new StoreDto() {Id = b.Id, Location = b.Location, Name = b.Name});
+            return db.Stores
+                .Select(b => new StoreWithProductsDto()
+                {
+                    Id = b.Id,
+                    Location = b.Location,
+                    Name = b.Name,
+                    Products = b.Products
+                        .Select(sm => new ProductDto()
+                        {
+                            Id = sm.Id,
+                            Description = sm.Description,
+                            Name = sm.Name,
+                            IsHsa = sm.IsHSA
+                        })
+                });
 
         }
 

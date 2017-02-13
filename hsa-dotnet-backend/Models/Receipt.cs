@@ -18,7 +18,7 @@ namespace HsaDotnetBackend.Models
         public Receipt()
         {
             this.LineItems = new HashSet<LineItem>();
-            this.ReimbursementReceipts = new HashSet<ReimbursementReceipt>();
+            this.Reimbursements = new HashSet<Reimbursement>();
         }
     
         public int Id { get; set; }
@@ -30,6 +30,6 @@ namespace HsaDotnetBackend.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LineItem> LineItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ReimbursementReceipt> ReimbursementReceipts { get; set; }
+        public virtual ICollection<Reimbursement> Reimbursements { get; set; }
     }
 }

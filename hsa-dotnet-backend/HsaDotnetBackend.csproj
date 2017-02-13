@@ -202,6 +202,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DevTestController.cs" />
     <Compile Include="Controllers\LoginTestController.cs" />
+    <Compile Include="Controllers\ReceiptsController.cs" />
     <Compile Include="Controllers\StoresController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -209,7 +210,11 @@
     <Compile Include="Models\Account.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DTOs\LineItemDto.cs" />
+    <Compile Include="Models\DTOs\ProductDto.cs" />
+    <Compile Include="Models\DTOs\ReceiptDto.cs" />
     <Compile Include="Models\DTOs\StoreDto.cs" />
+    <Compile Include="Models\DTOs\StoreWithProductsDto.cs" />
     <Compile Include="Models\HsaServiceModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -237,13 +242,7 @@
     <Compile Include="Models\Reimbursement.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ReimbursementReceipt.cs">
-      <DependentUpon>HsaServiceModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Store.cs">
-      <DependentUpon>HsaServiceModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\StoreProduct.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
