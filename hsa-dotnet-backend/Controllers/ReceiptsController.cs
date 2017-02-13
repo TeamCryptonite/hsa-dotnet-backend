@@ -99,12 +99,37 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
         {
+            Receipt receiptToAdd = new Receipt()
+            {
+                StoreId = receipt.StoreId,
+                UserId = receipt.UserId,
+                DateTime = System.DateTime.Now,
+                IsScanned = receipt.IsScanned,
+                LineItems = new List<LineItem>()
+            };
+
+            foreach (LineItem lineItem in receipt.LineItems)
+            {
+
+                Product product = db.Products.FirstOrDefault(p => p.Id == lineItem.Product.Id);
+                receiptToAdd.LineItems.Add(new LineItem()
+                {
+                    Price = lineItem.Price,
+                    ProductId = product.Id,
+                    Quantity = lineItem.Quantity,
+                    ReceiptId = receipt.Id,
+                    Receipt = receipt,
+                    Product = product
+                });
+            }
+
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Receipts.Add(receipt);
+            db.Receipts.Add(receiptToAdd);
             await db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, receipt);
