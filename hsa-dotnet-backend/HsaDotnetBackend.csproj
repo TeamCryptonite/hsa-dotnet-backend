@@ -209,7 +209,7 @@
     <Compile Include="Models\Account.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\DTOs\StoreDTO.cs" />
+    <Compile Include="Models\DTOs\StoreDto.cs" />
     <Compile Include="Models\HsaServiceModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
