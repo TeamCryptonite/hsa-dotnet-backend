@@ -316,7 +316,6 @@
     <Content Include="Models\HsaServiceModel.edmx.diagram">
       <DependentUpon>HsaServiceModel.edmx</DependentUpon>
     </Content>
-    <Content Include="secretConnectionStrings.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
