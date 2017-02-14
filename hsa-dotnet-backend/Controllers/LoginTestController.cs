@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Web.Http;
 
 namespace HsaDotnetBackend.Controllers
@@ -11,10 +13,15 @@ namespace HsaDotnetBackend.Controllers
         [HttpGet]
         public Object Test()
         {
-            return new
+            var identity = User.Identity as ClaimsIdentity;
+
+            var userName = identity.Name;
+
+            return identity.Claims.Select(c => new
             {
-                msg = "Success"
-            };
+                Type = c.Type,
+                Value = c.Value
+            });
         }
     }
 }
