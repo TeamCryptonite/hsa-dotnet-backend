@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
 
@@ -47,9 +48,7 @@ namespace HsaDotnetBackend.Controllers
             //            }).ToList()
             //    });
 
-            var test = Mapper.Map<Receipt, ReceiptDto>(db.Receipts.First());
-
-            return Mapper.Map<IEnumerable<Receipt>, IEnumerable<ReceiptDto>>(db.Receipts);
+            return db.Receipts.ProjectTo<ReceiptDto>();
         }
 
         // GET: api/Receipts/5
@@ -137,7 +136,28 @@ namespace HsaDotnetBackend.Controllers
             db.Receipts.Add(receiptToAdd);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, receipt);
+            return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, Mapper.Map<Receipt, ReceiptDto>(receipt));
+        }
+
+        [HttpPut]
+        [Route("api/receipts/{receiptId:int}/addLineItem")]
+        public async Task<IHttpActionResult> AddLineItemToReceipt(int receiptId, LineItem lineItem)
+        {
+            
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Receipt receipt = await db.Receipts.FindAsync(receiptId);
+
+            db.LineItems.Add(lineItem);
+            receipt.LineItems.Add(lineItem);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, Mapper.Map<Receipt, ReceiptDto>(receipt));
+
         }
 
         // DELETE: api/Receipts/5
