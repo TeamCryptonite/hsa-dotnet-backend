@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
 
@@ -20,7 +21,7 @@ namespace HsaDotnetBackend.Controllers
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
         // GET: api/Receipts
-        public IEnumerable<ReceiptDto> GetReceipts()
+        public IQueryable<ReceiptDto> GetReceipts()
         {
             //return db.Receipts
             //    .Select(b => new ReceiptDto()
@@ -47,9 +48,7 @@ namespace HsaDotnetBackend.Controllers
             //            }).ToList()
             //    });
 
-            var test = Mapper.Map<Receipt, ReceiptDto>(db.Receipts.First());
-
-            return Mapper.Map<IEnumerable<Receipt>, IEnumerable<ReceiptDto>>(db.Receipts);
+            return db.Receipts.ProjectTo<ReceiptDto>();
         }
 
         // GET: api/Receipts/5
@@ -104,40 +103,15 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
         {
-            Receipt receiptToAdd = new Receipt()
-            {
-                StoreId = receipt.StoreId,
-                UserId = receipt.UserId,
-                DateTime = System.DateTime.Now,
-                IsScanned = receipt.IsScanned,
-                LineItems = new List<LineItem>()
-            };
-
-            foreach (LineItem lineItem in receipt.LineItems)
-            {
-
-                Product product = db.Products.FirstOrDefault(p => p.Id == lineItem.Product.Id);
-                receiptToAdd.LineItems.Add(new LineItem()
-                {
-                    Price = lineItem.Price,
-                    ProductId = product.Id,
-                    Quantity = lineItem.Quantity,
-                    ReceiptId = receipt.Id,
-                    Receipt = receipt,
-                    Product = product
-                });
-            }
-
-            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Receipts.Add(receiptToAdd);
+            db.Receipts.Add(receipt);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, receipt);
+            return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, Mapper.Map<Receipt, ReceiptDto>(receipt));
         }
 
         // DELETE: api/Receipts/5
