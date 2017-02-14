@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -21,7 +19,7 @@ namespace HsaDotnetBackend.Controllers
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
         // GET: api/Receipts
-        public IEnumerable<ReceiptDto> GetReceipts()
+        public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)
         {
             //return db.Receipts
             //    .Select(b => new ReceiptDto()
@@ -47,8 +45,7 @@ namespace HsaDotnetBackend.Controllers
             //                }
             //            }).ToList()
             //    });
-
-            return db.Receipts.ProjectTo<ReceiptDto>();
+            return db.Receipts.OrderByDescending(x => x.DateTime).Skip(skip).Take(take).ProjectTo<ReceiptDto>();
         }
 
         // GET: api/Receipts/5
@@ -107,24 +104,24 @@ namespace HsaDotnetBackend.Controllers
             {
                 StoreId = receipt.StoreId,
                 UserId = receipt.UserId,
-                DateTime = System.DateTime.Now,
+                DateTime = DateTime.Now,
                 IsScanned = receipt.IsScanned,
                 LineItems = new List<LineItem>()
             };
 
             foreach (LineItem lineItem in receipt.LineItems)
             {
-
                 Product product = db.Products.FirstOrDefault(p => p.Id == lineItem.Product.Id);
-                receiptToAdd.LineItems.Add(new LineItem()
-                {
-                    Price = lineItem.Price,
-                    ProductId = product.Id,
-                    Quantity = lineItem.Quantity,
-                    ReceiptId = receipt.Id,
-                    Receipt = receipt,
-                    Product = product
-                });
+                if (product != null)
+                    receiptToAdd.LineItems.Add(new LineItem()
+                    {
+                        Price = lineItem.Price,
+                        ProductId = product.Id,
+                        Quantity = lineItem.Quantity,
+                        ReceiptId = receipt.Id,
+                        Receipt = receipt,
+                        Product = product
+                    });
             }
 
             
@@ -152,12 +149,19 @@ namespace HsaDotnetBackend.Controllers
 
             Receipt receipt = await db.Receipts.FindAsync(receiptId);
 
-            db.LineItems.Add(lineItem);
-            receipt.LineItems.Add(lineItem);
-            await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, Mapper.Map<Receipt, ReceiptDto>(receipt));
+            if (receipt != null)
+            {
+                db.LineItems.Add(lineItem);
+                receipt.LineItems.Add(lineItem);
+                await db.SaveChangesAsync();
 
+                return CreatedAtRoute("DefaultApi", new {id = receipt.Id}, Mapper.Map<Receipt, ReceiptDto>(receipt));
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // DELETE: api/Receipts/5
