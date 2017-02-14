@@ -114,6 +114,27 @@ namespace HsaDotnetBackend.Controllers
             return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, Mapper.Map<Receipt, ReceiptDto>(receipt));
         }
 
+        [HttpPut]
+        [Route("api/receipts/{receiptId:int}/addLineItem")]
+        public async Task<IHttpActionResult> AddLineItemToReceipt(int receiptId, LineItem lineItem)
+        {
+            
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Receipt receipt = await db.Receipts.FindAsync(receiptId);
+
+            db.LineItems.Add(lineItem);
+            receipt.LineItems.Add(lineItem);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = receipt.Id }, Mapper.Map<Receipt, ReceiptDto>(receipt));
+
+        }
+
         // DELETE: api/Receipts/5
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> DeleteReceipt(int id)
