@@ -31,5 +31,6 @@ namespace HsaDotnetBackend.Models
         public virtual ICollection<LineItem> LineItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Reimbursement> Reimbursements { get; set; }
+        public virtual User User { get; set; }
     }
 }

@@ -4,12 +4,12 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="81bde2550f26406198051014b6c9a943" Name="Diagram1" ZoomLevel="52">
-        <EntityTypeShape EntityType="Model.Account" Width="1.5" PointX="3.75" PointY="0.75" />
-        <EntityTypeShape EntityType="Model.LineItem" Width="1.5" PointX="3" PointY="3.5" />
+      <Diagram DiagramId="81bde2550f26406198051014b6c9a943" Name="Diagram1" ZoomLevel="86">
+        <EntityTypeShape EntityType="Model.Account" Width="1.5" PointX="9" PointY="5.875" />
+        <EntityTypeShape EntityType="Model.LineItem" Width="1.5" PointX="3" PointY="5" />
         <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="0.75" PointY="8.5" />
-        <EntityTypeShape EntityType="Model.Receipt" Width="1.5" PointX="0.75" PointY="3.5" />
-        <EntityTypeShape EntityType="Model.Reimbursement" Width="1.5" PointX="6" PointY="3.5" />
+        <EntityTypeShape EntityType="Model.Receipt" Width="1.5" PointX="0.75" PointY="5" />
+        <EntityTypeShape EntityType="Model.Reimbursement" Width="1.5" PointX="6" PointY="5" />
         <EntityTypeShape EntityType="Model.Store" Width="1.5" PointX="3" PointY="8.75" />
         <EntityTypeShape EntityType="Model.User" Width="1.5" PointX="5.75" PointY="7.5" />
         <AssociationConnector Association="Model.FK_dbo_Account_dbo_Account_Id" />
@@ -17,6 +17,8 @@
         <AssociationConnector Association="Model.FK_LineItem_Receipt" />
         <AssociationConnector Association="Model.ReimbursementReceipts" />
         <AssociationConnector Association="Model.StoreProducts" />
+        <AssociationConnector Association="Model.FK_Accounts_Users" />
+        <AssociationConnector Association="Model.FK_Receipts_Users" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -21,31 +21,11 @@ namespace HsaDotnetBackend.Controllers
         // GET: api/Receipts
         public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)
         {
-            //return db.Receipts
-            //    .Select(b => new ReceiptDto()
-            //    {
-            //        Id = b.Id,
-            //        UserId = b.UserId.Value,
-            //        StoreId = b.StoreId,
-            //        DateTime = b.DateTime.Value,
-            //        IsScanned = b.IsScanned.Value,
-            //        LineItems = b.LineItems
-            //            .Select(s => new LineItemDto()
-            //            {
-            //                Id = s.Id,
-            //                Price = s.Price,
-            //                Quantity = s.Quantity,
-            //                ReceiptId = s.ReceiptId,
-            //                Product = new ProductDto()
-            //                {
-            //                    Id = s.Product.Id,
-            //                    Name = s.Product.Name,
-            //                    Description = s.Product.Description,
-            //                    IsHsa = s.Product.IsHSA
-            //                }
-            //            }).ToList()
-            //    });
-            return db.Receipts.OrderByDescending(x => x.DateTime).Skip(skip).Take(take).ProjectTo<ReceiptDto>();
+            return db.Receipts
+                .OrderByDescending(x => x.DateTime)
+                .Skip(skip)
+                .Take(take)
+                .ProjectTo<ReceiptDto>();
         }
 
         // GET: api/Receipts/5
