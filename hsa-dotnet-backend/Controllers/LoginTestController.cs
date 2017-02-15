@@ -18,11 +18,12 @@ namespace HsaDotnetBackend.Controllers
 
             var userName = identity.Name;
 
-            return identity.Claims.Select(c => new
-            {
-                Type = c.Type,
-                Value = c.Value
-            });
+            yield return userName;
+            //return identity.Claims.Select(c => new
+            //{
+            //    Type = c.Type,
+            //    Value = c.Value
+            //});
         }
     }
 }

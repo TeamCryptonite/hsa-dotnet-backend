@@ -33,13 +33,13 @@ namespace HsaDotnetBackend.Controllers
             return db.Stores
                 .Select(b => new StoreWithProductsDto()
                 {
-                    Id = b.Id,
+                    Id = b.StoreId,
                     Location = b.Location,
                     Name = b.Name,
                     Products = b.Products
                         .Select(sm => new ProductDto()
                         {
-                            Id = sm.Id,
+                            Id = sm.ProductId,
                             Description = sm.Description,
                             Name = sm.Name,
                             IsHsa = sm.IsHSA
@@ -72,7 +72,7 @@ namespace HsaDotnetBackend.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != store.Id)
+            if (id != store.StoreId)
             {
                 return BadRequest();
             }
@@ -110,7 +110,7 @@ namespace HsaDotnetBackend.Controllers
             db.Stores.Add(store);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = store.Id }, store);
+            return CreatedAtRoute("DefaultApi", new { id = store.StoreId }, store);
         }
 
         // DELETE: api/Stores/5
@@ -140,7 +140,7 @@ namespace HsaDotnetBackend.Controllers
 
         private bool StoreExists(int id)
         {
-            return db.Stores.Count(e => e.Id == id) > 0;
+            return db.Stores.Count(e => e.StoreId == id) > 0;
         }
     }
 }

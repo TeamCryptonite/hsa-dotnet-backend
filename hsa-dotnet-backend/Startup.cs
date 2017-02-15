@@ -46,7 +46,8 @@ namespace HsaDotnetBackend
                 // This is where you specify that your API only accepts tokens from its own clients
                 ValidAudience = clientId,
                 AuthenticationType = policy,
-                NameClaimType = "http://schemas.microsoft.com/identity/claims/objectidentifier"
+                NameClaimType = "http://schemas.microsoft.com/identity/claims/objectidentifier",
+
             };
 
             return new OAuthBearerAuthenticationOptions
