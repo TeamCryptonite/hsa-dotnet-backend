@@ -20,7 +20,7 @@ namespace HsaDotnetBackend.Models
             this.Products = new HashSet<Product>();
         }
     
-        public int Id { get; set; }
+        public int StoreId { get; set; }
         public System.Data.Entity.Spatial.DbGeography Location { get; set; }
         public string Name { get; set; }
     

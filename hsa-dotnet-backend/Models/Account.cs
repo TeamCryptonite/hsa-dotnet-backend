@@ -20,13 +20,12 @@ namespace HsaDotnetBackend.Models
             this.Reimbursements = new HashSet<Reimbursement>();
         }
     
-        public int Id { get; set; }
+        public int AccountId { get; set; }
+        public System.Guid UserObjectId { get; set; }
         public int AccountNum { get; set; }
         public bool IsActive { get; set; }
-        public int UserId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Reimbursement> Reimbursements { get; set; }
-        public virtual User User { get; set; }
     }
 }

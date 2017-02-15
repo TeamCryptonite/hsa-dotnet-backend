@@ -7,18 +7,18 @@
     <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Accounts">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="AccountId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="AccountId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserObjectId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="AccountNum" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="LineItems">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="LineItemId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LineItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ReceiptId" Type="int" Nullable="false" />
           <Property Name="ProductId" Type="int" Nullable="false" />
           <Property Name="Price" Type="decimal" Precision="18" Scale="2" Nullable="false" />
@@ -26,19 +26,19 @@
         </EntityType>
         <EntityType Name="Products">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="ProductId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Description" Type="text" />
           <Property Name="IsHSA" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Receipts">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="ReceiptId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserId" Type="int" />
+          <Property Name="ReceiptId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserObjectId" Type="uniqueidentifier" />
           <Property Name="DateTime" Type="datetime" />
           <Property Name="IsScanned" Type="bit" />
           <Property Name="StoreId" Type="int" Nullable="false" />
@@ -53,9 +53,9 @@
         </EntityType>
         <EntityType Name="Reimbursements">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="ReimbursementId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ReimbursementId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="AccountId" Type="int" Nullable="false" />
           <Property Name="IsReimbursed" Type="bit" Nullable="false" />
           <Property Name="DateTime" Type="datetime" Nullable="false" />
@@ -71,17 +71,17 @@
         </EntityType>
         <EntityType Name="Stores">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="StoreId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StoreId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Location" Type="geography" />
           <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="UserId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Username" Type="varchar" MaxLength="30" />
           <Property Name="Password" Type="varchar(max)" />
           <Property Name="FirstName" Type="varchar" MaxLength="30" />
@@ -95,22 +95,10 @@
           <End Role="Reimbursements" Type="Self.Reimbursements" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Accounts">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="AccountId" />
             </Principal>
             <Dependent Role="Reimbursements">
               <PropertyRef Name="AccountId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Accounts_Users">
-          <End Role="Users" Type="Self.Users" Multiplicity="1" />
-          <End Role="Accounts" Type="Self.Accounts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Accounts">
-              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -121,7 +109,7 @@
           <End Role="LineItems" Type="Self.LineItems" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Products">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="ProductId" />
             </Principal>
             <Dependent Role="LineItems">
               <PropertyRef Name="ProductId" />
@@ -135,24 +123,10 @@
           <End Role="LineItems" Type="Self.LineItems" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Receipts">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="ReceiptId" />
             </Principal>
             <Dependent Role="LineItems">
               <PropertyRef Name="ReceiptId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Receipts_Users">
-          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Receipts" Type="Self.Receipts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Receipts">
-              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -163,7 +137,7 @@
           <End Role="ReimbursementReceipts" Type="Self.ReimbursementReceipts" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Receipts">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="ReceiptId" />
             </Principal>
             <Dependent Role="ReimbursementReceipts">
               <PropertyRef Name="ReceiptId" />
@@ -177,7 +151,7 @@
           <End Role="ReimbursementReceipts" Type="Self.ReimbursementReceipts" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Reimbursements">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="ReimbursementId" />
             </Principal>
             <Dependent Role="ReimbursementReceipts">
               <PropertyRef Name="ReimbursementId" />
@@ -191,7 +165,7 @@
           <End Role="StoreProducts" Type="Self.StoreProducts" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Products">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="ProductId" />
             </Principal>
             <Dependent Role="StoreProducts">
               <PropertyRef Name="ProductId" />
@@ -205,7 +179,7 @@
           <End Role="StoreProducts" Type="Self.StoreProducts" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Stores">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="StoreId" />
             </Principal>
             <Dependent Role="StoreProducts">
               <PropertyRef Name="StoreId" />
@@ -226,10 +200,6 @@
             <End Role="Accounts" EntitySet="Accounts" />
             <End Role="Reimbursements" EntitySet="Reimbursements" />
           </AssociationSet>
-          <AssociationSet Name="FK_Accounts_Users" Association="Self.FK_Accounts_Users">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="Accounts" EntitySet="Accounts" />
-          </AssociationSet>
           <AssociationSet Name="FK_LineItem_Product" Association="Self.FK_LineItem_Product">
             <End Role="Products" EntitySet="Products" />
             <End Role="LineItems" EntitySet="LineItems" />
@@ -237,10 +207,6 @@
           <AssociationSet Name="FK_LineItem_Receipt" Association="Self.FK_LineItem_Receipt">
             <End Role="Receipts" EntitySet="Receipts" />
             <End Role="LineItems" EntitySet="LineItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Receipts_Users" Association="Self.FK_Receipts_Users">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="Receipts" EntitySet="Receipts" />
           </AssociationSet>
           <AssociationSet Name="FK_ReimbursementReceipts_Receipt" Association="Self.FK_ReimbursementReceipts_Receipt">
             <End Role="Receipts" EntitySet="Receipts" />
@@ -271,7 +237,7 @@
           <EntitySet Name="Reimbursements" EntityType="Model.Reimbursement" />
           <EntitySet Name="Stores" EntityType="Model.Store" />
           <EntitySet Name="Users" EntityType="Model.User" />
-          <AssociationSet Name="FK_dbo_Account_dbo_Account_Id" Association="Model.FK_dbo_Account_dbo_Account_Id">
+          <AssociationSet Name="FK_Account_Account_Id" Association="Model.FK_Account_Account_Id">
             <End Role="Account" EntitySet="Accounts" />
             <End Role="Reimbursement" EntitySet="Reimbursements" />
           </AssociationSet>
@@ -291,31 +257,22 @@
             <End Role="Product" EntitySet="Products" />
             <End Role="Store" EntitySet="Stores" />
           </AssociationSet>
-          <AssociationSet Name="FK_Accounts_Users" Association="Model.FK_Accounts_Users">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Account" EntitySet="Accounts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Receipts_Users" Association="Model.FK_Receipts_Users">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Receipt" EntitySet="Receipts" />
-          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Account">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="AccountId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AccountId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserObjectId" Type="Guid" Nullable="false" />
           <Property Name="AccountNum" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Reimbursements" Relationship="Model.FK_dbo_Account_dbo_Account_Id" FromRole="Account" ToRole="Reimbursement" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="User" Relationship="Model.FK_Accounts_Users" FromRole="Account" ToRole="User" />
+          <NavigationProperty Name="Reimbursements" Relationship="Model.FK_Account_Account_Id" FromRole="Account" ToRole="Reimbursement" />
         </EntityType>
         <EntityType Name="LineItem">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="LineItemId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LineItemId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ReceiptId" Type="Int32" Nullable="false" />
           <Property Name="ProductId" Type="Int32" Nullable="false" />
           <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
@@ -325,9 +282,9 @@
         </EntityType>
         <EntityType Name="Product">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="ProductId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="IsHSA" Type="Boolean" Nullable="false" />
@@ -336,59 +293,56 @@
         </EntityType>
         <EntityType Name="Receipt">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="ReceiptId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="Int32" />
+          <Property Name="ReceiptId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserObjectId" Type="Guid" />
           <Property Name="DateTime" Type="DateTime" Precision="3" />
           <Property Name="IsScanned" Type="Boolean" />
           <Property Name="StoreId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="LineItems" Relationship="Model.FK_LineItem_Receipt" FromRole="Receipt" ToRole="LineItem" />
           <NavigationProperty Name="Reimbursements" Relationship="Model.ReimbursementReceipts" FromRole="Receipt" ToRole="Reimbursement" />
-          <NavigationProperty Name="User" Relationship="Model.FK_Receipts_Users" FromRole="Receipt" ToRole="User" />
         </EntityType>
         <EntityType Name="Reimbursement">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="ReimbursementId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReimbursementId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="AccountId" Type="Int32" Nullable="false" />
           <Property Name="IsReimbursed" Type="Boolean" Nullable="false" />
           <Property Name="DateTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <NavigationProperty Name="Account" Relationship="Model.FK_dbo_Account_dbo_Account_Id" FromRole="Reimbursement" ToRole="Account" />
+          <NavigationProperty Name="Account" Relationship="Model.FK_Account_Account_Id" FromRole="Reimbursement" ToRole="Account" />
           <NavigationProperty Name="Receipts" Relationship="Model.ReimbursementReceipts" FromRole="Reimbursement" ToRole="Receipt" />
         </EntityType>
         <EntityType Name="Store">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="StoreId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StoreId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Location" Type="Geography" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Products" Relationship="Model.StoreProducts" FromRole="Store" ToRole="Product" />
         </EntityType>
         <EntityType Name="User">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="UserId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Username" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="FirstName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="LastName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="PrefName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Accounts" Relationship="Model.FK_Accounts_Users" FromRole="User" ToRole="Account" />
-          <NavigationProperty Name="Receipts" Relationship="Model.FK_Receipts_Users" FromRole="User" ToRole="Receipt" />
         </EntityType>
-        <Association Name="FK_dbo_Account_dbo_Account_Id">
+        <Association Name="FK_Account_Account_Id">
           <End Type="Model.Account" Role="Account" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
           <End Type="Model.Reimbursement" Role="Reimbursement" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Account">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="AccountId" />
             </Principal>
             <Dependent Role="Reimbursement">
               <PropertyRef Name="AccountId" />
@@ -402,7 +356,7 @@
           <End Type="Model.LineItem" Role="LineItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Product">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="ProductId" />
             </Principal>
             <Dependent Role="LineItem">
               <PropertyRef Name="ProductId" />
@@ -416,7 +370,7 @@
           <End Type="Model.LineItem" Role="LineItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Receipt">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="ReceiptId" />
             </Principal>
             <Dependent Role="LineItem">
               <PropertyRef Name="ReceiptId" />
@@ -431,32 +385,6 @@
           <End Type="Model.Product" Role="Product" Multiplicity="*" />
           <End Type="Model.Store" Role="Store" Multiplicity="*" />
         </Association>
-        <Association Name="FK_Accounts_Users">
-          <End Type="Model.User" Role="User" Multiplicity="1" />
-          <End Type="Model.Account" Role="Account" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="User">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Account">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Receipts_Users">
-          <End Type="Model.User" Role="User" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="Model.Receipt" Role="Receipt" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="User">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Receipt">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -466,10 +394,10 @@
           <EntitySetMapping Name="Accounts">
             <EntityTypeMapping TypeName="Model.Account">
               <MappingFragment StoreEntitySet="Accounts">
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="AccountNum" ColumnName="AccountNum" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserObjectId" ColumnName="UserObjectId" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -480,7 +408,7 @@
                 <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="LineItemId" ColumnName="LineItemId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -490,7 +418,7 @@
                 <ScalarProperty Name="IsHSA" ColumnName="IsHSA" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -500,8 +428,8 @@
                 <ScalarProperty Name="StoreId" ColumnName="StoreId" />
                 <ScalarProperty Name="IsScanned" ColumnName="IsScanned" />
                 <ScalarProperty Name="DateTime" ColumnName="DateTime" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserObjectId" ColumnName="UserObjectId" />
+                <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -512,7 +440,7 @@
                 <ScalarProperty Name="DateTime" ColumnName="DateTime" />
                 <ScalarProperty Name="IsReimbursed" ColumnName="IsReimbursed" />
                 <ScalarProperty Name="AccountId" ColumnName="AccountId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ReimbursementId" ColumnName="ReimbursementId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -521,7 +449,7 @@
               <MappingFragment StoreEntitySet="Stores">
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="StoreId" ColumnName="StoreId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -533,24 +461,24 @@
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <AssociationSetMapping Name="ReimbursementReceipts" TypeName="Model.ReimbursementReceipts" StoreEntitySet="ReimbursementReceipts">
             <EndProperty Name="Reimbursement">
-              <ScalarProperty Name="Id" ColumnName="ReimbursementId" />
+              <ScalarProperty Name="ReimbursementId" ColumnName="ReimbursementId" />
             </EndProperty>
             <EndProperty Name="Receipt">
-              <ScalarProperty Name="Id" ColumnName="ReceiptId" />
+              <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
             </EndProperty>
           </AssociationSetMapping>
           <AssociationSetMapping Name="StoreProducts" TypeName="Model.StoreProducts" StoreEntitySet="StoreProducts">
             <EndProperty Name="Store">
-              <ScalarProperty Name="Id" ColumnName="StoreId" />
+              <ScalarProperty Name="StoreId" ColumnName="StoreId" />
             </EndProperty>
             <EndProperty Name="Product">
-              <ScalarProperty Name="Id" ColumnName="ProductId" />
+              <ScalarProperty Name="ProductId" ColumnName="ProductId" />
             </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>

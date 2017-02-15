@@ -20,7 +20,7 @@ namespace HsaDotnetBackend.Models
             this.Receipts = new HashSet<Receipt>();
         }
     
-        public int Id { get; set; }
+        public int ReimbursementId { get; set; }
         public int AccountId { get; set; }
         public bool IsReimbursed { get; set; }
         public System.DateTime DateTime { get; set; }

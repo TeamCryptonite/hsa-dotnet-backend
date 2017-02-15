@@ -14,7 +14,7 @@ namespace HsaDotnetBackend.Models
     
     public partial class LineItem
     {
-        public int Id { get; set; }
+        public int LineItemId { get; set; }
         public int ReceiptId { get; set; }
         public int ProductId { get; set; }
         public decimal Price { get; set; }

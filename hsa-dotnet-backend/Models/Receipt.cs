@@ -21,8 +21,8 @@ namespace HsaDotnetBackend.Models
             this.Reimbursements = new HashSet<Reimbursement>();
         }
     
-        public int Id { get; set; }
-        public Nullable<int> UserId { get; set; }
+        public int ReceiptId { get; set; }
+        public Nullable<System.Guid> UserObjectId { get; set; }
         public Nullable<System.DateTime> DateTime { get; set; }
         public Nullable<bool> IsScanned { get; set; }
         public int StoreId { get; set; }
@@ -31,6 +31,5 @@ namespace HsaDotnetBackend.Models
         public virtual ICollection<LineItem> LineItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Reimbursement> Reimbursements { get; set; }
-        public virtual User User { get; set; }
     }
 }
