@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens;
 
 namespace HsaDotnetBackend
 {
-    public partial class Startup
+    public class Startup
     {
         // These values are pulled from web.config
         public static string aadInstance = ConfigurationManager.AppSettings["ida:AadInstance"];

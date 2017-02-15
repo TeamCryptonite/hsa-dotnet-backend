@@ -248,7 +248,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\OpenIdConnectCachingSecurityTokenProvider.cs" />
-    <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DevTestController.cs" />
     <Compile Include="Controllers\LoginTestController.cs" />
