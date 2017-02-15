@@ -18,7 +18,9 @@ namespace HsaDotnetBackend.Controllers
 
             var userName = identity.Name;
 
-            return userName;
+            return identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value;
+
+            //return userName;
             //return identity.Claims.Select(c => new
             //{
             //    Type = c.Type,
