@@ -25,7 +25,7 @@ namespace HsaDotnetBackend.Controllers
             var identity = User.Identity as ClaimsIdentity;
             var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
             return db.Receipts
-                .Where(receipt => receipt.UserObjectId.Equals(userGuid))
+                .Where(receipt => receipt.UserObjectId.GetValueOrDefault().Equals(userGuid))
                 .OrderByDescending(x => x.DateTime)
                 .Skip(skip)
                 .Take(take)
