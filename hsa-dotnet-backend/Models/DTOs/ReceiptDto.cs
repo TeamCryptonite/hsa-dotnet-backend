@@ -12,7 +12,7 @@ namespace HsaDotnetBackend.Models.DTOs
             this.LineItems = new List<LineItemDto>();
         }
         public int Id { get; set; }
-        public int? UserObjectId { get; set; }
+        public System.Guid? UserObjectId { get; set; }
         public int StoreId { get; set; }
         public DateTime? DateTime { get; set; }
         public bool? IsScanned { get; set; }
