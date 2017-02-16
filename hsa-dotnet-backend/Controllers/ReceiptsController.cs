@@ -36,10 +36,17 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> GetReceipt(int id)
         {
+            var identity = User.Identity as ClaimsIdentity;
+            var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
             Receipt receipt = await db.Receipts.FindAsync(id);
             if (receipt == null)
             {
                 return NotFound();
+            }
+
+            if (receipt.UserObjectId != userGuid)
+            {
+                return Unauthorized();
             }
 
             return Ok(receipt);
