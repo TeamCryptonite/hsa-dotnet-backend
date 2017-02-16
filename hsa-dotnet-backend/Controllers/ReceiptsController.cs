@@ -92,6 +92,7 @@ namespace HsaDotnetBackend.Controllers
             {
                 var userGuid =
                     new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
+                receipt.UserObjectId = userGuid;
             }
             else
             {
