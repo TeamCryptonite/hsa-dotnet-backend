@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using HsaDotnetBackend.Helpers;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
 
@@ -22,8 +23,8 @@ namespace HsaDotnetBackend.Controllers
         // GET: api/Receipts
         public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)
         {
-            var identity = User.Identity as ClaimsIdentity;
-            var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
             return db.Receipts
                 .Where(receipt => receipt.UserObjectId == userGuid)
                 .OrderByDescending(x => x.DateTime)
@@ -36,8 +37,7 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> GetReceipt(int id)
         {
-            var identity = User.Identity as ClaimsIdentity;
-            var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
             Receipt receipt = await db.Receipts.FindAsync(id);
             if (receipt == null || receipt.UserObjectId != userGuid)
             {
@@ -86,26 +86,15 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
         {
-            var identity = User.Identity as ClaimsIdentity;
-
-            if (identity != null)
-            {
-                var userGuid =
-                    new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
-                receipt.UserObjectId = userGuid;
-            }
-            else
-            {
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            if (userGuid == Guid.Empty)
                 return Unauthorized();
-            }
 
             foreach (LineItem lineItem in receipt.LineItems)
             {
                 Product product = db.Products.FirstOrDefault(p => p.ProductId == lineItem.Product.ProductId);
                 if (product != null)
-                {
                     lineItem.Product = product;
-                }
             }
             
             if (!ModelState.IsValid)
