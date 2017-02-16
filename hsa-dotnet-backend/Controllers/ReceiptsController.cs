@@ -84,54 +84,26 @@ namespace HsaDotnetBackend.Controllers
 
         // POST: api/Receipts
         [ResponseType(typeof(Receipt))]
-        public async Task<IHttpActionResult> PostReceipt(ReceiptDto receipt)
+        public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
         {
             var identity = User.Identity as ClaimsIdentity;
             var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
-
-            Receipt receiptToAdd = new Receipt()
-            {
-                StoreId = receipt.StoreId,
-                UserObjectId = userGuid,
-                DateTime = DateTime.Now,
-                IsScanned = receipt.IsScanned,
-                LineItems = new List<LineItem>()
-            };
-
-            foreach (LineItemDto lineItem in receipt.LineItems)
+            
+            foreach (LineItem lineItem in receipt.LineItems)
             {
                 Product product = db.Products.First(p => p.ProductId == lineItem.Product.ProductId);
                 if (product != null)
                 {
-                    receiptToAdd.LineItems.Add(new LineItem()
-                    {
-                        Price = lineItem.Price,
-                        ProductId = product.ProductId,
-                        Quantity = lineItem.Quantity,
-                        ReceiptId = receipt.ReceiptId,
-                        Product = product
-                    });
-                }
-                else
-                {
-                    receiptToAdd.LineItems.Add(new LineItem()
-                    {
-                        Price = lineItem.Price,
-                        ProductId = product.ProductId,
-                        Quantity = lineItem.Quantity,
-                        ReceiptId = receipt.ReceiptId,
-                        Product = Mapper.Map<ProductDto, Product>(lineItem.Product)
-                    });
+                    lineItem.Product = product;
                 }
             }
-
             
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Receipts.Add(receiptToAdd);
+            db.Receipts.Add(receipt);
             await db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = receipt.ReceiptId }, Mapper.Map<Receipt, ReceiptDto>(receiptToAdd));
