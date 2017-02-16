@@ -33,13 +33,13 @@ namespace HsaDotnetBackend.Controllers
             return db.Stores
                 .Select(b => new StoreWithProductsDto()
                 {
-                    Id = b.StoreId,
+                    StoreId = b.StoreId,
                     Location = b.Location,
                     Name = b.Name,
                     Products = b.Products
                         .Select(sm => new ProductDto()
                         {
-                            Id = sm.ProductId,
+                            ProductId = sm.ProductId,
                             Description = sm.Description,
                             Name = sm.Name,
                             IsHsa = sm.IsHSA

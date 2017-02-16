@@ -12,13 +12,15 @@ namespace HsaDotnetBackend.Controllers
     {
         [Route("test")]
         [HttpGet]
-        public IEnumerable<object> Test()
+        public string Test()
         {
             var identity = User.Identity as ClaimsIdentity;
 
             var userName = identity.Name;
 
-            yield return userName;
+            return identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value;
+
+            //return userName;
             //return identity.Claims.Select(c => new
             //{
             //    Type = c.Type,

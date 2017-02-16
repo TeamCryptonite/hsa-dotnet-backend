@@ -23,9 +23,9 @@ namespace HsaDotnetBackend.Controllers
         public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)
         {
             var identity = User.Identity as ClaimsIdentity;
-
+            var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
             return db.Receipts
-                //.Where(receipt => receipt.UserObjectId.Value == identity.Name.)
+                .Where(receipt => receipt.UserObjectId == userGuid)
                 .OrderByDescending(x => x.DateTime)
                 .Skip(skip)
                 .Take(take)
