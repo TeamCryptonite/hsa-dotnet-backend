@@ -256,6 +256,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ReceiptPictureHelper.cs" />
     <Compile Include="Models\Account.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
