@@ -106,7 +106,7 @@ namespace HsaDotnetBackend.Controllers
             db.Receipts.Add(receipt);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = receipt.ReceiptId }, Mapper.Map<Receipt, ReceiptDto>(receiptToAdd));
+            return CreatedAtRoute("DefaultApi", new { id = receipt.ReceiptId }, Mapper.Map<Receipt, ReceiptDto>(receipt));
         }
 
         [HttpPut]
