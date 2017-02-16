@@ -21,9 +21,9 @@ namespace HsaDotnetBackend
             // AutoMapper
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Receipt, ReceiptDto>();
-                cfg.CreateMap<LineItem, LineItemDto>();
-                cfg.CreateMap<Product, ProductDto>();
+                cfg.CreateMap<Receipt, ReceiptDto>().ReverseMap();
+                cfg.CreateMap<LineItem, LineItemDto>().ReverseMap();
+                cfg.CreateMap<Product, ProductDto>().ReverseMap();
             });
             //amConfig.AssertConfigurationIsValid();
             //Mapper.Initialize(amConfig);

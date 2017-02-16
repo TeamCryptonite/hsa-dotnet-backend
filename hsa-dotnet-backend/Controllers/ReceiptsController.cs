@@ -39,14 +39,9 @@ namespace HsaDotnetBackend.Controllers
             var identity = User.Identity as ClaimsIdentity;
             var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
             Receipt receipt = await db.Receipts.FindAsync(id);
-            if (receipt == null)
+            if (receipt == null || receipt.UserObjectId != userGuid)
             {
                 return NotFound();
-            }
-
-            if (receipt.UserObjectId != userGuid)
-            {
-                return Unauthorized();
             }
 
             return Ok(Mapper.Map<Receipt, ReceiptDto>(receipt));
@@ -89,30 +84,45 @@ namespace HsaDotnetBackend.Controllers
 
         // POST: api/Receipts
         [ResponseType(typeof(Receipt))]
-        public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
+        public async Task<IHttpActionResult> PostReceipt(ReceiptDto receipt)
         {
+            var identity = User.Identity as ClaimsIdentity;
+            var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
+
             Receipt receiptToAdd = new Receipt()
             {
                 StoreId = receipt.StoreId,
-                UserObjectId = receipt.UserObjectId,
+                UserObjectId = userGuid,
                 DateTime = DateTime.Now,
                 IsScanned = receipt.IsScanned,
                 LineItems = new List<LineItem>()
             };
 
-            foreach (LineItem lineItem in receipt.LineItems)
+            foreach (LineItemDto lineItem in receipt.LineItems)
             {
-                Product product = db.Products.FirstOrDefault(p => p.ProductId == lineItem.Product.ProductId);
+                Product product = db.Products.First(p => p.ProductId == lineItem.Product.ProductId);
                 if (product != null)
+                {
                     receiptToAdd.LineItems.Add(new LineItem()
                     {
                         Price = lineItem.Price,
                         ProductId = product.ProductId,
                         Quantity = lineItem.Quantity,
                         ReceiptId = receipt.ReceiptId,
-                        Receipt = receipt,
                         Product = product
                     });
+                }
+                else
+                {
+                    receiptToAdd.LineItems.Add(new LineItem()
+                    {
+                        Price = lineItem.Price,
+                        ProductId = product.ProductId,
+                        Quantity = lineItem.Quantity,
+                        ReceiptId = receipt.ReceiptId,
+                        Product = Mapper.Map<ProductDto, Product>(lineItem.Product)
+                    });
+                }
             }
 
             
@@ -124,7 +134,7 @@ namespace HsaDotnetBackend.Controllers
             db.Receipts.Add(receiptToAdd);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = receipt.ReceiptId }, Mapper.Map<Receipt, ReceiptDto>(receipt));
+            return CreatedAtRoute("DefaultApi", new { id = receipt.ReceiptId }, Mapper.Map<Receipt, ReceiptDto>(receiptToAdd));
         }
 
         [HttpPut]
