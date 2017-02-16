@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Web.Http;
 using AutoMapper;
@@ -42,7 +43,7 @@ namespace HsaDotnetBackend.Controllers
         public string GetBlob()
         {
             CloudStorageAccount storageAccount =
-                CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
+                CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
 
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
 
