@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Http;
+using AutoMapper;
 using HsaDotnetBackend.Models;
+using HsaDotnetBackend.Models.DTOs;
 
 namespace HsaDotnetBackend.Controllers
 { 
-    [Authorize]
     public class DevTestController : ApiController
     {
 
@@ -17,6 +18,13 @@ namespace HsaDotnetBackend.Controllers
             {
                 msg = "Default Route Testing"
             };
+        }
+
+        [Route("devtest/post")]
+        [HttpPost]
+        public ReceiptDto PostTest(Receipt receipt)
+        {
+            return Mapper.Map<Receipt, ReceiptDto>(receipt);
         }
 
         //[Route("devtest/")]
