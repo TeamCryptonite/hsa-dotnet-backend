@@ -86,12 +86,21 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
         {
-            var identity = User.Identity as ClaimsIdentity;
-            var userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
-            
+            //var identity = User.Identity as ClaimsIdentity;
+
+            //if (identity != null)
+            //{
+            //    var userGuid =
+            //        new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
+            //}
+            //else
+            //{
+            //    var userGuid = new Guid("c85d417c-c7e6-4117-9d7a-27ae6f57f975");
+            //}
+
             foreach (LineItem lineItem in receipt.LineItems)
             {
-                Product product = db.Products.First(p => p.ProductId == lineItem.Product.ProductId);
+                Product product = db.Products.FirstOrDefault(p => p.ProductId == lineItem.Product.ProductId);
                 if (product != null)
                 {
                     lineItem.Product = product;
