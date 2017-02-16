@@ -49,7 +49,7 @@ namespace HsaDotnetBackend.Controllers
                 return Unauthorized();
             }
 
-            return Ok(receipt);
+            return Ok(Mapper.Map<Receipt, ReceiptDto>(receipt));
         }
 
         // PUT: api/Receipts/5
