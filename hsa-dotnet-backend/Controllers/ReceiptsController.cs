@@ -97,12 +97,15 @@ namespace HsaDotnetBackend.Controllers
             }
 
             Receipt dbReceipt = await db.Receipts.FindAsync(receipt.ReceiptId);
+            Guid userGuid = IdentityHelper.GetCurrentUserGuid();
 
-            if (dbReceipt == null)
+            if (dbReceipt?.UserObjectId != userGuid)
             {
                 return NotFound();
             }
 
+            // Assumes Properties from ReceiptPatchDto match EXACTLY with Receipt.
+            // TODO: Look into partial updates with AutoMapper
             foreach (PropertyInfo property in receipt.GetType().GetProperties())
             {
                 var propertyValue = property.GetValue(receipt, null);
@@ -157,6 +160,10 @@ namespace HsaDotnetBackend.Controllers
 
             return CreatedAtRoute("DefaultApi", new { id = receipt.ReceiptId }, Mapper.Map<Receipt, ReceiptDto>(receipt));
         }
+
+        // TODO: Add POST new LineItems to a specific receipt
+        // TODO: Add DELETE LineItems from a specific receipt
+        // TODO: Consider allowing GET on LineItems from a specific receipt (May be redunant to GET receipt/id)
 
         [HttpPut]
         [Route("api/receipts/{receiptId:int}/addLineItem")]
