@@ -90,7 +90,7 @@ namespace HsaDotnetBackend.Controllers
 
             if (id != receipt.ReceiptId)
             {
-                return BadRequest("id in URI must match ReceiptId in body");
+                return Ok("id in URI must match ReceiptId in body");
             }
 
             foreach (string propertyName in db.Entry(receipt).CurrentValues.PropertyNames)
