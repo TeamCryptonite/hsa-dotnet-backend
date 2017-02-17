@@ -97,6 +97,8 @@ namespace HsaDotnetBackend.Controllers
 
             try
             {
+                db.Receipts.Attach(receipt);
+
                 foreach (string propertyName in db.Entry(receipt).CurrentValues.PropertyNames)
                 {
                     if (db.Entry(receipt).Property(propertyName).CurrentValue != null)
