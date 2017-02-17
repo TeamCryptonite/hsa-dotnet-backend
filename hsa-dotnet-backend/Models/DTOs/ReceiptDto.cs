@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using HsaDotnetBackend.Helpers;
 
 namespace HsaDotnetBackend.Models.DTOs
 {
@@ -15,6 +16,8 @@ namespace HsaDotnetBackend.Models.DTOs
         public int StoreId { get; set; }
         public DateTime? DateTime { get; set; }
         public bool? IsScanned { get; set; }
+        public string PictureId { get; set; }
+        public string PictureUrl => ReceiptPictureHelper.GetReceiptPictureUri(PictureId);
         public ICollection<LineItemDto> LineItems { get; set; }
     }
 }

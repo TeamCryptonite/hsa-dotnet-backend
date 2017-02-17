@@ -12,6 +12,10 @@ namespace HsaDotnetBackend.Helpers
     {
         public static string GetReceiptPictureUri(string receiptBlobId, int uriValidForMinutes = 30)
         {
+            // Check the receiptBlobId
+            if (string.IsNullOrEmpty(receiptBlobId))
+                return null;
+
             CloudStorageAccount storageAccount =
                 CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
 
@@ -21,6 +25,9 @@ namespace HsaDotnetBackend.Helpers
                 blobClient.GetContainerReference(ConfigurationManager.AppSettings["ReceiptContainer"]);
 
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(receiptBlobId);
+
+            if (!blockBlob.Exists())
+                return null;
 
             SharedAccessBlobPolicy policy = new SharedAccessBlobPolicy()
             {
