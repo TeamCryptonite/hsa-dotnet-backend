@@ -95,10 +95,17 @@ namespace HsaDotnetBackend.Controllers
                 return Ok("id in URI must match ReceiptId in body");
             }
 
-            foreach (string propertyName in db.Entry(receipt).CurrentValues.PropertyNames)
+            try
             {
-                if (db.Entry(receipt).Property(propertyName).CurrentValue != null)
-                    db.Entry(receipt).Property(propertyName).IsModified = true;
+                foreach (string propertyName in db.Entry(receipt).CurrentValues.PropertyNames)
+                {
+                    if (db.Entry(receipt).Property(propertyName).CurrentValue != null)
+                        db.Entry(receipt).Property(propertyName).IsModified = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
             }
 
             try
