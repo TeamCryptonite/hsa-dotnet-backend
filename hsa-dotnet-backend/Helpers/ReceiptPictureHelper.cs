@@ -40,5 +40,10 @@ namespace HsaDotnetBackend.Helpers
 
             return blockBlob.Uri + sasBlobToken;
         }
+
+        public static string GetNewReceiptPictureId()
+        {
+            return Guid.NewGuid().ToString().Replace("-", "") + "rec";
+        }
     }
 }

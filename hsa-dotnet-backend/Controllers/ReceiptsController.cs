@@ -56,11 +56,6 @@ namespace HsaDotnetBackend.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != receipt.ReceiptId)
-            {
-                return BadRequest();
-            }
-
             db.Entry(receipt).State = EntityState.Modified;
 
             try
@@ -82,7 +77,49 @@ namespace HsaDotnetBackend.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [ResponseType(typeof(void))]
+        [HttpPatch]
+        [Route("api/receipts/{id:int}")]
+        public async Task<IHttpActionResult> PatchReceipt(int id, [FromBody] Receipt receipt)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != receipt.ReceiptId)
+            {
+                return BadRequest("id in URI must match ReceiptId in body");
+            }
+
+            foreach (string propertyName in db.Entry(receipt).CurrentValues.PropertyNames)
+            {
+                if (db.Entry(receipt).Property(propertyName).CurrentValue != null)
+                    db.Entry(receipt).Property(propertyName).IsModified = true;
+            }
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReceiptExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
         // POST: api/Receipts
+        // TODO: Allow posting images. May need to be a separate API call
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
         {
