@@ -35,6 +35,8 @@ namespace HsaDotnetBackend.Controllers
 
         // GET: api/Receipts/5
         [ResponseType(typeof(Receipt))]
+        [HttpGet]
+        [Route("api/receipts/{id:int}")]
         public async Task<IHttpActionResult> GetReceipt(int id)
         {
             var userGuid = IdentityHelper.GetCurrentUserGuid();
