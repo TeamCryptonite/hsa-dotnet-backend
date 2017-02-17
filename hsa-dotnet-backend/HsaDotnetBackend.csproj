@@ -263,6 +263,7 @@
     </Compile>
     <Compile Include="Models\DTOs\LineItemDto.cs" />
     <Compile Include="Models\DTOs\ProductDto.cs" />
+    <Compile Include="Models\DTOs\ReceiptPatchDto.cs" />
     <Compile Include="Models\DTOs\ReceiptDto.cs" />
     <Compile Include="Models\DTOs\StoreDto.cs" />
     <Compile Include="Models\DTOs\StoreWithProductsDto.cs" />

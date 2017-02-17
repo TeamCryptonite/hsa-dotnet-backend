@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -82,7 +83,7 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(void))]
         [HttpPatch]
         [Route("api/receipts/{id:int}")]
-        public async Task<IHttpActionResult> PatchReceipt(int id, [FromBody] Receipt receipt)
+        public async Task<IHttpActionResult> PatchReceipt(int id, [FromBody] ReceiptPatchDto receipt)
         {
 
             if (!ModelState.IsValid)
@@ -92,22 +93,23 @@ namespace HsaDotnetBackend.Controllers
 
             if (id != receipt.ReceiptId)
             {
-                return Ok("id in URI must match ReceiptId in body");
+                return Ok("Error: id in URI must match ReceiptId in body");
             }
 
-            try
-            {
-                db.Receipts.Attach(receipt);
+            Receipt dbReceipt = await db.Receipts.FindAsync(receipt.ReceiptId);
 
-                foreach (string propertyName in db.Entry(receipt).CurrentValues.PropertyNames)
+            if (dbReceipt == null)
+            {
+                return NotFound();
+            }
+
+            foreach (PropertyInfo property in receipt.GetType().GetProperties())
+            {
+                var propertyValue = property.GetValue(receipt, null);
+                if (propertyValue != null)
                 {
-                    if (db.Entry(receipt).Property(propertyName).CurrentValue != null)
-                        db.Entry(receipt).Property(propertyName).IsModified = true;
+                    db.Entry(dbReceipt).Property(property.Name).CurrentValue = propertyValue;
                 }
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
             }
 
             try
