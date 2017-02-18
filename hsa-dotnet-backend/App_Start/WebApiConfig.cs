@@ -12,7 +12,7 @@ namespace HsaDotnetBackend
             //    .Add(new MediaTypeHeaderValue("text/html"));
 
             // Send error reports to remote calls
-            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
+            GlobalConfiguration.Configuration.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 
             // Web API routes
             config.MapHttpAttributeRoutes();
