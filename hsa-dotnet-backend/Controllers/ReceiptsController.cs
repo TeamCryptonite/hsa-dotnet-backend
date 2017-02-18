@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.Services.Description;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using HsaDotnetBackend.Helpers;
@@ -28,9 +29,7 @@ namespace HsaDotnetBackend.Controllers
 
             return db.Receipts
                 .Where(receipt => receipt.UserObjectId == userGuid)
-                .OrderByDescending(x => x.DateTime)
-                .Skip(skip)
-                .Take(take)
+                .AsQueryable()
                 .ProjectTo<ReceiptDto>();
         }
 
@@ -159,6 +158,19 @@ namespace HsaDotnetBackend.Controllers
             await db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = receipt.ReceiptId }, Mapper.Map<Receipt, ReceiptDto>(receipt));
+        }
+
+        [HttpGet]
+        [Route("api/receipts/{receiptId:int}/lineitems")]
+        public IQueryable<LineItemDto> GetAllLineItemsForReceipt(int receiptId)
+        {
+            Receipt dbReceipt = db.Receipts.Find(receiptId);
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
+            if (dbReceipt?.UserObjectId != userGuid)
+                return Enumerable.Empty<LineItemDto>().AsQueryable();
+
+            return dbReceipt.LineItems.AsQueryable().ProjectTo<LineItemDto>();
         }
 
         // TODO: Add POST new LineItems to a specific receipt
