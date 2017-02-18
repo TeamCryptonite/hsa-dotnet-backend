@@ -11,6 +11,9 @@ namespace HsaDotnetBackend
             //config.Formatters.JsonFormatter.SupportedMediaTypes
             //    .Add(new MediaTypeHeaderValue("text/html"));
 
+            // Send error reports to remote calls
+            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
+
             // Web API routes
             config.MapHttpAttributeRoutes();
 
