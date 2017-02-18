@@ -162,36 +162,67 @@ namespace HsaDotnetBackend.Controllers
         }
 
         // TODO: Add POST new LineItems to a specific receipt
+        [HttpPost]
+        [Route("api/receipts/[receiptId:int}/lineitem")]
+        public async Task<IHttpActionResult> PostLineItem(int receiptId, [FromBody] LineItemDto lineItem)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            Receipt dbReceipt = await db.Receipts.FindAsync(receiptId);
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
+            if (dbReceipt?.UserObjectId != userGuid)
+                return NotFound();
+
+            LineItem dbLineItem = Mapper.Map<LineItemDto, LineItem>(lineItem);
+            
+            //Replace ProductDto with Product from db if found, or create a new Product and add it
+            Product dbProduct = await db.Products.FindAsync(lineItem.Product.ProductId);
+            if (dbProduct == null)
+                dbProduct = Mapper.Map<ProductDto, Product>(lineItem.Product);
+
+            dbLineItem.Product = dbProduct;
+
+            dbReceipt.LineItems.Add(dbLineItem);
+
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("api/receipts/id/lineitem", new {lineItemId = dbLineItem.LineItemId},
+                Mapper.Map<LineItem, LineItemDto>(dbLineItem));
+
+
+        }
         // TODO: Add DELETE LineItems from a specific receipt
         // TODO: Consider allowing GET on LineItems from a specific receipt (May be redunant to GET receipt/id)
 
-        [HttpPut]
-        [Route("api/receipts/{receiptId:int}/addLineItem")]
-        public async Task<IHttpActionResult> AddLineItemToReceipt(int receiptId, LineItem lineItem)
-        {
+        //[HttpPut]
+        //[Route("api/receipts/{receiptId:int}/addLineItem")]
+        //public async Task<IHttpActionResult> AddLineItemToReceipt(int receiptId, LineItem lineItem)
+        //{
             
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            Receipt receipt = await db.Receipts.FindAsync(receiptId);
+        //    Receipt receipt = await db.Receipts.FindAsync(receiptId);
 
 
-            if (receipt != null)
-            {
-                db.LineItems.Add(lineItem);
-                receipt.LineItems.Add(lineItem);
-                await db.SaveChangesAsync();
+        //    if (receipt != null)
+        //    {
+        //        db.LineItems.Add(lineItem);
+        //        receipt.LineItems.Add(lineItem);
+        //        await db.SaveChangesAsync();
 
-                return CreatedAtRoute("DefaultApi", new {id = receipt.ReceiptId}, Mapper.Map<Receipt, ReceiptDto>(receipt));
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
+        //        return CreatedAtRoute("DefaultApi", new {id = receipt.ReceiptId}, Mapper.Map<Receipt, ReceiptDto>(receipt));
+        //    }
+        //    else
+        //    {
+        //        return NotFound();
+        //    }
+        //}
 
         // DELETE: api/Receipts/5
         [ResponseType(typeof(Receipt))]
