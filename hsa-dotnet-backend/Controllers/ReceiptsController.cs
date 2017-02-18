@@ -187,6 +187,53 @@ namespace HsaDotnetBackend.Controllers
             return Ok(Mapper.Map<LineItem, LineItemDto>(dbLineItem));
         }
 
+        [HttpPatch]
+        [Route("api/receipts/{receiptId:int}/lineitems/{lineItemId:int}")]
+        public async Task<IHttpActionResult> PatchLineItem(int receiptId, int lineItemId, [FromBody] LineItemDto lineItem)
+        {
+            LineItem dbLineItem = await db.LineItems.FindAsync(lineItemId);
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
+            if (dbLineItem?.Receipt.UserObjectId != userGuid)
+                return NotFound();
+            if (lineItem.ReceiptId != receiptId)
+                return BadRequest("Error: URI receiptId does not match lineItem.ReceiptId");
+
+            // TODO: Refactor the foreach!
+            foreach (PropertyInfo property in lineItem.GetType().GetProperties())
+            {
+                var propertyValue = property.GetValue(lineItem, null);
+                if (propertyValue != null)
+                {
+                    db.Entry(dbLineItem).Property(property.Name).CurrentValue = propertyValue;
+                }
+            }
+
+            Product dbProduct = await db.Products.FindAsync(lineItem.Product.ProductId);
+            if (dbProduct == null)
+                dbProduct = Mapper.Map<ProductDto, Product>(lineItem.Product);
+
+            dbLineItem.Product = dbProduct;
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!LineItemExists(lineItemId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
         // TODO: Add POST new LineItems to a specific receipt
         [HttpPost]
         [Route("api/receipts/{receiptId:int}/lineitems")]
@@ -277,6 +324,11 @@ namespace HsaDotnetBackend.Controllers
         private bool ReceiptExists(int id)
         {
             return db.Receipts.Count(e => e.ReceiptId == id) > 0;
+        }
+
+        private bool LineItemExists(int id)
+        {
+            return db.LineItems.Count(e => e.LineItemId == id) > 0;
         }
     }
 }
