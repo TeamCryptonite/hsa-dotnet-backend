@@ -191,6 +191,7 @@ namespace HsaDotnetBackend.Controllers
         [Route("api/receipts/{receiptId:int}/lineitems/{lineItemId:int}")]
         public async Task<IHttpActionResult> PatchLineItem(int receiptId, int lineItemId, [FromBody] LineItemDto lineItem)
         {
+            // TODO: Continue to work on. Doesn't currently allow empty lineitemid in json.
             LineItem dbLineItem = await db.LineItems.FindAsync(lineItemId);
             var userGuid = IdentityHelper.GetCurrentUserGuid();
 
