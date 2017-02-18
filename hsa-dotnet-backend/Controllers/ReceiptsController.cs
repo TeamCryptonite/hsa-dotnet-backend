@@ -218,45 +218,33 @@ namespace HsaDotnetBackend.Controllers
 
         }
         // TODO: Add DELETE LineItems from a specific receipt
-        // TODO: Consider allowing GET on LineItems from a specific receipt (May be redunant to GET receipt/id)
+        [HttpDelete]
+        [Route("api/receipts/{receiptId:int}/lineitems/{lineItemId:int}")]
+        public async Task<IHttpActionResult> DeleteLineItem(int receiptId, int lineItemId)
+        {
+            LineItem dbLineItem = await db.LineItems.FindAsync(lineItemId);
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
 
-        //[HttpPut]
-        //[Route("api/receipts/{receiptId:int}/addLineItem")]
-        //public async Task<IHttpActionResult> AddLineItemToReceipt(int receiptId, LineItem lineItem)
-        //{
-            
+            if (dbLineItem?.Receipt.UserObjectId != userGuid)
+                return NotFound();
 
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+            db.LineItems.Remove(dbLineItem);
 
-        //    Receipt receipt = await db.Receipts.FindAsync(receiptId);
+            await db.SaveChangesAsync();
 
-
-        //    if (receipt != null)
-        //    {
-        //        db.LineItems.Add(lineItem);
-        //        receipt.LineItems.Add(lineItem);
-        //        await db.SaveChangesAsync();
-
-        //        return CreatedAtRoute("DefaultApi", new {id = receipt.ReceiptId}, Mapper.Map<Receipt, ReceiptDto>(receipt));
-        //    }
-        //    else
-        //    {
-        //        return NotFound();
-        //    }
-        //}
+            return Ok(dbLineItem);
+        }
+      
 
         // DELETE: api/Receipts/5
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> DeleteReceipt(int id)
         {
             Receipt receipt = await db.Receipts.FindAsync(id);
-            if (receipt == null)
-            {
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
+            if (receipt?.UserObjectId != userGuid)
                 return NotFound();
-            }
 
             db.Receipts.Remove(receipt);
             await db.SaveChangesAsync();
