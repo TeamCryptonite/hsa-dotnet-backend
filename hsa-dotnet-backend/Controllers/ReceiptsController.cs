@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.OData;
 using System.Web.Services.Description;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -23,6 +24,9 @@ namespace HsaDotnetBackend.Controllers
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
         // GET: api/Receipts
+        [EnableQueryAttribute]
+        [HttpGet]
+        [Route("api/receipts")]
         public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)
         {
             var userGuid = IdentityHelper.GetCurrentUserGuid();
@@ -164,6 +168,7 @@ namespace HsaDotnetBackend.Controllers
 
         [HttpGet]
         [Route("api/receipts/{receiptId:int}/lineitems")]
+        [EnableQueryAttribute]
         public IQueryable<LineItemDto> GetAllLineItemsForReceipt(int receiptId)
         {
             Receipt dbReceipt = db.Receipts.Find(receiptId);
