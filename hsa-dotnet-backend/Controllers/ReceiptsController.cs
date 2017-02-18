@@ -169,8 +169,8 @@ namespace HsaDotnetBackend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (lineItem.ReceiptId != 0 || lineItem.ReceiptId != receiptId)
-                return BadRequest(ModelState);
+            if (lineItem.ReceiptId == 0 || lineItem.ReceiptId != receiptId)
+                return BadRequest("URI and Body do not match: ReceiptId");
 
             Receipt dbReceipt = await db.Receipts.FindAsync(receiptId);
             var userGuid = IdentityHelper.GetCurrentUserGuid();
