@@ -24,7 +24,6 @@ namespace HsaDotnetBackend.Controllers
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
         // GET: api/Receipts
-        [EnableQueryAttribute]
         [HttpGet]
         [Route("api/receipts")]
         public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)

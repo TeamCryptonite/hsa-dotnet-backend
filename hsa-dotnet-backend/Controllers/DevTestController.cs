@@ -6,7 +6,6 @@ using AutoMapper;
 using HsaDotnetBackend.Helpers;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
-using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
