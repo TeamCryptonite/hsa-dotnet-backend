@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Web.Http;
+﻿using System.Web.Http;
 using AutoMapper;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;

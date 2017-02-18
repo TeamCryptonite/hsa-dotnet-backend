@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace HsaDotnetBackend.Models.DTOs
+﻿namespace HsaDotnetBackend.Models.DTOs
 {
     public class ProductDto
     {

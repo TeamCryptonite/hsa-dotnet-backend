@@ -1,13 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin.Security.Jwt;
-using Microsoft.Owin.Security;
-using System.Net.Http;
 using System.IdentityModel.Tokens;
-using System.IdentityModel;
 using Microsoft.IdentityModel.Protocols;
 using System.Threading;
 

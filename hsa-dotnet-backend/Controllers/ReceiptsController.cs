@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using System.Web.OData;
-using System.Web.Services.Description;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using HsaDotnetBackend.Helpers;
@@ -167,7 +163,6 @@ namespace HsaDotnetBackend.Controllers
 
         [HttpGet]
         [Route("api/receipts/{receiptId:int}/lineitems")]
-        [EnableQueryAttribute]
         public IQueryable<LineItemDto> GetAllLineItemsForReceipt(int receiptId)
         {
             Receipt dbReceipt = db.Receipts.Find(receiptId);
