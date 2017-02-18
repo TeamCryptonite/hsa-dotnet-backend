@@ -29,7 +29,9 @@ namespace HsaDotnetBackend.Controllers
 
             return db.Receipts
                 .Where(receipt => receipt.UserObjectId == userGuid)
-                .AsQueryable()
+                .OrderByDescending(x => x.DateTime)
+                .Skip(skip)
+                .Take(take)
                 .ProjectTo<ReceiptDto>();
         }
 
