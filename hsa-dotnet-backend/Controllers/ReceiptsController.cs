@@ -163,7 +163,7 @@ namespace HsaDotnetBackend.Controllers
 
         // TODO: Add POST new LineItems to a specific receipt
         [HttpPost]
-        [Route("api/receipts/[receiptId:int}/lineitem")]
+        [Route("api/receipts/{receiptId:int}/lineitem")]
         public async Task<IHttpActionResult> PostLineItem(int receiptId, [FromBody] LineItemDto lineItem)
         {
             if (!ModelState.IsValid)
