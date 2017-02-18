@@ -196,8 +196,10 @@ namespace HsaDotnetBackend.Controllers
 
             if (dbLineItem?.Receipt.UserObjectId != userGuid)
                 return NotFound();
-            if (lineItem.ReceiptId != receiptId)
+            if (lineItem.ReceiptId < 1 && lineItem.ReceiptId != receiptId)
                 return BadRequest("Error: URI receiptId does not match lineItem.ReceiptId");
+            if (lineItem.LineItemId < 1 && lineItem.LineItemId != lineItemId)
+                return BadRequest("Error: URI lineItemId does not match lieItem.LineItemId");
 
             // TODO: Refactor the foreach!
             foreach (PropertyInfo property in lineItem.GetType().GetProperties())
