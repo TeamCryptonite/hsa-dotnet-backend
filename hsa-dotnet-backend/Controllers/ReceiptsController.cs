@@ -88,12 +88,12 @@ namespace HsaDotnetBackend.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest("Error: Model is not valid");
             }
 
             if (id != receipt.ReceiptId)
             {
-                return Ok("Error: id in URI must match ReceiptId in body");
+                return BadRequest("Error: id in URI must match ReceiptId in body");
             }
 
             Receipt dbReceipt = await db.Receipts.FindAsync(receipt.ReceiptId);
@@ -163,7 +163,7 @@ namespace HsaDotnetBackend.Controllers
 
         // TODO: Add POST new LineItems to a specific receipt
         [HttpPost]
-        [Route("api/receipts/{receiptId:int}/lineitem")]
+        [Route("api/receipts/{receiptId:int}/lineitems")]
         public async Task<IHttpActionResult> PostLineItem(int receiptId, [FromBody] LineItemDto lineItem)
         {
             if (!ModelState.IsValid)
@@ -193,7 +193,7 @@ namespace HsaDotnetBackend.Controllers
 
                 await db.SaveChangesAsync();
 
-                return Ok();
+                return Created($"api/receipts/{dbReceipt.ReceiptId}/lineitems/{dbLineItem.LineItemId}", Mapper.Map<LineItem, LineItemDto>(dbLineItem));
                 //return CreatedAtRoute("api/receipts/{receiptId}/lineitem/{lineItemId}", 
                 //    new {receiptId = dbReceipt.ReceiptId, lineItemId = dbLineItem.LineItemId},
                 //    Mapper.Map<LineItem, LineItemDto>(dbLineItem));
