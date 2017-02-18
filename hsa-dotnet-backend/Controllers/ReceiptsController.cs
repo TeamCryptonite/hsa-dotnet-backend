@@ -26,7 +26,7 @@ namespace HsaDotnetBackend.Controllers
         // GET: api/Receipts
         [EnableQueryAttribute]
         [HttpGet]
-        [Route("/api/receipts")]
+        [Route("api/receipts")]
         public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)
         {
             var userGuid = IdentityHelper.GetCurrentUserGuid();
