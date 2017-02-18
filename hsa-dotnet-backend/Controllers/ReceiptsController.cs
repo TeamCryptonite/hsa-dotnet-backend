@@ -169,6 +169,9 @@ namespace HsaDotnetBackend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            if (receiptId != lineItem.ReceiptId)
+                return BadRequest(ModelState);
+
             Receipt dbReceipt = await db.Receipts.FindAsync(receiptId);
             var userGuid = IdentityHelper.GetCurrentUserGuid();
 
@@ -176,21 +179,27 @@ namespace HsaDotnetBackend.Controllers
                 return NotFound();
 
             LineItem dbLineItem = Mapper.Map<LineItemDto, LineItem>(lineItem);
-            
-            //Replace ProductDto with Product from db if found, or create a new Product and add it
-            Product dbProduct = await db.Products.FindAsync(lineItem.Product.ProductId);
-            if (dbProduct == null)
-                dbProduct = Mapper.Map<ProductDto, Product>(lineItem.Product);
 
-            dbLineItem.Product = dbProduct;
+            try
+            {
+                //Replace ProductDto with Product from db if found, or create a new Product and add it
+                Product dbProduct = await db.Products.FindAsync(lineItem.Product.ProductId);
+                if (dbProduct == null)
+                    dbProduct = Mapper.Map<ProductDto, Product>(lineItem.Product);
 
-            dbReceipt.LineItems.Add(dbLineItem);
+                dbLineItem.Product = dbProduct;
 
-            await db.SaveChangesAsync();
+                dbReceipt.LineItems.Add(dbLineItem);
 
-            return CreatedAtRoute("api/receipts/id/lineitem", new {lineItemId = dbLineItem.LineItemId},
-                Mapper.Map<LineItem, LineItemDto>(dbLineItem));
+                await db.SaveChangesAsync();
 
+                return CreatedAtRoute("api/receipts/id/lineitem", new {lineItemId = dbLineItem.LineItemId},
+                    Mapper.Map<LineItem, LineItemDto>(dbLineItem));
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
 
         }
         // TODO: Add DELETE LineItems from a specific receipt
