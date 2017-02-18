@@ -193,9 +193,10 @@ namespace HsaDotnetBackend.Controllers
 
                 await db.SaveChangesAsync();
 
-                return CreatedAtRoute("api/receipts/{receiptId}/lineitem/{lineItemId}", 
-                    new {receiptId = dbReceipt.ReceiptId, lineItemId = dbLineItem.LineItemId},
-                    Mapper.Map<LineItem, LineItemDto>(dbLineItem));
+                return Ok();
+                //return CreatedAtRoute("api/receipts/{receiptId}/lineitem/{lineItemId}", 
+                //    new {receiptId = dbReceipt.ReceiptId, lineItemId = dbLineItem.LineItemId},
+                //    Mapper.Map<LineItem, LineItemDto>(dbLineItem));
             }
             catch (Exception ex)
             {
