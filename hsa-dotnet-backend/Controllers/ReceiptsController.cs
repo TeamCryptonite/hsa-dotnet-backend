@@ -169,7 +169,7 @@ namespace HsaDotnetBackend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (receiptId != lineItem.ReceiptId)
+            if (lineItem.ReceiptId != 0 || lineItem.ReceiptId != receiptId)
                 return BadRequest(ModelState);
 
             Receipt dbReceipt = await db.Receipts.FindAsync(receiptId);
@@ -193,7 +193,7 @@ namespace HsaDotnetBackend.Controllers
 
                 await db.SaveChangesAsync();
 
-                return CreatedAtRoute("api/receipts/id/lineitem", new {lineItemId = dbLineItem.LineItemId},
+                return CreatedAtRoute("api/receipts/receiptId/lineitem/lineItemId", new {receiptId = dbReceipt.ReceiptId, lineItemId = dbLineItem.LineItemId},
                     Mapper.Map<LineItem, LineItemDto>(dbLineItem));
             }
             catch (Exception ex)
