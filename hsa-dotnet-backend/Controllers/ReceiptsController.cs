@@ -145,7 +145,7 @@ namespace HsaDotnetBackend.Controllers
 
             foreach (LineItem lineItem in receipt.LineItems)
             {
-                Product product = db.Products.FirstOrDefault(p => p.ProductId == lineItem.Product.ProductId);
+                Product product = db.Products.First(p => p.ProductId == lineItem.Product.ProductId);
                 if (product != null)
                     lineItem.Product = product;
             }
@@ -172,6 +172,19 @@ namespace HsaDotnetBackend.Controllers
                 return Enumerable.Empty<LineItemDto>().AsQueryable();
 
             return dbReceipt.LineItems.AsQueryable().ProjectTo<LineItemDto>();
+        }
+
+        [HttpGet]
+        [Route("api/receipts/{receiptId:int}/lineitems/{lineItemId:int}")]
+        public async Task<IHttpActionResult> GetLineItem(int receiptId, int lineItemId)
+        {
+            LineItem dbLineItem = await db.LineItems.FindAsync(lineItemId);
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
+            if (dbLineItem?.Receipt.UserObjectId != userGuid)
+                return NotFound();
+
+            return Ok(Mapper.Map<LineItem, LineItemDto>(dbLineItem));
         }
 
         // TODO: Add POST new LineItems to a specific receipt
