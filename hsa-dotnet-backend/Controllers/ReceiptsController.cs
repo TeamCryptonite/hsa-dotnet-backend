@@ -202,15 +202,8 @@ namespace HsaDotnetBackend.Controllers
             if (lineItem.LineItemId > 0 && lineItem.LineItemId != lineItemId)
                 return BadRequest("Error: URI lineItemId does not match lieItem.LineItemId");
 
-            // TODO: Refactor the foreach!
-            foreach (PropertyInfo property in lineItem.GetType().GetProperties())
-            {
-                var propertyValue = property.GetValue(lineItem, null);
-                if (propertyValue != null)
-                {
-                    db.Entry(dbLineItem).Property(property.Name).CurrentValue = propertyValue;
-                }
-            }
+            dbLineItem.Price = lineItem.Price;
+            dbLineItem.Quantity = lineItem.Quantity;
 
             Product dbProduct = await db.Products.FindAsync(lineItem.Product.ProductId);
             if (dbProduct == null)
