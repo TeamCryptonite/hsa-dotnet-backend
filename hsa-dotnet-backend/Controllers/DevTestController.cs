@@ -37,7 +37,7 @@ namespace HsaDotnetBackend.Controllers
         [HttpGet]
         public string GetBlob()
         {
-            return ReceiptPictureHelper.GetReceiptPictureUri("20170216_140140[1].jpg");
+            return ReceiptPictureHelper.GetReceiptPictureUrl("20170216_140140[1].jpg");
         }
     }
 }

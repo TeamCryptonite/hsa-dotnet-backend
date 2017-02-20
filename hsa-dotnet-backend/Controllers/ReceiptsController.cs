@@ -201,6 +201,8 @@ namespace HsaDotnetBackend.Controllers
                 return BadRequest("Error: URI receiptId does not match lineItem.ReceiptId");
             if (lineItem.LineItemId > 0 && lineItem.LineItemId != lineItemId)
                 return BadRequest("Error: URI lineItemId does not match lieItem.LineItemId");
+            
+            // Note: Patch method will not update receiptId or lineItemId on purpose
 
             dbLineItem.Price = lineItem.Price;
             dbLineItem.Quantity = lineItem.Quantity;
@@ -306,6 +308,21 @@ namespace HsaDotnetBackend.Controllers
             await db.SaveChangesAsync();
 
             return Ok(receipt);
+        }
+
+
+        // TODO Reconsider this separate route
+        [HttpGet]
+        [Route("api/receipts/{receiptId:int}/pictureurl")]
+        public async Task<object> GetReadWritePictureUrl(int receiptId)
+        {
+            Receipt receipt = await db.Receipts.FindAsync(receiptId);
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
+            if (receipt?.UserObjectId != userGuid)
+                return NotFound();
+
+            return Ok(new {});
         }
 
         protected override void Dispose(bool disposing)
