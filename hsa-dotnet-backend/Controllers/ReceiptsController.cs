@@ -83,7 +83,7 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(void))]
         [HttpPatch]
         [Route("api/receipts/{id:int}")]
-        public async Task<IHttpActionResult> PatchReceipt(int id, [FromBody] ReceiptPatchDto receipt)
+        public async Task<IHttpActionResult> PatchReceipt(int id, [FromBody] ReceiptPatchDto patchReceipt)
         {
 
             if (!ModelState.IsValid)
@@ -91,12 +91,12 @@ namespace HsaDotnetBackend.Controllers
                 return BadRequest("Error: Model is not valid");
             }
 
-            if (id != receipt.ReceiptId)
+            if (id != patchReceipt.ReceiptId)
             {
                 return BadRequest("Error: id in URI must match ReceiptId in body");
             }
 
-            Receipt dbReceipt = await db.Receipts.FindAsync(receipt.ReceiptId);
+            Receipt dbReceipt = await db.Receipts.FindAsync(patchReceipt.ReceiptId);
             Guid userGuid = IdentityHelper.GetCurrentUserGuid();
 
             if (dbReceipt?.UserObjectId != userGuid)
@@ -105,15 +105,21 @@ namespace HsaDotnetBackend.Controllers
             }
 
             // Assumes Properties from ReceiptPatchDto match EXACTLY with Receipt.
-            // TODO: Look into partial updates with AutoMapper
-            foreach (PropertyInfo property in receipt.GetType().GetProperties())
-            {
-                var propertyValue = property.GetValue(receipt, null);
-                if (propertyValue != null)
-                {
-                    db.Entry(dbReceipt).Property(property.Name).CurrentValue = propertyValue;
-                }
-            }
+            //foreach (PropertyInfo property in patchReceipt.GetType().GetProperties())
+            //{
+            //    var propertyValue = property.GetValue(patchReceipt, null);
+            //    if (propertyValue != null)
+            //    {
+            //        db.Entry(dbReceipt).Property(property.Name).CurrentValue = propertyValue;
+            //    }
+            //}
+
+            if(patchReceipt.DateTime.HasValue)
+                dbReceipt.DateTime = patchReceipt.DateTime;
+            if (patchReceipt.IsScanned.HasValue)
+                dbReceipt.IsScanned = patchReceipt.IsScanned;
+            if (patchReceipt.StoreId > 0)
+                dbReceipt.StoreId = patchReceipt.StoreId;
 
             try
             {
@@ -139,10 +145,14 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(Receipt))]
         public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
         {
+
+            // Authorize user
             var userGuid = IdentityHelper.GetCurrentUserGuid();
             if (userGuid == Guid.Empty)
                 return Unauthorized();
 
+            // TODO: Consider refactoring this into a helper
+            // Check for existing products, and create product if none exist
             foreach (LineItem lineItem in receipt.LineItems)
             {
                 Product product = db.Products.First(p => p.ProductId == lineItem.Product.ProductId);
