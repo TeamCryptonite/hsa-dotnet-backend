@@ -50,7 +50,7 @@ namespace HsaDotnetBackend.Controllers
                     break;
             }
 
-            var agregateData = db.Receipts
+            var aggregateData = db.Receipts
                 .Where(r => r.UserObjectId == userGuid)
                 .Where(r => r.DateTime >= startDate)
                 .Where(r => r.DateTime <= endDate)
@@ -61,11 +61,12 @@ namespace HsaDotnetBackend.Controllers
                     GroupKey = group.Key,
                     TotalSpent = group.Sum(r => r.LineItems.Sum(li => li.Price)),
                     TotalHsaSpent = group.Sum(r => r.LineItems.Where(li => li.Product.IsHSA).Sum(li => li.Price)),
-                    ProductList = group.SelectMany(r => r.LineItems).Select(li => new {Product = li.Product.Name}).Distinct()
+                    ProductList = group.SelectMany(r => r.LineItems).Select(li => li.Product.Name).Distinct(),
+                    ReceiptIdList = group.Select(r => r.ReceiptId)
                 });
 
 
-            return agregateData;
+            return aggregateData;
         }
 
     }
