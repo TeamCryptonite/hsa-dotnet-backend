@@ -26,7 +26,7 @@ namespace HsaDotnetBackend.Models
         public Nullable<System.DateTime> DateTime { get; set; }
         public Nullable<bool> IsScanned { get; set; }
         public int StoreId { get; set; }
-        public string PictureId { get; set; }
+        public string ImageId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LineItem> LineItems { get; set; }

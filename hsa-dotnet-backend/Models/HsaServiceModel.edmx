@@ -31,6 +31,7 @@
           <Property Name="ProductId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Description" Type="text" />
+          <Property Name="ImageId" Type="varchar(max)" />
           <Property Name="IsHSA" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Receipts">
@@ -42,7 +43,7 @@
           <Property Name="DateTime" Type="datetime" />
           <Property Name="IsScanned" Type="bit" />
           <Property Name="StoreId" Type="int" Nullable="false" />
-          <Property Name="PictureId" Type="varchar(max)" />
+          <Property Name="ImageId" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="ReimbursementReceipts">
           <Key>
@@ -288,6 +289,7 @@
           <Property Name="ProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ImageId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="IsHSA" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="LineItems" Relationship="Model.FK_LineItem_Product" FromRole="Product" ToRole="LineItem" />
           <NavigationProperty Name="Stores" Relationship="Model.StoreProducts" FromRole="Product" ToRole="Store" />
@@ -301,9 +303,9 @@
           <Property Name="DateTime" Type="DateTime" Precision="3" />
           <Property Name="IsScanned" Type="Boolean" />
           <Property Name="StoreId" Type="Int32" Nullable="false" />
+          <Property Name="ImageId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="LineItems" Relationship="Model.FK_LineItem_Receipt" FromRole="Receipt" ToRole="LineItem" />
           <NavigationProperty Name="Reimbursements" Relationship="Model.ReimbursementReceipts" FromRole="Receipt" ToRole="Reimbursement" />
-          <Property Name="PictureId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Reimbursement">
           <Key>
@@ -418,6 +420,7 @@
             <EntityTypeMapping TypeName="Model.Product">
               <MappingFragment StoreEntitySet="Products">
                 <ScalarProperty Name="IsHSA" ColumnName="IsHSA" />
+                <ScalarProperty Name="ImageId" ColumnName="ImageId" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
@@ -427,7 +430,7 @@
           <EntitySetMapping Name="Receipts">
             <EntityTypeMapping TypeName="Model.Receipt">
               <MappingFragment StoreEntitySet="Receipts">
-                <ScalarProperty Name="PictureId" ColumnName="PictureId" />
+                <ScalarProperty Name="ImageId" ColumnName="ImageId" />
                 <ScalarProperty Name="StoreId" ColumnName="StoreId" />
                 <ScalarProperty Name="IsScanned" ColumnName="IsScanned" />
                 <ScalarProperty Name="DateTime" ColumnName="DateTime" />

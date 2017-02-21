@@ -40,7 +40,7 @@ namespace HsaDotnetBackend.Helpers
             return blockBlob.Uri + sasBlobToken;
         }
 
-        public static string GetNewReceiptPictureId()
+        public static string GetNewReceiptImageId()
         {
             return Guid.NewGuid().ToString().Replace("-", "") + "rec";
         }

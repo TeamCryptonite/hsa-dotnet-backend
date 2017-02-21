@@ -7,7 +7,7 @@
       <Diagram DiagramId="81bde2550f26406198051014b6c9a943" Name="Diagram1" ZoomLevel="55">
         <EntityTypeShape EntityType="Model.Account" Width="1.5" PointX="3.75" PointY="0.75" />
         <EntityTypeShape EntityType="Model.LineItem" Width="1.5" PointX="3" PointY="3.5" />
-        <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="0.75" PointY="8.625" />
+        <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="0.75" PointY="8.5" />
         <EntityTypeShape EntityType="Model.Receipt" Width="1.5" PointX="0.75" PointY="3.5" />
         <EntityTypeShape EntityType="Model.Reimbursement" Width="1.5" PointX="6" PointY="3.5" />
         <EntityTypeShape EntityType="Model.Store" Width="1.5" PointX="3" PointY="8.875" />

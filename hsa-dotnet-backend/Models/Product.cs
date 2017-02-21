@@ -24,6 +24,7 @@ namespace HsaDotnetBackend.Models
         public int ProductId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string ImageId { get; set; }
         public bool IsHSA { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

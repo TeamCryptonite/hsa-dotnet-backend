@@ -8,6 +8,6 @@ namespace HsaDotnetBackend.Models.DTOs
         public int StoreId { get; set; }
         public DateTime? DateTime { get; set; }
         public bool? IsScanned { get; set; }
-        public string PictureId { get; set; }
+        public string ImageId { get; set; }
     }
 }
