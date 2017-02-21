@@ -54,6 +54,7 @@ namespace HsaDotnetBackend.Controllers
                 .Where(r => r.UserObjectId == userGuid)
                 .Where(r => r.DateTime >= startDate)
                 .Where(r => r.DateTime <= endDate)
+                .ToList()
                 .GroupBy(r => r.DateTime.Value.ToString(dateTimeGroupFormat))
                 .Select(group => new
                 {
