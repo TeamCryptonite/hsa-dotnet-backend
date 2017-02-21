@@ -58,6 +58,7 @@ namespace HsaDotnetBackend.Controllers
                 .GroupBy(r => r.DateTime.Value.ToString(dateTimeGroupFormat))
                 .Select(group => new
                 {
+                    GroupKey = group.Key,
                     TotalSpent = group.Sum(r => r.LineItems.Sum(li => li.Price)),
                     TotalHsaSpent = group.Sum(r => r.LineItems.Where(li => li.Product.IsHSA).Sum(li => li.Price)),
                     ProductList = group.SelectMany(r => r.LineItems).Select(li => new {Product = li.Product.Name}).Distinct()
