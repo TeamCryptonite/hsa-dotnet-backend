@@ -12,16 +12,18 @@ namespace HsaDotnetBackend.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class LineItem
+    public partial class ShoppingListItem
     {
-        public int LineItemId { get; set; }
-        public int ReceiptId { get; set; }
-        public int ProductId { get; set; }
-        public decimal Price { get; set; }
-        public int Quantity { get; set; }
-        public bool IsHsa { get; set; }
+        public int ShoppingListItemId { get; set; }
+        public int ShoppingListId { get; set; }
+        public string ProductName { get; set; }
+        public Nullable<int> ProductId { get; set; }
+        public Nullable<int> Quantity { get; set; }
+        public Nullable<int> StoreId { get; set; }
+        public bool Checked { get; set; }
     
         public virtual Product Product { get; set; }
-        public virtual Receipt Receipt { get; set; }
+        public virtual ShoppingList ShoppingList { get; set; }
+        public virtual Store Store { get; set; }
     }
 }

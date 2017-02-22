@@ -12,28 +12,21 @@ namespace HsaDotnetBackend.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Product
+    public partial class ShoppingList
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Product()
+        public ShoppingList()
         {
-            this.LineItems = new HashSet<LineItem>();
             this.ShoppingListItems = new HashSet<ShoppingListItem>();
-            this.Stores = new HashSet<Store>();
         }
     
-        public int ProductId { get; set; }
+        public int ShoppingListId { get; set; }
+        public System.Guid UserObjectId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public bool AlwaysHsa { get; set; }
-        public Nullable<int> CategoryId { get; set; }
+        public Nullable<System.DateTime> DateTime { get; set; }
     
-        public virtual Category Category { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LineItem> LineItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ShoppingListItem> ShoppingListItems { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Store> Stores { get; set; }
     }
 }

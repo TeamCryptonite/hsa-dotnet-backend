@@ -55,12 +55,12 @@ namespace HsaDotnetBackend.Controllers
                 .Where(r => r.DateTime >= startDate)
                 .Where(r => r.DateTime <= endDate)
                 .ToList()
-                .GroupBy(r => r.DateTime.Value.ToString(dateTimeGroupFormat))
+                .GroupBy(r => r.DateTime?.ToString(dateTimeGroupFormat))
                 .Select(group => new
                 {
                     GroupKey = group.Key,
                     TotalSpent = group.Sum(r => r.LineItems.Sum(li => li.Price)),
-                    TotalHsaSpent = group.Sum(r => r.LineItems.Where(li => li.Product.IsHSA).Sum(li => li.Price)),
+                    TotalHsaSpent = group.Sum(r => r.LineItems.Where(li => li.IsHsa).Sum(li => li.Price)),
                     ProductList = group.SelectMany(r => r.LineItems).Select(li => li.Product.Name).Distinct(),
                     ReceiptIdList = group.Select(r => r.ReceiptId)
                 });

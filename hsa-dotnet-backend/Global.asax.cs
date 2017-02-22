@@ -23,6 +23,9 @@ namespace HsaDotnetBackend
                 cfg.CreateMap<Receipt, ReceiptDto>().ReverseMap();
                 cfg.CreateMap<LineItem, LineItemDto>().ReverseMap();
                 cfg.CreateMap<Product, ProductDto>().ReverseMap();
+                cfg.CreateMap<Store, StoreDto>().ReverseMap();
+                cfg.CreateMap<ShoppingList, ShoppingListDto>().ReverseMap();
+                cfg.CreateMap<ShoppingListItem, ShoppingListDto>().ReverseMap();
             });
             //amConfig.AssertConfigurationIsValid();
             //Mapper.Initialize(amConfig);

@@ -169,6 +169,7 @@
     <Compile Include="Controllers\LoginTestController.cs" />
     <Compile Include="Controllers\ReceiptAggregateController.cs" />
     <Compile Include="Controllers\ReceiptsController.cs" />
+    <Compile Include="Controllers\ShoppingListsController.cs" />
     <Compile Include="Controllers\StoresController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -178,10 +179,15 @@
     <Compile Include="Models\Account.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Category.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\DTOs\LineItemDto.cs" />
     <Compile Include="Models\DTOs\ProductDto.cs" />
     <Compile Include="Models\DTOs\ReceiptPatchDto.cs" />
     <Compile Include="Models\DTOs\ReceiptDto.cs" />
+    <Compile Include="Models\DTOs\ShoppingListDto.cs" />
+    <Compile Include="Models\DTOs\ShoppingListItemDto.cs" />
     <Compile Include="Models\DTOs\StoreDto.cs" />
     <Compile Include="Models\DTOs\StoreWithProductsDto.cs" />
     <Compile Include="Models\HsaServiceModel.Context.cs">
@@ -209,6 +215,12 @@
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Reimbursement.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShoppingList.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShoppingListItem.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Store.cs">

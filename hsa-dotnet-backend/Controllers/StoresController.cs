@@ -38,7 +38,7 @@ namespace HsaDotnetBackend.Controllers
                             ProductId = sm.ProductId,
                             Description = sm.Description,
                             Name = sm.Name,
-                            IsHsa = sm.IsHSA
+                            IsHsa = sm.AlwaysHsa
                         })
                 });
 

@@ -26,10 +26,13 @@ namespace HsaDotnetBackend.Models
         }
     
         public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<LineItem> LineItems { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Receipt> Receipts { get; set; }
         public virtual DbSet<Reimbursement> Reimbursements { get; set; }
+        public virtual DbSet<ShoppingListItem> ShoppingListItems { get; set; }
+        public virtual DbSet<ShoppingList> ShoppingLists { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
         public virtual DbSet<User> Users { get; set; }
     }
