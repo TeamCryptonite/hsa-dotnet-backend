@@ -182,6 +182,7 @@
     <Compile Include="Models\Category.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DTOs\CategoryDto.cs" />
     <Compile Include="Models\DTOs\LineItemDto.cs" />
     <Compile Include="Models\DTOs\ProductDto.cs" />
     <Compile Include="Models\DTOs\ReceiptPatchDto.cs" />
