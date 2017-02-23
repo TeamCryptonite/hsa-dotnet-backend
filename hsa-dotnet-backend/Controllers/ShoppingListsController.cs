@@ -141,7 +141,23 @@ namespace HsaDotnetBackend.Controllers
 
         }
 
-        // TODO: GET ShoppingListItems
+        // TODO: GET all ShoppingListItems
+        //[HttpGet]
+        //[Route("api/shoppinglists/{shoppingListId:int}/shoppingListItems")]
+        //public async IQueryable<ShoppingListItemDto> GetShoppingListItems(int shoppingListId)
+        //{
+
+        //    var userGuid = IdentityHelper.GetCurrentUserGuid();
+        //    return db.ShoppingListItems.Where(sli => )
+
+        //    ShoppingListItem dbShoppingListItem = db.ShoppingListItems.Find(shoppingListId);
+        //    if (dbShoppingListItem.ShoppingList.UserObjectId != userGuid)
+        //        return NotFound();
+
+        //    return O
+        //}
+
+        // TODO: GET one ShoppingListItem
 
         // TODO: POST ShoppingListItem
 
