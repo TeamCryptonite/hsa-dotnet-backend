@@ -1,3 +1,7 @@
+using System.Web.Http;
+using HsaDotnetBackend.Helpers;
+using Ninject.Web.WebApi;
+
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(HsaDotnetBackend.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(HsaDotnetBackend.App_Start.NinjectWebCommon), "Stop")]
 
@@ -46,6 +50,7 @@ namespace HsaDotnetBackend.App_Start
                 kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
 
                 RegisterServices(kernel);
+                GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
                 return kernel;
             }
             catch
@@ -61,6 +66,11 @@ namespace HsaDotnetBackend.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+#if DEBUG
+            kernel.Bind<IIdentityHelper>().To<MockIdentityHelper>();
+#else
+            kernel.Bind<IIdentityHelper>().To<IdentityHelper>();
+#endif
         }        
     }
 }

@@ -196,6 +196,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\IdentityHelper.cs" />
+    <Compile Include="Helpers\IIdentityHelper.cs" />
+    <Compile Include="Helpers\MockIdentityHelper.cs" />
     <Compile Include="Helpers\ReceiptPictureHelper.cs" />
     <Compile Include="Models\Account.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>

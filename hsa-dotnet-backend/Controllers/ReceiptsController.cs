@@ -12,6 +12,7 @@ using AutoMapper.QueryableExtensions;
 using HsaDotnetBackend.Helpers;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
+using Ninject;
 
 namespace HsaDotnetBackend.Controllers
 {
@@ -19,12 +20,20 @@ namespace HsaDotnetBackend.Controllers
     {
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
+        //Identity 
+        private readonly IIdentityHelper _identityHelper;
+
+        public ReceiptsController(IIdentityHelper identity)
+        {
+            _identityHelper = identity;
+        }
+
         // GET: api/Receipts
         [HttpGet]
         [Route("api/receipts")]
         public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)
         {
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             return db.Receipts
                 .Where(receipt => receipt.UserObjectId == userGuid)
@@ -40,7 +49,7 @@ namespace HsaDotnetBackend.Controllers
         [Route("api/receipts/{id:int}")]
         public async Task<IHttpActionResult> GetReceipt(int id)
         {
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
             Receipt receipt = await db.Receipts.FindAsync(id);
             if (receipt == null || receipt.UserObjectId != userGuid)
             {
@@ -97,7 +106,7 @@ namespace HsaDotnetBackend.Controllers
             }
 
             Receipt dbReceipt = await db.Receipts.FindAsync(patchReceipt.ReceiptId);
-            Guid userGuid = IdentityHelper.GetCurrentUserGuid();
+            Guid userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (dbReceipt?.UserObjectId != userGuid)
             {
@@ -147,7 +156,7 @@ namespace HsaDotnetBackend.Controllers
         {
 
             // Authorize user
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
             if (userGuid == Guid.Empty)
                 return Unauthorized();
 
@@ -176,7 +185,7 @@ namespace HsaDotnetBackend.Controllers
         public IQueryable<LineItemDto> GetAllLineItemsForReceipt(int receiptId)
         {
             Receipt dbReceipt = db.Receipts.Find(receiptId);
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (dbReceipt?.UserObjectId != userGuid)
                 return Enumerable.Empty<LineItemDto>().AsQueryable();
@@ -189,7 +198,7 @@ namespace HsaDotnetBackend.Controllers
         public async Task<IHttpActionResult> GetLineItem(int receiptId, int lineItemId)
         {
             LineItem dbLineItem = await db.LineItems.FindAsync(lineItemId);
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (dbLineItem?.Receipt.UserObjectId != userGuid)
                 return NotFound();
@@ -203,7 +212,7 @@ namespace HsaDotnetBackend.Controllers
         {
             // TODO: Continue to work on. Doesn't currently allow empty lineitemid in json.
             LineItem dbLineItem = await db.LineItems.FindAsync(lineItemId);
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (dbLineItem?.Receipt.UserObjectId != userGuid)
                 return NotFound();
@@ -254,7 +263,7 @@ namespace HsaDotnetBackend.Controllers
                 return BadRequest("URI and Body do not match: ReceiptId");
 
             Receipt dbReceipt = await db.Receipts.FindAsync(receiptId);
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (dbReceipt?.UserObjectId != userGuid)
                 return NotFound();
@@ -291,7 +300,7 @@ namespace HsaDotnetBackend.Controllers
         public async Task<IHttpActionResult> DeleteLineItem(int receiptId, int lineItemId)
         {
             LineItem dbLineItem = await db.LineItems.FindAsync(lineItemId);
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (dbLineItem?.Receipt.UserObjectId != userGuid)
                 return NotFound();
@@ -309,7 +318,7 @@ namespace HsaDotnetBackend.Controllers
         public async Task<IHttpActionResult> DeleteReceipt(int id)
         {
             Receipt receipt = await db.Receipts.FindAsync(id);
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (receipt?.UserObjectId != userGuid)
                 return NotFound();
@@ -327,7 +336,7 @@ namespace HsaDotnetBackend.Controllers
         public async Task<object> GetReadWritePictureUrl(int receiptId)
         {
             Receipt receipt = await db.Receipts.FindAsync(receiptId);
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (receipt?.UserObjectId != userGuid)
                 return NotFound();

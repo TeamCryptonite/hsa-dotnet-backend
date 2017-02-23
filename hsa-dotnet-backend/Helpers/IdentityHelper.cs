@@ -4,9 +4,9 @@ using System.Web;
 
 namespace HsaDotnetBackend.Helpers
 {
-    public class IdentityHelper
+    public class IdentityHelper : IIdentityHelper
     {
-        public static Guid GetCurrentUserGuid()
+        public Guid GetCurrentUserGuid()
         {
             var identity = HttpContext.Current.User.Identity as ClaimsIdentity;
 

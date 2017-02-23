@@ -19,11 +19,13 @@ namespace HsaDotnetBackend.Controllers
     {
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
+        private readonly IIdentityHelper _identityHelper;
+
         [HttpGet]
         [Route("api/shoppinglists")]
         public IQueryable<ShoppingListDto> GetShoppingLists(int skip = 0, int take = 10)
         {
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             return db.ShoppingLists
                 .Where(sl => sl.UserObjectId == userGuid)
@@ -37,7 +39,7 @@ namespace HsaDotnetBackend.Controllers
         [Route("api/shoppinglists/{id:int}")]
         public async Task<IHttpActionResult> GetShoppingList(int id)
         {
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             ShoppingList shoppingList = await db.ShoppingLists.FindAsync(id);
             if (shoppingList == null || shoppingList.UserObjectId != userGuid)
@@ -52,7 +54,7 @@ namespace HsaDotnetBackend.Controllers
         [Route("api/shoppinglists")]
         public async Task<IHttpActionResult> PostShoppingList([FromBody] ShoppingList shoppingList)
         {
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
             if (userGuid == Guid.Empty)
                 return Unauthorized();
 
@@ -85,7 +87,7 @@ namespace HsaDotnetBackend.Controllers
         [Route("api/shoppinglists/{id:int}")]
         public async Task<IHttpActionResult> PatchShoppingList(int id, [FromBody] ShoppingListDto shoppingList)
         {
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             ShoppingList dbShoppingList = db.ShoppingLists.Find(id);
             if (dbShoppingList == null || dbShoppingList.UserObjectId != userGuid)
@@ -127,7 +129,7 @@ namespace HsaDotnetBackend.Controllers
         public async Task<IHttpActionResult> DeleteShoppingList(int id)
         {
 
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
             ShoppingList dbShoppingList = db.ShoppingLists.Find(id);
             if (dbShoppingList?.UserObjectId != userGuid)
@@ -147,7 +149,7 @@ namespace HsaDotnetBackend.Controllers
         //public async IQueryable<ShoppingListItemDto> GetShoppingListItems(int shoppingListId)
         //{
 
-        //    var userGuid = IdentityHelper.GetCurrentUserGuid();
+        //    var userGuid = _identityHelper.GetCurrentUserGuid();
         //    return db.ShoppingListItems.Where(sli => )
 
         //    ShoppingListItem dbShoppingListItem = db.ShoppingListItems.Find(shoppingListId);

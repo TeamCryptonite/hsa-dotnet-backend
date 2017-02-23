@@ -14,13 +14,15 @@ namespace HsaDotnetBackend.Controllers
     {
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
+        private readonly IIdentityHelper _identityHelper;
+
         // TODO: Create spendingovertimedto
         [HttpGet]
         [Route("api/receiptaggregate/spendingovertime")]
         public async Task<object> SpendingOverTime(string startDateStr = null, string endDateStr = null, string timePeriod = "yearmonth")
         {
             // Authorize user
-            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            var userGuid = _identityHelper.GetCurrentUserGuid();
             if (userGuid == Guid.Empty)
                 return Unauthorized();
 
