@@ -62,9 +62,14 @@ namespace HsaDotnetBackend.Controllers
 
             foreach (ShoppingListItem shoppingListItem in shoppingList.ShoppingListItems)
             {
-                Product product = db.Products.Find(shoppingListItem.Product.ProductId);
-                if (product != null)
-                    shoppingListItem.Product = product;
+                if (shoppingListItem.ProductId.HasValue)
+                    shoppingListItem.Product.ProductId = shoppingListItem.ProductId.Value;
+                if (shoppingListItem.Product != null && shoppingListItem.Product.ProductId < 0)
+                {
+                    Product product = db.Products.Find(shoppingListItem.Product.ProductId);
+                    if (product != null)
+                        shoppingListItem.Product = product;
+                }
             }
 
             db.ShoppingLists.Add(shoppingList);
