@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -64,7 +65,7 @@ namespace HsaDotnetBackend.Controllers
             {
                 if (shoppingListItem.ProductId.HasValue)
                     shoppingListItem.Product.ProductId = shoppingListItem.ProductId.Value;
-                if (shoppingListItem.Product != null && shoppingListItem.Product.ProductId < 0)
+                if (shoppingListItem.Product != null && shoppingListItem.Product.ProductId > 0)
                 {
                     Product product = db.Products.Find(shoppingListItem.Product.ProductId);
                     if (product != null)
@@ -75,7 +76,54 @@ namespace HsaDotnetBackend.Controllers
             db.ShoppingLists.Add(shoppingList);
             await db.SaveChangesAsync();
 
-            return Created($"api/shoppinglists/{shoppingList.ShoppingListId}", Mapper.Map<ShoppingList, ShoppingListDto>(shoppingList));
+            return Created($"api/shoppinglists/{shoppingList.ShoppingListId}",
+                Mapper.Map<ShoppingList, ShoppingListDto>(shoppingList));
+        }
+
+
+        [HttpPatch]
+        [Route("api/shoppinglists/{id:int}")]
+        public async Task<IHttpActionResult> PatchShoppingList(int id, [FromBody] ShoppingListDto shoppingList)
+        {
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
+            ShoppingList dbShoppingList = db.ShoppingLists.Find(id);
+            if (dbShoppingList == null || dbShoppingList.UserObjectId != userGuid)
+            {
+                return NotFound();
+            }
+
+            if (shoppingList.Name != null)
+                dbShoppingList.Name = shoppingList.Name;
+            if (shoppingList.Description != null)
+                dbShoppingList.Description = shoppingList.Description;
+            if (shoppingList.DateTime != null)
+                dbShoppingList.DateTime = shoppingList.DateTime;
+            
+            // Once a shopping list is created, you must use ShoppingListItem routes to modify the shopping list items
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ShoppingListExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        private bool ShoppingListExists(int id)
+        {
+            return db.ShoppingLists.Count(e => e.ShoppingListId == id) > 0;
         }
     }
 }
