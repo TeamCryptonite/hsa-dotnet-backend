@@ -121,9 +121,42 @@ namespace HsaDotnetBackend.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        // TODO: DELETE ShoppingListItem
+        [HttpDelete]
+        [Route("api/shoppinglists/{id:int}")]
+        public async Task<IHttpActionResult> DeleteShoppingList(int id)
+        {
+
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+
+            ShoppingList dbShoppingList = db.ShoppingLists.Find(id);
+            if (dbShoppingList?.UserObjectId != userGuid)
+                return NotFound();
+
+            db.ShoppingLists.Remove(dbShoppingList);
+
+            await db.SaveChangesAsync();
+
+            return Ok("Shopping List Deleted");
+
+        }
+
+        // TODO: GET ShoppingListItems
+
+        // TODO: POST ShoppingListItem
+
+        // TODO: PATCH ShoppingListItem
+
+        // TODO: DELTE ShoppingListItem
+        
+
         private bool ShoppingListExists(int id)
         {
             return db.ShoppingLists.Count(e => e.ShoppingListId == id) > 0;
+        }
+        private bool ShoppingListItemExists(int id)
+        {
+            return db.ShoppingListItems.Count(e => e.ShoppingListItemId == id) > 0;
         }
     }
 }

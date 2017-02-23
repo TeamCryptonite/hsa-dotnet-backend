@@ -300,7 +300,7 @@ namespace HsaDotnetBackend.Controllers
 
             await db.SaveChangesAsync();
 
-            return Ok(dbLineItem);
+            return Ok("Line Item Deleted");
         }
       
 
