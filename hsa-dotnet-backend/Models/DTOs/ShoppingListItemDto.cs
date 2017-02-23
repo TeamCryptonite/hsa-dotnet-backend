@@ -13,7 +13,7 @@ namespace HsaDotnetBackend.Models.DTOs
         public int? Quantity { get; set; }
         public int? StoreId { get; set; }
         public bool Checked { get; set; }
-        public Product Product { get; set; }
-        public Store Store { get; set; }
+        public ProductDto Product { get; set; }
+        public StoreDto Store { get; set; }
     }
 }
