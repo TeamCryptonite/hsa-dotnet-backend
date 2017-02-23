@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.ModelBinding;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using HsaDotnetBackend.Helpers;
@@ -44,6 +45,32 @@ namespace HsaDotnetBackend.Controllers
             }
 
             return Ok(Mapper.Map<ShoppingList, ShoppingListDto>(shoppingList));
+        }
+
+        [HttpPost]
+        [Route("api/shoppinglists")]
+        public async Task<IHttpActionResult> PostShoppingList([FromBody] ShoppingList shoppingList)
+        {
+            var userGuid = IdentityHelper.GetCurrentUserGuid();
+            if (userGuid == Guid.Empty)
+                return Unauthorized();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid model");
+            }
+
+            foreach (ShoppingListItem shoppingListItem in shoppingList.ShoppingListItems)
+            {
+                Product product = db.Products.Find(shoppingListItem.Product.ProductId);
+                if (product != null)
+                    shoppingListItem.Product = product;
+            }
+
+            db.ShoppingLists.Add(shoppingList);
+            await db.SaveChangesAsync();
+
+            return Created($"api/shoppinglists/{shoppingList.ShoppingListId}", Mapper.Map<ShoppingList, ShoppingListDto>(shoppingList));
         }
     }
 }
