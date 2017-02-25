@@ -152,6 +152,8 @@ namespace HsaDotnetBackend.Controllers
         // POST: api/Receipts
         // TODO: Allow posting images. May need to be a separate API call
         [ResponseType(typeof(Receipt))]
+        [HttpPost]
+        [Route("api/receipts")]
         public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
         {
 
@@ -164,9 +166,12 @@ namespace HsaDotnetBackend.Controllers
             // Check for existing products, and create product if none exist
             foreach (LineItem lineItem in receipt.LineItems)
             {
-                Product product = db.Products.First(p => p.ProductId == lineItem.Product.ProductId);
-                if (product != null)
-                    lineItem.Product = product;
+                if (lineItem.ProductId > 0)
+                {
+                    Product product = db.Products.Find(lineItem.ProductId);
+                    if (product != null)
+                        lineItem.Product = product;
+                }
             }
             
             if (!ModelState.IsValid)
@@ -177,7 +182,7 @@ namespace HsaDotnetBackend.Controllers
             db.Receipts.Add(receipt);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = receipt.ReceiptId }, Mapper.Map<Receipt, ReceiptDto>(receipt));
+            return Created($"api/receipts/{receipt.ReceiptId}", Mapper.Map<Receipt, ReceiptDto>(receipt));
         }
 
         [HttpGet]

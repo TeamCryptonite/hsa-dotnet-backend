@@ -4,331 +4,323 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Accounts">
-          <Key>
-            <PropertyRef Name="AccountId" />
-          </Key>
-          <Property Name="AccountId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserObjectId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="AccountNum" Type="int" Nullable="false" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Categories">
-          <Key>
-            <PropertyRef Name="CategoryId" />
-          </Key>
-          <Property Name="CategoryId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar(max)" Nullable="false" />
-        </EntityType>
-        <EntityType Name="LineItems">
-          <Key>
-            <PropertyRef Name="LineItemId" />
-          </Key>
-          <Property Name="LineItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ReceiptId" Type="int" Nullable="false" />
-          <Property Name="ProductId" Type="int" Nullable="false" />
-          <Property Name="Price" Type="decimal" Precision="18" Scale="2" Nullable="false" />
-          <Property Name="Quantity" Type="int" Nullable="false" />
-          <Property Name="IsHsa" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Products">
-          <Key>
-            <PropertyRef Name="ProductId" />
-          </Key>
-          <Property Name="ProductId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Description" Type="text" />
-          <Property Name="AlwaysHsa" Type="bit" Nullable="false" />
-          <Property Name="CategoryId" Type="int" />
-        </EntityType>
-        <EntityType Name="Receipts">
-          <Key>
-            <PropertyRef Name="ReceiptId" />
-          </Key>
-          <Property Name="ReceiptId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserObjectId" Type="uniqueidentifier" />
-          <Property Name="DateTime" Type="datetime" />
-          <Property Name="IsScanned" Type="bit" />
-          <Property Name="StoreId" Type="int" Nullable="false" />
-          <Property Name="ImageId" Type="varchar(max)" />
-        </EntityType>
-        <EntityType Name="ReimbursementReceipts">
-          <Key>
-            <PropertyRef Name="ReceiptId" />
-            <PropertyRef Name="ReimbursementId" />
-          </Key>
-          <Property Name="ReceiptId" Type="int" Nullable="false" />
-          <Property Name="ReimbursementId" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Reimbursements">
-          <Key>
-            <PropertyRef Name="ReimbursementId" />
-          </Key>
-          <Property Name="ReimbursementId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="AccountId" Type="int" Nullable="false" />
-          <Property Name="IsReimbursed" Type="bit" Nullable="false" />
-          <Property Name="DateTime" Type="datetime" Nullable="false" />
-          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
-        </EntityType>
-        <EntityType Name="ShoppingListItems">
-          <Key>
-            <PropertyRef Name="ShoppingListItemId" />
-          </Key>
-          <Property Name="ShoppingListItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ShoppingListId" Type="int" Nullable="false" />
-          <Property Name="ProductName" Type="varchar(max)" />
-          <Property Name="ProductId" Type="int" />
-          <Property Name="Quantity" Type="int" />
-          <Property Name="StoreId" Type="int" />
-          <Property Name="Checked" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="ShoppingLists">
-          <Key>
-            <PropertyRef Name="ShoppingListId" />
-          </Key>
-          <Property Name="ShoppingListId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserObjectId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="Name" Type="varchar(max)" />
-          <Property Name="Description" Type="varchar(max)" />
-          <Property Name="DateTime" Type="datetime" />
-        </EntityType>
-        <EntityType Name="StoreProducts">
-          <Key>
-            <PropertyRef Name="ProductId" />
-            <PropertyRef Name="StoreId" />
-          </Key>
-          <Property Name="ProductId" Type="int" Nullable="false" />
-          <Property Name="StoreId" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Stores">
-          <Key>
-            <PropertyRef Name="StoreId" />
-          </Key>
-          <Property Name="StoreId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Location" Type="geography" />
-          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Users">
-          <Key>
-            <PropertyRef Name="UserId" />
-          </Key>
-          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Username" Type="varchar" MaxLength="30" />
-          <Property Name="Password" Type="varchar(max)" />
-          <Property Name="FirstName" Type="varchar" MaxLength="30" />
-          <Property Name="LastName" Type="varchar" MaxLength="30" />
-          <Property Name="PrefName" Type="varchar" MaxLength="30" />
-        </EntityType>
-        <Association Name="FK_Account_Account_Id">
-          <End Role="Accounts" Type="Self.Accounts" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Reimbursements" Type="Self.Reimbursements" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Accounts">
-              <PropertyRef Name="AccountId" />
-            </Principal>
-            <Dependent Role="Reimbursements">
-              <PropertyRef Name="AccountId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_LineItem_Product">
-          <End Role="Products" Type="Self.Products" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="LineItems" Type="Self.LineItems" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Products">
-              <PropertyRef Name="ProductId" />
-            </Principal>
-            <Dependent Role="LineItems">
-              <PropertyRef Name="ProductId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_LineItem_Receipt">
-          <End Role="Receipts" Type="Self.Receipts" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="LineItems" Type="Self.LineItems" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Receipts">
-              <PropertyRef Name="ReceiptId" />
-            </Principal>
-            <Dependent Role="LineItems">
-              <PropertyRef Name="ReceiptId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Products_Categories">
-          <End Role="Categories" Type="Self.Categories" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Products" Type="Self.Products" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Categories">
-              <PropertyRef Name="CategoryId" />
-            </Principal>
-            <Dependent Role="Products">
-              <PropertyRef Name="CategoryId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ReimbursementReceipts_Receipt">
-          <End Role="Receipts" Type="Self.Receipts" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="ReimbursementReceipts" Type="Self.ReimbursementReceipts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Receipts">
-              <PropertyRef Name="ReceiptId" />
-            </Principal>
-            <Dependent Role="ReimbursementReceipts">
-              <PropertyRef Name="ReceiptId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ReimbursementReceipts_Reimbursement">
-          <End Role="Reimbursements" Type="Self.Reimbursements" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="ReimbursementReceipts" Type="Self.ReimbursementReceipts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Reimbursements">
-              <PropertyRef Name="ReimbursementId" />
-            </Principal>
-            <Dependent Role="ReimbursementReceipts">
-              <PropertyRef Name="ReimbursementId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ShoppingListItem_Products">
-          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
-          <End Role="ShoppingListItems" Type="Self.ShoppingListItems" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Products">
-              <PropertyRef Name="ProductId" />
-            </Principal>
-            <Dependent Role="ShoppingListItems">
-              <PropertyRef Name="ProductId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ShoppingListItem_ShoppingLists">
-          <End Role="ShoppingLists" Type="Self.ShoppingLists" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="ShoppingListItems" Type="Self.ShoppingListItems" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ShoppingLists">
-              <PropertyRef Name="ShoppingListId" />
-            </Principal>
-            <Dependent Role="ShoppingListItems">
-              <PropertyRef Name="ShoppingListId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_StoreProducts_Product">
-          <End Role="Products" Type="Self.Products" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="StoreProducts" Type="Self.StoreProducts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Products">
-              <PropertyRef Name="ProductId" />
-            </Principal>
-            <Dependent Role="StoreProducts">
-              <PropertyRef Name="ProductId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_StoreProducts_Store">
-          <End Role="Stores" Type="Self.Stores" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="StoreProducts" Type="Self.StoreProducts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stores">
-              <PropertyRef Name="StoreId" />
-            </Principal>
-            <Dependent Role="StoreProducts">
-              <PropertyRef Name="StoreId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_StoreProducts_Stores">
-          <End Role="Stores" Type="Self.Stores" Multiplicity="0..1" />
-          <End Role="ShoppingListItems" Type="Self.ShoppingListItems" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stores">
-              <PropertyRef Name="StoreId" />
-            </Principal>
-            <Dependent Role="ShoppingListItems">
-              <PropertyRef Name="StoreId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="ModelStoreContainer">
-          <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="LineItems" EntityType="Self.LineItems" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Receipts" EntityType="Self.Receipts" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ReimbursementReceipts" EntityType="Self.ReimbursementReceipts" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Reimbursements" EntityType="Self.Reimbursements" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ShoppingListItems" EntityType="Self.ShoppingListItems" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ShoppingLists" EntityType="Self.ShoppingLists" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="StoreProducts" EntityType="Self.StoreProducts" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Stores" EntityType="Self.Stores" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Account_Account_Id" Association="Self.FK_Account_Account_Id">
-            <End Role="Accounts" EntitySet="Accounts" />
-            <End Role="Reimbursements" EntitySet="Reimbursements" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LineItem_Product" Association="Self.FK_LineItem_Product">
-            <End Role="Products" EntitySet="Products" />
-            <End Role="LineItems" EntitySet="LineItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LineItem_Receipt" Association="Self.FK_LineItem_Receipt">
-            <End Role="Receipts" EntitySet="Receipts" />
-            <End Role="LineItems" EntitySet="LineItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Products_Categories" Association="Self.FK_Products_Categories">
-            <End Role="Categories" EntitySet="Categories" />
-            <End Role="Products" EntitySet="Products" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ReimbursementReceipts_Receipt" Association="Self.FK_ReimbursementReceipts_Receipt">
-            <End Role="Receipts" EntitySet="Receipts" />
-            <End Role="ReimbursementReceipts" EntitySet="ReimbursementReceipts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ReimbursementReceipts_Reimbursement" Association="Self.FK_ReimbursementReceipts_Reimbursement">
-            <End Role="Reimbursements" EntitySet="Reimbursements" />
-            <End Role="ReimbursementReceipts" EntitySet="ReimbursementReceipts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ShoppingListItem_Products" Association="Self.FK_ShoppingListItem_Products">
-            <End Role="Products" EntitySet="Products" />
-            <End Role="ShoppingListItems" EntitySet="ShoppingListItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ShoppingListItem_ShoppingLists" Association="Self.FK_ShoppingListItem_ShoppingLists">
-            <End Role="ShoppingLists" EntitySet="ShoppingLists" />
-            <End Role="ShoppingListItems" EntitySet="ShoppingListItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StoreProducts_Product" Association="Self.FK_StoreProducts_Product">
-            <End Role="Products" EntitySet="Products" />
-            <End Role="StoreProducts" EntitySet="StoreProducts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StoreProducts_Store" Association="Self.FK_StoreProducts_Store">
-            <End Role="Stores" EntitySet="Stores" />
-            <End Role="StoreProducts" EntitySet="StoreProducts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StoreProducts_Stores" Association="Self.FK_StoreProducts_Stores">
-            <End Role="Stores" EntitySet="Stores" />
-            <End Role="ShoppingListItems" EntitySet="ShoppingListItems" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema></edmx:StorageModels>
+    <Schema Namespace="Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="ModelStoreContainer">
+    <EntitySet Name="Accounts" EntityType="Model.Store.Accounts" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Categories" EntityType="Model.Store.Categories" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="LineItems" EntityType="Model.Store.LineItems" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Products" EntityType="Model.Store.Products" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Receipts" EntityType="Model.Store.Receipts" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Reimbursements" EntityType="Model.Store.Reimbursements" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ShoppingListItems" EntityType="Model.Store.ShoppingListItems" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ShoppingLists" EntityType="Model.Store.ShoppingLists" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Stores" EntityType="Model.Store.Stores" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Users" EntityType="Model.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ReimbursementReceipts" EntityType="Model.Store.ReimbursementReceipts" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="StoreProducts" EntityType="Model.Store.StoreProducts" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="FK_Account_Account_Id" Association="Model.Store.FK_Account_Account_Id">
+      <End Role="Account" EntitySet="Accounts" />
+      <End Role="Reimbursement" EntitySet="Reimbursements" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Products_Categories" Association="Model.Store.FK_Products_Categories">
+      <End Role="Category" EntitySet="Categories" />
+      <End Role="Product" EntitySet="Products" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LineItem_Product" Association="Model.Store.FK_LineItem_Product">
+      <End Role="Product" EntitySet="Products" />
+      <End Role="LineItem" EntitySet="LineItems" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LineItem_Receipt" Association="Model.Store.FK_LineItem_Receipt">
+      <End Role="Receipt" EntitySet="Receipts" />
+      <End Role="LineItem" EntitySet="LineItems" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ShoppingListItem_Products" Association="Model.Store.FK_ShoppingListItem_Products">
+      <End Role="Product" EntitySet="Products" />
+      <End Role="ShoppingListItem" EntitySet="ShoppingListItems" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ShoppingListItem_ShoppingLists" Association="Model.Store.FK_ShoppingListItem_ShoppingLists">
+      <End Role="ShoppingList" EntitySet="ShoppingLists" />
+      <End Role="ShoppingListItem" EntitySet="ShoppingListItems" />
+    </AssociationSet>
+    <AssociationSet Name="FK_StoreProducts_Stores" Association="Model.Store.FK_StoreProducts_Stores">
+      <End Role="Store" EntitySet="Stores" />
+      <End Role="ShoppingListItem" EntitySet="ShoppingListItems" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ReimbursementReceipts_Receipt" Association="Model.Store.FK_ReimbursementReceipts_Receipt">
+      <End Role="Receipt" EntitySet="Receipts" />
+      <End Role="ReimbursementReceipts" EntitySet="ReimbursementReceipts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ReimbursementReceipts_Reimbursement" Association="Model.Store.FK_ReimbursementReceipts_Reimbursement">
+      <End Role="Reimbursement" EntitySet="Reimbursements" />
+      <End Role="ReimbursementReceipts" EntitySet="ReimbursementReceipts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_StoreProducts_Product" Association="Model.Store.FK_StoreProducts_Product">
+      <End Role="Product" EntitySet="Products" />
+      <End Role="StoreProducts" EntitySet="StoreProducts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_StoreProducts_Store" Association="Model.Store.FK_StoreProducts_Store">
+      <End Role="Store" EntitySet="Stores" />
+      <End Role="StoreProducts" EntitySet="StoreProducts" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Accounts">
+    <Key>
+      <PropertyRef Name="AccountId" />
+    </Key>
+    <Property Name="AccountId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserObjectId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AccountNum" Type="int" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Categories">
+    <Key>
+      <PropertyRef Name="CategoryId" />
+    </Key>
+    <Property Name="CategoryId" Type="int" Nullable="false" />
+    <Property Name="Name" Type="varchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="LineItems">
+    <Key>
+      <PropertyRef Name="LineItemId" />
+    </Key>
+    <Property Name="LineItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ReceiptId" Type="int" Nullable="false" />
+    <Property Name="ProductId" Type="int" Nullable="false" />
+    <Property Name="Price" Type="decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="Quantity" Type="int" Nullable="false" />
+    <Property Name="IsHsa" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Products">
+    <Key>
+      <PropertyRef Name="ProductId" />
+    </Key>
+    <Property Name="ProductId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="100" />
+    <Property Name="Description" Type="varchar(max)" Nullable="true" />
+    <Property Name="AlwaysHsa" Type="bit" Nullable="false" />
+    <Property Name="CategoryId" Type="int" Nullable="true" />
+  </EntityType>
+  <EntityType Name="Receipts">
+    <Key>
+      <PropertyRef Name="ReceiptId" />
+    </Key>
+    <Property Name="ReceiptId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserObjectId" Type="uniqueidentifier" Nullable="true" />
+    <Property Name="DateTime" Type="datetime" Nullable="true" />
+    <Property Name="IsScanned" Type="bit" Nullable="true" />
+    <Property Name="StoreId" Type="int" Nullable="false" />
+    <Property Name="ImageId" Type="varchar(max)" Nullable="true" />
+  </EntityType>
+  <EntityType Name="Reimbursements">
+    <Key>
+      <PropertyRef Name="ReimbursementId" />
+    </Key>
+    <Property Name="ReimbursementId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AccountId" Type="int" Nullable="false" />
+    <Property Name="IsReimbursed" Type="bit" Nullable="false" />
+    <Property Name="DateTime" Type="datetime" Nullable="false" />
+    <Property Name="Amount" Type="decimal" Nullable="false" Precision="18" Scale="2" />
+  </EntityType>
+  <EntityType Name="ShoppingListItems">
+    <Key>
+      <PropertyRef Name="ShoppingListItemId" />
+    </Key>
+    <Property Name="ShoppingListItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ShoppingListId" Type="int" Nullable="false" />
+    <Property Name="ProductName" Type="varchar(max)" Nullable="true" />
+    <Property Name="ProductId" Type="int" Nullable="true" />
+    <Property Name="Quantity" Type="int" Nullable="true" />
+    <Property Name="StoreId" Type="int" Nullable="true" />
+    <Property Name="Checked" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ShoppingLists">
+    <Key>
+      <PropertyRef Name="ShoppingListId" />
+    </Key>
+    <Property Name="ShoppingListId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserObjectId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Name" Type="varchar(max)" Nullable="true" />
+    <Property Name="Description" Type="varchar(max)" Nullable="true" />
+    <Property Name="DateTime" Type="datetime" Nullable="true" />
+  </EntityType>
+  <EntityType Name="Stores">
+    <Key>
+      <PropertyRef Name="StoreId" />
+    </Key>
+    <Property Name="StoreId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Location" Type="geography" Nullable="true" SRID="4326" />
+    <Property Name="Name" Type="varchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Username" Type="varchar" Nullable="true" MaxLength="30" />
+    <Property Name="Password" Type="varchar(max)" Nullable="true" />
+    <Property Name="FirstName" Type="varchar" Nullable="true" MaxLength="30" />
+    <Property Name="LastName" Type="varchar" Nullable="true" MaxLength="30" />
+    <Property Name="PrefName" Type="varchar" Nullable="true" MaxLength="30" />
+  </EntityType>
+  <EntityType Name="ReimbursementReceipts">
+    <Key>
+      <PropertyRef Name="Receipts_ReceiptId" />
+      <PropertyRef Name="Reimbursements_ReimbursementId" />
+    </Key>
+    <Property Name="Receipts_ReceiptId" Type="int" Nullable="false" />
+    <Property Name="Reimbursements_ReimbursementId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="StoreProducts">
+    <Key>
+      <PropertyRef Name="Products_ProductId" />
+      <PropertyRef Name="Stores_StoreId" />
+    </Key>
+    <Property Name="Products_ProductId" Type="int" Nullable="false" />
+    <Property Name="Stores_StoreId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_Account_Account_Id">
+    <End Role="Account" Type="Model.Store.Accounts" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Reimbursement" Type="Model.Store.Reimbursements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Account">
+        <PropertyRef Name="AccountId" />
+      </Principal>
+      <Dependent Role="Reimbursement">
+        <PropertyRef Name="AccountId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Products_Categories">
+    <End Role="Category" Type="Model.Store.Categories" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Product" Type="Model.Store.Products" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="CategoryId" />
+      </Principal>
+      <Dependent Role="Product">
+        <PropertyRef Name="CategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LineItem_Product">
+    <End Role="Product" Type="Model.Store.Products" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="LineItem" Type="Model.Store.LineItems" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="ProductId" />
+      </Principal>
+      <Dependent Role="LineItem">
+        <PropertyRef Name="ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LineItem_Receipt">
+    <End Role="Receipt" Type="Model.Store.Receipts" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="LineItem" Type="Model.Store.LineItems" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Receipt">
+        <PropertyRef Name="ReceiptId" />
+      </Principal>
+      <Dependent Role="LineItem">
+        <PropertyRef Name="ReceiptId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ShoppingListItem_Products">
+    <End Role="Product" Type="Model.Store.Products" Multiplicity="0..1" />
+    <End Role="ShoppingListItem" Type="Model.Store.ShoppingListItems" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="ProductId" />
+      </Principal>
+      <Dependent Role="ShoppingListItem">
+        <PropertyRef Name="ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ShoppingListItem_ShoppingLists">
+    <End Role="ShoppingList" Type="Model.Store.ShoppingLists" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ShoppingListItem" Type="Model.Store.ShoppingListItems" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ShoppingList">
+        <PropertyRef Name="ShoppingListId" />
+      </Principal>
+      <Dependent Role="ShoppingListItem">
+        <PropertyRef Name="ShoppingListId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_StoreProducts_Stores">
+    <End Role="Store" Type="Model.Store.Stores" Multiplicity="0..1" />
+    <End Role="ShoppingListItem" Type="Model.Store.ShoppingListItems" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Store">
+        <PropertyRef Name="StoreId" />
+      </Principal>
+      <Dependent Role="ShoppingListItem">
+        <PropertyRef Name="StoreId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ReimbursementReceipts_Receipt">
+    <End Role="Receipt" Type="Model.Store.Receipts" Multiplicity="1" />
+    <End Role="ReimbursementReceipts" Type="Model.Store.ReimbursementReceipts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Receipt">
+        <PropertyRef Name="ReceiptId" />
+      </Principal>
+      <Dependent Role="ReimbursementReceipts">
+        <PropertyRef Name="Receipts_ReceiptId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ReimbursementReceipts_Reimbursement">
+    <End Role="ReimbursementReceipts" Type="Model.Store.ReimbursementReceipts" Multiplicity="*" />
+    <End Role="Reimbursement" Type="Model.Store.Reimbursements" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Reimbursement">
+        <PropertyRef Name="ReimbursementId" />
+      </Principal>
+      <Dependent Role="ReimbursementReceipts">
+        <PropertyRef Name="Reimbursements_ReimbursementId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_StoreProducts_Product">
+    <End Role="Product" Type="Model.Store.Products" Multiplicity="1" />
+    <End Role="StoreProducts" Type="Model.Store.StoreProducts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="ProductId" />
+      </Principal>
+      <Dependent Role="StoreProducts">
+        <PropertyRef Name="Products_ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_StoreProducts_Store">
+    <End Role="StoreProducts" Type="Model.Store.StoreProducts" Multiplicity="*" />
+    <End Role="Store" Type="Model.Store.Stores" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Store">
+        <PropertyRef Name="StoreId" />
+      </Principal>
+      <Dependent Role="StoreProducts">
+        <PropertyRef Name="Stores_StoreId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -603,136 +595,135 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="Fortress_of_SolitudeEntities">
-          <EntitySetMapping Name="Accounts">
-            <EntityTypeMapping TypeName="Model.Account">
-              <MappingFragment StoreEntitySet="Accounts">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="AccountNum" ColumnName="AccountNum" />
-                <ScalarProperty Name="UserObjectId" ColumnName="UserObjectId" />
-                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Categories">
-            <EntityTypeMapping TypeName="Model.Category">
-              <MappingFragment StoreEntitySet="Categories">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="LineItems">
-            <EntityTypeMapping TypeName="Model.LineItem">
-              <MappingFragment StoreEntitySet="LineItems">
-                <ScalarProperty Name="IsHsa" ColumnName="IsHsa" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
-                <ScalarProperty Name="LineItemId" ColumnName="LineItemId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Products">
-            <EntityTypeMapping TypeName="Model.Product">
-              <MappingFragment StoreEntitySet="Products">
-                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
-                <ScalarProperty Name="AlwaysHsa" ColumnName="AlwaysHsa" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Receipts">
-            <EntityTypeMapping TypeName="Model.Receipt">
-              <MappingFragment StoreEntitySet="Receipts">
-                <ScalarProperty Name="ImageId" ColumnName="ImageId" />
-                <ScalarProperty Name="StoreId" ColumnName="StoreId" />
-                <ScalarProperty Name="IsScanned" ColumnName="IsScanned" />
-                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
-                <ScalarProperty Name="UserObjectId" ColumnName="UserObjectId" />
-                <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Reimbursements">
-            <EntityTypeMapping TypeName="Model.Reimbursement">
-              <MappingFragment StoreEntitySet="Reimbursements">
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
-                <ScalarProperty Name="IsReimbursed" ColumnName="IsReimbursed" />
-                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
-                <ScalarProperty Name="ReimbursementId" ColumnName="ReimbursementId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ShoppingListItems">
-            <EntityTypeMapping TypeName="Model.ShoppingListItem">
-              <MappingFragment StoreEntitySet="ShoppingListItems">
-                <ScalarProperty Name="Checked" ColumnName="Checked" />
-                <ScalarProperty Name="StoreId" ColumnName="StoreId" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
-                <ScalarProperty Name="ShoppingListId" ColumnName="ShoppingListId" />
-                <ScalarProperty Name="ShoppingListItemId" ColumnName="ShoppingListItemId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ShoppingLists">
-            <EntityTypeMapping TypeName="Model.ShoppingList">
-              <MappingFragment StoreEntitySet="ShoppingLists">
-                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="UserObjectId" ColumnName="UserObjectId" />
-                <ScalarProperty Name="ShoppingListId" ColumnName="ShoppingListId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Stores">
-            <EntityTypeMapping TypeName="Model.Store">
-              <MappingFragment StoreEntitySet="Stores">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Location" ColumnName="Location" />
-                <ScalarProperty Name="StoreId" ColumnName="StoreId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="Model.User">
-              <MappingFragment StoreEntitySet="Users">
-                <ScalarProperty Name="PrefName" ColumnName="PrefName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="ReimbursementReceipts" TypeName="Model.ReimbursementReceipts" StoreEntitySet="ReimbursementReceipts">
-            <EndProperty Name="Reimbursement">
-              <ScalarProperty Name="ReimbursementId" ColumnName="ReimbursementId" />
-            </EndProperty>
-            <EndProperty Name="Receipt">
-              <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="StoreProducts" TypeName="Model.StoreProducts" StoreEntitySet="StoreProducts">
-            <EndProperty Name="Store">
-              <ScalarProperty Name="StoreId" ColumnName="StoreId" />
-            </EndProperty>
-            <EndProperty Name="Product">
-              <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-            </EndProperty>
-          </AssociationSetMapping>
-        </EntityContainerMapping>
-      </Mapping>
-    </edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="Fortress_of_SolitudeEntities">
+    <EntitySetMapping Name="Accounts">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.Account)">
+        <MappingFragment StoreEntitySet="Accounts">
+          <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+          <ScalarProperty Name="UserObjectId" ColumnName="UserObjectId" />
+          <ScalarProperty Name="AccountNum" ColumnName="AccountNum" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Categories">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.Category)">
+        <MappingFragment StoreEntitySet="Categories">
+          <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="LineItems">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.LineItem)">
+        <MappingFragment StoreEntitySet="LineItems">
+          <ScalarProperty Name="LineItemId" ColumnName="LineItemId" />
+          <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="IsHsa" ColumnName="IsHsa" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Products">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.Product)">
+        <MappingFragment StoreEntitySet="Products">
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="AlwaysHsa" ColumnName="AlwaysHsa" />
+          <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Receipts">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.Receipt)">
+        <MappingFragment StoreEntitySet="Receipts">
+          <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
+          <ScalarProperty Name="UserObjectId" ColumnName="UserObjectId" />
+          <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+          <ScalarProperty Name="IsScanned" ColumnName="IsScanned" />
+          <ScalarProperty Name="StoreId" ColumnName="StoreId" />
+          <ScalarProperty Name="ImageId" ColumnName="ImageId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Reimbursements">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.Reimbursement)">
+        <MappingFragment StoreEntitySet="Reimbursements">
+          <ScalarProperty Name="ReimbursementId" ColumnName="ReimbursementId" />
+          <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+          <ScalarProperty Name="IsReimbursed" ColumnName="IsReimbursed" />
+          <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ShoppingListItems">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.ShoppingListItem)">
+        <MappingFragment StoreEntitySet="ShoppingListItems">
+          <ScalarProperty Name="ShoppingListItemId" ColumnName="ShoppingListItemId" />
+          <ScalarProperty Name="ShoppingListId" ColumnName="ShoppingListId" />
+          <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="StoreId" ColumnName="StoreId" />
+          <ScalarProperty Name="Checked" ColumnName="Checked" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ShoppingLists">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.ShoppingList)">
+        <MappingFragment StoreEntitySet="ShoppingLists">
+          <ScalarProperty Name="ShoppingListId" ColumnName="ShoppingListId" />
+          <ScalarProperty Name="UserObjectId" ColumnName="UserObjectId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Stores">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.Store)">
+        <MappingFragment StoreEntitySet="Stores">
+          <ScalarProperty Name="StoreId" ColumnName="StoreId" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="IsTypeOf(Model.User)">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Username" ColumnName="Username" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="PrefName" ColumnName="PrefName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="ReimbursementReceipts" TypeName="Model.ReimbursementReceipts" StoreEntitySet="ReimbursementReceipts">
+      <EndProperty Name="Receipt">
+        <ScalarProperty Name="ReceiptId" ColumnName="Receipts_ReceiptId" />
+      </EndProperty>
+      <EndProperty Name="Reimbursement">
+        <ScalarProperty Name="ReimbursementId" ColumnName="Reimbursements_ReimbursementId" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="StoreProducts" TypeName="Model.StoreProducts" StoreEntitySet="StoreProducts">
+      <EndProperty Name="Product">
+        <ScalarProperty Name="ProductId" ColumnName="Products_ProductId" />
+      </EndProperty>
+      <EndProperty Name="Store">
+        <ScalarProperty Name="StoreId" ColumnName="Stores_StoreId" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
   <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
@@ -746,7 +737,7 @@
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="true" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
-        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
       </DesignerInfoPropertySet>
     </Options>
