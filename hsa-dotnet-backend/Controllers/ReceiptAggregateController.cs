@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +15,13 @@ namespace HsaDotnetBackend.Controllers
     {
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
+        //Identity 
         private readonly IIdentityHelper _identityHelper;
+
+        public ReceiptAggregateController(IIdentityHelper identity)
+        {
+            _identityHelper = identity;
+        }
 
         // TODO: Create spendingovertimedto
         [HttpGet]

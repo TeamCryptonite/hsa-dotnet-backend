@@ -19,7 +19,13 @@ namespace HsaDotnetBackend.Controllers
     {
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
+        //Identity 
         private readonly IIdentityHelper _identityHelper;
+
+        public ShoppingListsController(IIdentityHelper identity)
+        {
+            _identityHelper = identity;
+        }
 
         [HttpGet]
         [Route("api/shoppinglists")]
@@ -63,6 +69,10 @@ namespace HsaDotnetBackend.Controllers
                 return BadRequest("Invalid model");
             }
 
+            // Set the user to the currently logged in user
+            shoppingList.UserObjectId = userGuid;
+
+            // Find existing products for shopping list items if they exist, or create them if they don't
             foreach (ShoppingListItem shoppingListItem in shoppingList.ShoppingListItems)
             {
                 if (shoppingListItem.ProductId.HasValue)
@@ -144,29 +154,135 @@ namespace HsaDotnetBackend.Controllers
         }
 
         // TODO: GET all ShoppingListItems
-        //[HttpGet]
-        //[Route("api/shoppinglists/{shoppingListId:int}/shoppingListItems")]
-        //public async IQueryable<ShoppingListItemDto> GetShoppingListItems(int shoppingListId)
-        //{
+        [HttpGet]
+        [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems")]
+        public IQueryable<ShoppingListItemDto> GetShoppingListItems(int shoppingListId)
+        {
+            ShoppingList dbShoppingList = db.ShoppingLists.Find(shoppingListId);
+            var userGuid = _identityHelper.GetCurrentUserGuid();
 
-        //    var userGuid = _identityHelper.GetCurrentUserGuid();
-        //    return db.ShoppingListItems.Where(sli => )
+            if (dbShoppingList?.UserObjectId != userGuid)
+                return Enumerable.Empty<ShoppingListItemDto>().AsQueryable();
 
-        //    ShoppingListItem dbShoppingListItem = db.ShoppingListItems.Find(shoppingListId);
-        //    if (dbShoppingListItem.ShoppingList.UserObjectId != userGuid)
-        //        return NotFound();
-
-        //    return O
-        //}
+            return dbShoppingList.ShoppingListItems.AsQueryable().ProjectTo<ShoppingListItemDto>();
+        }
 
         // TODO: GET one ShoppingListItem
+        [HttpGet]
+        [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems/{shoppingListItemId:int}")]
+        public async Task<IHttpActionResult> GetOneShoppingListItem(int shoppingListId, int shoppingListItemId)
+        {
+            ShoppingListItem dbShoppingListItem = await db.ShoppingListItems.FindAsync(shoppingListItemId);
+            Guid userGuid = _identityHelper.GetCurrentUserGuid();
+
+            if (dbShoppingListItem?.ShoppingList.UserObjectId != userGuid) 
+                return Unauthorized();
+
+            return Ok(Mapper.Map<ShoppingListItem, ShoppingListItemDto>(dbShoppingListItem));
+        }
 
         // TODO: POST ShoppingListItem
+        [HttpPost]
+        [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems")]
+        public async Task<IHttpActionResult> PostNewShoppingListItem(int shoppingListId, [FromBody] ShoppingListItem shoppingListItem)
+        {
+            ShoppingList dbShoppingList = await db.ShoppingLists.FindAsync(shoppingListId);
+            Guid userGuid = _identityHelper.GetCurrentUserGuid();
+
+            if (dbShoppingList?.UserObjectId != userGuid)
+                return Unauthorized();
+
+            // Find Product if it exists
+            // TODO: Consider refactoring. This now appears twice
+            if (shoppingListItem.Product != null) // There is a Product object
+            {
+                if (shoppingListItem.Product.ProductId > 0) // Try to find product
+                {
+                    var product = await db.Products.FindAsync(shoppingListItem.ProductId);
+                    if (product != null)
+                        shoppingListItem.Product = product;
+                }
+            }
+            else if (shoppingListItem.ProductId.HasValue) // There is a ProductId
+            {
+                var product = await db.Products.FindAsync(shoppingListItem.ProductId);
+                if (product != null)
+                    shoppingListItem.Product = product; // If a product is found using shoppingListItem.ProductId, it will override anything in shoppingListItem.Product
+            }
+
+            dbShoppingList.ShoppingListItems.Add(shoppingListItem);
+            await db.SaveChangesAsync();
+
+            return Created($"api/shoppinglists/{dbShoppingList.ShoppingListId}/shoppinglistitems/{shoppingListItem.ShoppingListItemId}",
+                Mapper.Map<ShoppingListItem, ShoppingListItemDto>(shoppingListItem));
+        }
 
         // TODO: PATCH ShoppingListItem
+        [HttpPatch]
+        [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems/{shoppingListItemId:int}")]
+        public async Task<IHttpActionResult> PatchShoppingListItem(int shoppingListId, int shoppingListItemId,
+            [FromBody] ShoppingListItemDto shoppingListItem)
+        {
+            ShoppingListItem dbShoppingListItem = await db.ShoppingListItems.FindAsync(shoppingListItemId);
+            Guid userGuid = _identityHelper.GetCurrentUserGuid();
+
+            if (dbShoppingListItem?.ShoppingList.UserObjectId != userGuid)
+                return NotFound();
+
+            if (shoppingListItem.ProductName != null)
+                dbShoppingListItem.ProductName = shoppingListItem.ProductName;
+            if (shoppingListItem.Quantity.HasValue)
+                dbShoppingListItem.Quantity = shoppingListItem.Quantity;
+            if (shoppingListItem.Checked.HasValue)
+                dbShoppingListItem.Checked = shoppingListItem.Checked.Value;
+            if (shoppingListItem.Product?.ProductId > 0)
+            {
+                var product = await db.Products.FindAsync(shoppingListItem.Product.ProductId);
+                dbShoppingListItem.Product = product ?? Mapper.Map<ProductDto, Product>(shoppingListItem.Product);
+            }
+            if (shoppingListItem.Store?.StoreId > 0)
+            {
+                var store = await db.Stores.FindAsync(shoppingListItem.Store.StoreId);
+                if (store != null)
+                    dbShoppingListItem.Store = store;
+            }
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ShoppingListItemExists(shoppingListItemId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
 
         // TODO: DELTE ShoppingListItem
-        
+        [HttpDelete]
+        [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems/{shoppingListItemId:int}")]
+        public async Task<IHttpActionResult> DeleteShoppingListItem(int shoppingListId, int shoppingListItemId)
+        {
+            ShoppingListItem dbShoppingListItem = await db.ShoppingListItems.FindAsync(shoppingListItemId);
+            Guid userGuid = _identityHelper.GetCurrentUserGuid();
+
+            if (dbShoppingListItem?.ShoppingList.UserObjectId != userGuid)
+                return Unauthorized();
+
+            db.ShoppingListItems.Remove(dbShoppingListItem);
+
+            await db.SaveChangesAsync();
+
+            return Ok("Shopping List Item Deleted");
+        }
 
         private bool ShoppingListExists(int id)
         {
