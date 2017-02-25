@@ -6,7 +6,7 @@ namespace HsaDotnetBackend.test
     [TestFixture]
     public class NUnitTest1
     {
-        //[Test]
+        [Test]
         public void TestMethod1()
         {
         }
