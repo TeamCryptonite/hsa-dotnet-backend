@@ -132,8 +132,7 @@ namespace HsaDotnetBackend.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-
-        // TODO: DELETE ShoppingListItem
+        
         [HttpDelete]
         [Route("api/shoppinglists/{id:int}")]
         public async Task<IHttpActionResult> DeleteShoppingList(int id)
@@ -152,8 +151,7 @@ namespace HsaDotnetBackend.Controllers
             return Ok("Shopping List Deleted");
 
         }
-
-        // TODO: GET all ShoppingListItems
+        
         [HttpGet]
         [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems")]
         public IQueryable<ShoppingListItemDto> GetShoppingListItems(int shoppingListId)
@@ -166,8 +164,7 @@ namespace HsaDotnetBackend.Controllers
 
             return dbShoppingList.ShoppingListItems.AsQueryable().ProjectTo<ShoppingListItemDto>();
         }
-
-        // TODO: GET one ShoppingListItem
+        
         [HttpGet]
         [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems/{shoppingListItemId:int}")]
         public async Task<IHttpActionResult> GetOneShoppingListItem(int shoppingListId, int shoppingListItemId)
@@ -180,8 +177,7 @@ namespace HsaDotnetBackend.Controllers
 
             return Ok(Mapper.Map<ShoppingListItem, ShoppingListItemDto>(dbShoppingListItem));
         }
-
-        // TODO: POST ShoppingListItem
+        
         [HttpPost]
         [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems")]
         public async Task<IHttpActionResult> PostNewShoppingListItem(int shoppingListId, [FromBody] ShoppingListItem shoppingListItem)
@@ -216,8 +212,7 @@ namespace HsaDotnetBackend.Controllers
             return Created($"api/shoppinglists/{dbShoppingList.ShoppingListId}/shoppinglistitems/{shoppingListItem.ShoppingListItemId}",
                 Mapper.Map<ShoppingListItem, ShoppingListItemDto>(shoppingListItem));
         }
-
-        // TODO: PATCH ShoppingListItem
+        
         [HttpPatch]
         [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems/{shoppingListItemId:int}")]
         public async Task<IHttpActionResult> PatchShoppingListItem(int shoppingListId, int shoppingListItemId,
@@ -265,8 +260,7 @@ namespace HsaDotnetBackend.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-
-        // TODO: DELTE ShoppingListItem
+        
         [HttpDelete]
         [Route("api/shoppinglists/{shoppingListId:int}/shoppinglistitems/{shoppingListItemId:int}")]
         public async Task<IHttpActionResult> DeleteShoppingListItem(int shoppingListId, int shoppingListItemId)

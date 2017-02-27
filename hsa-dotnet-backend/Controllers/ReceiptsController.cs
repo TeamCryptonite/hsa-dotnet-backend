@@ -31,16 +31,34 @@ namespace HsaDotnetBackend.Controllers
         // GET: api/Receipts
         [HttpGet]
         [Route("api/receipts")]
-        public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10)
+        public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10, string query = null)
         {
             var userGuid = _identityHelper.GetCurrentUserGuid();
 
-            return db.Receipts
-                .Where(receipt => receipt.UserObjectId == userGuid)
-                .OrderByDescending(x => x.DateTime)
-                .Skip(skip)
-                .Take(take)
-                .ProjectTo<ReceiptDto>();
+            if (query == null) // Simple paginated query
+            {
+                return db.Receipts
+                    .Where(receipt => receipt.UserObjectId == userGuid)
+                    .OrderByDescending(x => x.DateTime)
+                    .Skip(skip)
+                    .Take(take)
+                    .ProjectTo<ReceiptDto>();
+            }
+            else // More involved query
+            {
+                return db.Receipts
+                    .Where(receipt => receipt.UserObjectId == userGuid)
+                    .Where(receipt => 
+                        receipt.LineItems.Any(li => 
+                            li.Product.Name.Contains(query) 
+                            || li.Product.Description.Contains(query))
+                        || receipt.Store.Name.Contains(query)
+                        )
+                    .OrderByDescending(x => x.DateTime)
+                    .Skip(skip)
+                    .Take(take)
+                    .ProjectTo<ReceiptDto>();
+            }
         }
 
         // GET: api/Receipts/5
@@ -127,8 +145,13 @@ namespace HsaDotnetBackend.Controllers
                 dbReceipt.DateTime = patchReceipt.DateTime;
             if (patchReceipt.IsScanned.HasValue)
                 dbReceipt.IsScanned = patchReceipt.IsScanned;
-            if (patchReceipt.StoreId > 0)
-                dbReceipt.StoreId = patchReceipt.StoreId;
+            if (patchReceipt.Store != null)
+            {
+                Store dbStore = null;
+                if (patchReceipt.Store.StoreId > 0)
+                    dbStore = await db.Stores.FindAsync(patchReceipt.Store.StoreId);
+                dbReceipt.Store = dbStore ?? Mapper.Map<StoreDto, Store>(patchReceipt.Store);
+            }
 
             try
             {
@@ -255,8 +278,7 @@ namespace HsaDotnetBackend.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-
-        // TODO: Add POST new LineItems to a specific receipt
+        
         [HttpPost]
         [Route("api/receipts/{receiptId:int}/lineitems")]
         public async Task<IHttpActionResult> PostLineItem(int receiptId, [FromBody] LineItemDto lineItem)

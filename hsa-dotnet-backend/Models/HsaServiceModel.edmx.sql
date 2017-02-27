@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/23/2017 17:19:38
+-- Date Created: 02/27/2017 16:55:39
 -- Generated from EDMX file: C:\Users\pah9qd\Documents\TeamCryptonite\hsa-dotnet-backend\hsa-dotnet-backend\Models\HsaServiceModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
-GO
-USE [fortresstest];
+--GO
+--USE [fortresstest];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -20,23 +20,17 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_Account_Account_Id]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Reimbursements] DROP CONSTRAINT [FK_Account_Account_Id];
 GO
-IF OBJECT_ID(N'[dbo].[FK_Products_Categories]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Products] DROP CONSTRAINT [FK_Products_Categories];
-GO
 IF OBJECT_ID(N'[dbo].[FK_LineItem_Product]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[LineItems] DROP CONSTRAINT [FK_LineItem_Product];
 GO
 IF OBJECT_ID(N'[dbo].[FK_LineItem_Receipt]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[LineItems] DROP CONSTRAINT [FK_LineItem_Receipt];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ShoppingListItem_Products]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ShoppingListItems] DROP CONSTRAINT [FK_ShoppingListItem_Products];
+IF OBJECT_ID(N'[dbo].[FK_Products_Categories]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Products] DROP CONSTRAINT [FK_Products_Categories];
 GO
-IF OBJECT_ID(N'[dbo].[FK_ShoppingListItem_ShoppingLists]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ShoppingListItems] DROP CONSTRAINT [FK_ShoppingListItem_ShoppingLists];
-GO
-IF OBJECT_ID(N'[dbo].[FK_StoreProducts_Stores]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ShoppingListItems] DROP CONSTRAINT [FK_StoreProducts_Stores];
+IF OBJECT_ID(N'[dbo].[FK_Receipts_Stores]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Receipts] DROP CONSTRAINT [FK_Receipts_Stores];
 GO
 IF OBJECT_ID(N'[dbo].[FK_ReimbursementReceipts_Receipt]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[ReimbursementReceipts] DROP CONSTRAINT [FK_ReimbursementReceipts_Receipt];
@@ -44,11 +38,20 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_ReimbursementReceipts_Reimbursement]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[ReimbursementReceipts] DROP CONSTRAINT [FK_ReimbursementReceipts_Reimbursement];
 GO
+IF OBJECT_ID(N'[dbo].[FK_ShoppingListItem_Products]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ShoppingListItems] DROP CONSTRAINT [FK_ShoppingListItem_Products];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ShoppingListItem_ShoppingLists]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ShoppingListItems] DROP CONSTRAINT [FK_ShoppingListItem_ShoppingLists];
+GO
 IF OBJECT_ID(N'[dbo].[FK_StoreProducts_Product]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[StoreProducts] DROP CONSTRAINT [FK_StoreProducts_Product];
 GO
 IF OBJECT_ID(N'[dbo].[FK_StoreProducts_Store]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[StoreProducts] DROP CONSTRAINT [FK_StoreProducts_Store];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StoreProducts_Stores]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ShoppingListItems] DROP CONSTRAINT [FK_StoreProducts_Stores];
 GO
 
 -- --------------------------------------------------
@@ -70,6 +73,9 @@ GO
 IF OBJECT_ID(N'[dbo].[Receipts]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Receipts];
 GO
+IF OBJECT_ID(N'[dbo].[ReimbursementReceipts]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ReimbursementReceipts];
+GO
 IF OBJECT_ID(N'[dbo].[Reimbursements]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Reimbursements];
 GO
@@ -79,17 +85,14 @@ GO
 IF OBJECT_ID(N'[dbo].[ShoppingLists]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ShoppingLists];
 GO
+IF OBJECT_ID(N'[dbo].[StoreProducts]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[StoreProducts];
+GO
 IF OBJECT_ID(N'[dbo].[Stores]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Stores];
 GO
 IF OBJECT_ID(N'[dbo].[Users]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Users];
-GO
-IF OBJECT_ID(N'[dbo].[ReimbursementReceipts]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[ReimbursementReceipts];
-GO
-IF OBJECT_ID(N'[dbo].[StoreProducts]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[StoreProducts];
 GO
 
 -- --------------------------------------------------
@@ -139,7 +142,7 @@ CREATE TABLE [dbo].[Receipts] (
     [UserObjectId] uniqueidentifier  NULL,
     [DateTime] datetime  NULL,
     [IsScanned] bit  NULL,
-    [StoreId] int  NOT NULL,
+    [StoreId] int  NULL,
     [ImageId] varchar(max)  NULL
 );
 GO
@@ -362,6 +365,21 @@ GO
 CREATE INDEX [IX_FK_ShoppingListItem_Products]
 ON [dbo].[ShoppingListItems]
     ([ProductId]);
+GO
+
+-- Creating foreign key on [StoreId] in table 'Receipts'
+ALTER TABLE [dbo].[Receipts]
+ADD CONSTRAINT [FK_Receipts_Stores]
+    FOREIGN KEY ([StoreId])
+    REFERENCES [dbo].[Stores]
+        ([StoreId])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_Receipts_Stores'
+CREATE INDEX [IX_FK_Receipts_Stores]
+ON [dbo].[Receipts]
+    ([StoreId]);
 GO
 
 -- Creating foreign key on [ShoppingListId] in table 'ShoppingListItems'

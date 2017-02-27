@@ -17,6 +17,7 @@ namespace HsaDotnetBackend.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Store()
         {
+            this.Receipts = new HashSet<Receipt>();
             this.ShoppingListItems = new HashSet<ShoppingListItem>();
             this.Products = new HashSet<Product>();
         }
@@ -25,6 +26,8 @@ namespace HsaDotnetBackend.Models
         public System.Data.Entity.Spatial.DbGeography Location { get; set; }
         public string Name { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Receipt> Receipts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ShoppingListItem> ShoppingListItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

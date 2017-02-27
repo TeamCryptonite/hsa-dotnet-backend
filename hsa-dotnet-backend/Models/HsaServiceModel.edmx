@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityContainer Name="ModelStoreContainer">
     <EntitySet Name="Accounts" EntityType="Model.Store.Accounts" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Categories" EntityType="Model.Store.Categories" store:Type="Tables" Schema="dbo" />
@@ -37,6 +37,10 @@
     <AssociationSet Name="FK_ShoppingListItem_Products" Association="Model.Store.FK_ShoppingListItem_Products">
       <End Role="Product" EntitySet="Products" />
       <End Role="ShoppingListItem" EntitySet="ShoppingListItems" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Receipts_Stores" Association="Model.Store.FK_Receipts_Stores">
+      <End Role="Store" EntitySet="Stores" />
+      <End Role="Receipt" EntitySet="Receipts" />
     </AssociationSet>
     <AssociationSet Name="FK_ShoppingListItem_ShoppingLists" Association="Model.Store.FK_ShoppingListItem_ShoppingLists">
       <End Role="ShoppingList" EntitySet="ShoppingLists" />
@@ -108,7 +112,7 @@
     <Property Name="UserObjectId" Type="uniqueidentifier" Nullable="true" />
     <Property Name="DateTime" Type="datetime" Nullable="true" />
     <Property Name="IsScanned" Type="bit" Nullable="true" />
-    <Property Name="StoreId" Type="int" Nullable="false" />
+    <Property Name="StoreId" Type="int" Nullable="true" />
     <Property Name="ImageId" Type="varchar(max)" Nullable="true" />
   </EntityType>
   <EntityType Name="Reimbursements">
@@ -246,6 +250,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Receipts_Stores">
+    <End Role="Store" Type="Model.Store.Stores" Multiplicity="0..1" />
+    <End Role="Receipt" Type="Model.Store.Receipts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Store">
+        <PropertyRef Name="StoreId" />
+      </Principal>
+      <Dependent Role="Receipt">
+        <PropertyRef Name="StoreId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_ShoppingListItem_ShoppingLists">
     <End Role="ShoppingList" Type="Model.Store.ShoppingLists" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -355,6 +371,10 @@
             <End Role="Product" EntitySet="Products" />
             <End Role="ShoppingListItem" EntitySet="ShoppingListItems" />
           </AssociationSet>
+          <AssociationSet Name="FK_Receipts_Stores" Association="Model.FK_Receipts_Stores">
+            <End Role="Store" EntitySet="Stores" />
+            <End Role="Receipt" EntitySet="Receipts" />
+          </AssociationSet>
           <AssociationSet Name="FK_ShoppingListItem_ShoppingLists" Association="Model.FK_ShoppingListItem_ShoppingLists">
             <End Role="ShoppingList" EntitySet="ShoppingLists" />
             <End Role="ShoppingListItem" EntitySet="ShoppingListItems" />
@@ -425,9 +445,10 @@
           <Property Name="UserObjectId" Type="Guid" />
           <Property Name="DateTime" Type="DateTime" Precision="3" />
           <Property Name="IsScanned" Type="Boolean" />
-          <Property Name="StoreId" Type="Int32" Nullable="false" />
+          <Property Name="StoreId" Type="Int32" />
           <Property Name="ImageId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="LineItems" Relationship="Model.FK_LineItem_Receipt" FromRole="Receipt" ToRole="LineItem" />
+          <NavigationProperty Name="Store" Relationship="Model.FK_Receipts_Stores" FromRole="Receipt" ToRole="Store" />
           <NavigationProperty Name="Reimbursements" Relationship="Model.ReimbursementReceipts" FromRole="Receipt" ToRole="Reimbursement" />
         </EntityType>
         <EntityType Name="Reimbursement">
@@ -475,6 +496,7 @@
           <Property Name="StoreId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Location" Type="Geography" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Receipts" Relationship="Model.FK_Receipts_Stores" FromRole="Store" ToRole="Receipt" />
           <NavigationProperty Name="ShoppingListItems" Relationship="Model.FK_StoreProducts_Stores" FromRole="Store" ToRole="ShoppingListItem" />
           <NavigationProperty Name="Products" Relationship="Model.StoreProducts" FromRole="Store" ToRole="Product" />
         </EntityType>
@@ -554,6 +576,18 @@
             </Principal>
             <Dependent Role="ShoppingListItem">
               <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Receipts_Stores">
+          <End Type="Model.Store" Role="Store" Multiplicity="0..1" />
+          <End Type="Model.Receipt" Role="Receipt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Store">
+              <PropertyRef Name="StoreId" />
+            </Principal>
+            <Dependent Role="Receipt">
+              <PropertyRef Name="StoreId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
