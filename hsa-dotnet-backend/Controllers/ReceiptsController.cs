@@ -49,9 +49,7 @@ namespace HsaDotnetBackend.Controllers
                 return db.Receipts
                     .Where(receipt => receipt.UserObjectId == userGuid)
                     .Where(receipt => 
-                        receipt.LineItems.Any(li => 
-                            li.Product.Name.Contains(query) 
-                            || li.Product.Description.Contains(query))
+                        receipt.LineItems.Any(li => li.Product.Name.Contains(query) || li.Product.Description.Contains(query))
                         || receipt.Store.Name.Contains(query)
                         )
                     .OrderByDescending(x => x.DateTime)
