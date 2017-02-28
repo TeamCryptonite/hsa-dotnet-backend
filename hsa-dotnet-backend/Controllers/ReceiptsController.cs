@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.Http.ModelBinding;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using HsaDotnetBackend.Helpers;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
 using Ninject;
+using Ninject.Infrastructure.Language;
 
 namespace HsaDotnetBackend.Controllers
 {
@@ -116,12 +119,7 @@ namespace HsaDotnetBackend.Controllers
                 return BadRequest("Error: Model is not valid");
             }
 
-            if (id != patchReceipt.ReceiptId)
-            {
-                return BadRequest("Error: id in URI must match ReceiptId in body");
-            }
-
-            Receipt dbReceipt = await db.Receipts.FindAsync(patchReceipt.ReceiptId);
+            Receipt dbReceipt = await db.Receipts.FindAsync(id);
             Guid userGuid = _identityHelper.GetCurrentUserGuid();
 
             if (dbReceipt?.UserObjectId != userGuid)
@@ -148,6 +146,7 @@ namespace HsaDotnetBackend.Controllers
                 Store dbStore = null;
                 if (patchReceipt.Store.StoreId > 0)
                     dbStore = await db.Stores.FindAsync(patchReceipt.Store.StoreId);
+                // TODO: Reconsider allowing users to add stores
                 dbReceipt.Store = dbStore ?? Mapper.Map<StoreDto, Store>(patchReceipt.Store);
             }
 
@@ -202,11 +201,20 @@ namespace HsaDotnetBackend.Controllers
                         lineItem.Product = product;
                 }
             }
-            
-            
 
-            db.Receipts.Add(receipt);
-            await db.SaveChangesAsync();
+
+
+            try
+            {
+                db.Receipts.Add(receipt);
+                await db.SaveChangesAsync();
+            }
+            catch (DbEntityValidationException e)
+            {
+                return
+                    BadRequest("Failed database validation. " +
+                               e.EntityValidationErrors.First().ValidationErrors.First().ErrorMessage);
+            }
 
             return Created($"api/receipts/{receipt.ReceiptId}", Mapper.Map<Receipt, ReceiptDto>(receipt));
         }
@@ -345,6 +353,8 @@ namespace HsaDotnetBackend.Controllers
 
         // DELETE: api/Receipts/5
         [ResponseType(typeof(Receipt))]
+        [HttpDelete]
+        [Route("api/receipts/{id:int}")]
         public async Task<IHttpActionResult> DeleteReceipt(int id)
         {
             Receipt receipt = await db.Receipts.FindAsync(id);
@@ -356,7 +366,7 @@ namespace HsaDotnetBackend.Controllers
             db.Receipts.Remove(receipt);
             await db.SaveChangesAsync();
 
-            return Ok(receipt);
+            return Ok("Receipt Deleted");
         }
 
 
