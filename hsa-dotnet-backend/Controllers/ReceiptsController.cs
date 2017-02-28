@@ -183,6 +183,14 @@ namespace HsaDotnetBackend.Controllers
             if (userGuid == Guid.Empty)
                 return Unauthorized();
 
+            // Add user guid to receipt
+            receipt.UserObjectId = userGuid;
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Model is invalid");
+            }
+
             // TODO: Consider refactoring this into a helper
             // Check for existing products, and create product if none exist
             foreach (LineItem lineItem in receipt.LineItems)
@@ -195,10 +203,7 @@ namespace HsaDotnetBackend.Controllers
                 }
             }
             
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            
 
             db.Receipts.Add(receipt);
             await db.SaveChangesAsync();
