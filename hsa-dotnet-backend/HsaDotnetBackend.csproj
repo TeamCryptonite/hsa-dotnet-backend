@@ -196,6 +196,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DevTestController.cs" />
     <Compile Include="Controllers\LoginTestController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\ReceiptAggregateController.cs" />
     <Compile Include="Controllers\ReceiptsController.cs" />
     <Compile Include="Controllers\ShoppingListsController.cs" />
