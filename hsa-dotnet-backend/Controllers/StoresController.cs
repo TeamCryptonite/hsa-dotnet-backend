@@ -1,10 +1,15 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using HsaDotnetBackend.Helpers;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
 
@@ -14,66 +19,68 @@ namespace HsaDotnetBackend.Controllers
     {
         private Fortress_of_SolitudeEntities db = new Fortress_of_SolitudeEntities();
 
-        // GET: api/Stores
-        public IQueryable<StoreWithProductsDto> GetStores()
+        //Identity 
+        private readonly IIdentityHelper _identityHelper;
+
+        public StoresController(IIdentityHelper identity)
         {
-            //return db.Stores;
-            //return from b in db.Stores
-            //       select new StoreWithProductsDto()
-            //       {
-            //           Id = b.Id,
-            //           Name = b.Name,
-            //           Location = b.Location,
-            //           Products = new List<ProductDto>() { from p in db.Products select new ProductDto() }
-            //       };
+            _identityHelper = identity;
+        }
+        // TODO: Get All Stores
+        [HttpGet]
+        [Route("api/stores")]
+        public IQueryable<StoreDto> GetAllStores(int skip = 0, int take = 10, string query = null, int? productid = null)
+        {
             return db.Stores
-                .Select(b => new StoreWithProductsDto()
-                {
-                    StoreId = b.StoreId,
-                    Location = b.Location,
-                    Name = b.Name,
-                    Products = b.Products
-                        .Select(sm => new ProductDto()
-                        {
-                            ProductId = sm.ProductId,
-                            Description = sm.Description,
-                            Name = sm.Name,
-                            AlwaysHsa = sm.AlwaysHsa
-                        })
-                });
-
+                .Where(s => query == null || s.Name.Contains(query))
+                .Where(s => productid == null || s.Products.Any(p => p.ProductId == productid.Value))
+                .OrderBy(s => s.Name)
+                .Skip(skip)
+                .Take(take)
+                .ProjectTo<StoreDto>();
         }
 
-        // GET: api/Stores/5
-        [ResponseType(typeof(Store))]
-        public async Task<IHttpActionResult> GetStore(int id)
+        // TODO: Get One Store
+        [HttpGet]
+        [Route("api/stores/{storeId:int}")]
+        public async Task<IHttpActionResult> GetOneStore(int storeId)
         {
-            Store store = await db.Stores.FindAsync(id);
-
-            
-            if (store == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(store);
+            var dbStore = await db.Stores.FindAsync(storeId);
+            return Ok(Mapper.Map<Store, StoreDto>(dbStore));
         }
 
-        // PUT: api/Stores/5
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutStore(int id, Store store)
+        // TODO: Add New Store
+        [HttpPost]
+        [Route("api/stores")]
+        public async Task<IHttpActionResult> PostStore([FromBody] Store store)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest("Model not valid.");
             }
 
-            if (id != store.StoreId)
-            {
-                return BadRequest();
-            }
+            db.Stores.Add(store);
+            await db.SaveChangesAsync();
 
-            db.Entry(store).State = EntityState.Modified;
+            return Created($"api/stores/{store.StoreId}", Mapper.Map<Store, StoreDto>(store));
+        }
+
+        // TODO: Update Store
+        [HttpPatch]
+        [Route("api/stores/{storeId:int}")]
+        public async Task<IHttpActionResult> PatchStore(int storeId, [FromBody] StoreDto storeDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Model not valid.");
+
+            var dbStore = await db.Stores.FindAsync(storeId);
+            if (dbStore == null)
+                return NotFound();
+
+            if (storeDto.Name != null)
+                dbStore.Name = storeDto.Name;
+            if (storeDto.Location != null)
+                dbStore.Location = storeDto.Location;
 
             try
             {
@@ -81,7 +88,7 @@ namespace HsaDotnetBackend.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StoreExists(id))
+                if (!StoreExists(storeId))
                 {
                     return NotFound();
                 }
@@ -94,44 +101,23 @@ namespace HsaDotnetBackend.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Stores
-        [ResponseType(typeof(Store))]
-        public async Task<IHttpActionResult> PostStore(Store store)
+
+        // TODO: Delete Store
+        [HttpDelete]
+        [Route("api/stores/{storeId:int}")]
+        public async Task<IHttpActionResult> DeleteStore(int storeId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Stores.Add(store);
-            await db.SaveChangesAsync();
-
-            return CreatedAtRoute("DefaultApi", new { id = store.StoreId }, store);
-        }
-
-        // DELETE: api/Stores/5
-        [ResponseType(typeof(Store))]
-        public async Task<IHttpActionResult> DeleteStore(int id)
-        {
-            Store store = await db.Stores.FindAsync(id);
-            if (store == null)
+            var dbStore = await db.Stores.FindAsync(storeId);
+            if (dbStore == null)
             {
                 return NotFound();
             }
 
-            db.Stores.Remove(store);
+            db.Stores.Remove(dbStore);
             await db.SaveChangesAsync();
 
-            return Ok(store);
-        }
+            return Ok("Store Deleted");
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
 
         private bool StoreExists(int id)
