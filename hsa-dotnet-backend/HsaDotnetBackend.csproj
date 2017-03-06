@@ -173,6 +173,7 @@
     <None Include="App_Data\fortresstest_log.ldf">
       <DependentUpon>fortresstest.mdf</DependentUpon>
     </None>
+    <Content Include="App_Data\Assets\missingreceipt.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Models\HsaServiceModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

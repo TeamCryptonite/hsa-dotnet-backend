@@ -343,6 +343,32 @@ namespace HsaDotnetBackend.Controllers
             return Ok(new {});
         }
 
+
+        // Receipt Pictures
+
+        // TODO add edit picture method
+        //TODO add delete picture method
+        [HttpPost]
+        [Route("api/receipts/{receiptId:int}/pictureblob")]
+        public async Task<object> CreatePictureBlob(int receiptId, string imagetype = "jpg")
+        {
+            var receipt = await db.Receipts.FindAsync(receiptId);
+            var userGuid = _identityHelper.GetCurrentUserGuid();
+            if (receipt?.UserObjectId != userGuid)
+                return NotFound();
+
+            var newBlobObj = ReceiptPictureHelper.CreateEmptyReceiptPictureBlob(receipt, imagetype);
+            receipt.ImageId = newBlobObj.ReceiptId;
+
+            if (newBlobObj == null)
+                return BadRequest("Could Not Create Blob");
+
+            receipt.ImageId = newBlobObj.ReceiptId;
+            await db.SaveChangesAsync();
+
+            return new {PictureUrl = newBlobObj.SasUrl};
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
