@@ -142,7 +142,6 @@ namespace HsaDotnetBackend.Controllers
         }
 
         // POST: api/Receipts
-        // TODO: Allow posting images. May need to be a separate API call
         [ResponseType(typeof(Receipt))]
         [HttpPost]
         [Route("api/receipts")]
@@ -290,8 +289,7 @@ namespace HsaDotnetBackend.Controllers
                 return InternalServerError(ex);
             }
         }
-
-        // TODO: Add DELETE LineItems from a specific receipt
+        
         [HttpDelete]
         [Route("api/receipts/{receiptId:int}/lineitems/{lineItemId:int}")]
         public async Task<IHttpActionResult> DeleteLineItem(int receiptId, int lineItemId)
@@ -345,12 +343,10 @@ namespace HsaDotnetBackend.Controllers
 
 
         // Receipt Pictures
-
-        // TODO add edit picture method
-        //TODO add delete picture method
+        
         [HttpPost]
         [Route("api/receipts/{receiptId:int}/pictureblob")]
-        public async Task<object> CreatePictureBlob(int receiptId, string imagetype = "jpg")
+        public async Task<IHttpActionResult> CreatePictureBlob(int receiptId, string imagetype = "jpg")
         {
             var receipt = await db.Receipts.FindAsync(receiptId);
             var userGuid = _identityHelper.GetCurrentUserGuid();
@@ -366,7 +362,39 @@ namespace HsaDotnetBackend.Controllers
             receipt.ImageId = newBlobObj.ReceiptId;
             await db.SaveChangesAsync();
 
-            return new {PictureUrl = newBlobObj.SasUrl};
+            return Ok(new {PictureUrl = newBlobObj.SasUrl});
+        }
+
+        [HttpPatch]
+        [Route("api/receipts/{receiptId:int}/pictureblob")]
+        public async Task<IHttpActionResult> GetEditPictureBlob(int receiptId)
+        {
+            var receipt = await db.Receipts.FindAsync(receiptId);
+            var userGuid = _identityHelper.GetCurrentUserGuid();
+            if (receipt?.UserObjectId != userGuid)
+                return NotFound();
+
+            var blobUrl = ReceiptPictureHelper.GetEditReceiptPictureBlob(receipt);
+            if (blobUrl == null)
+                return BadRequest("Could Not Find Blob");
+
+            return Ok(new {PictureUrl = blobUrl});
+        }
+
+        [HttpDelete]
+        [Route("api/receipts/{receiptId:int}/pictureblob")]
+        public async Task<IHttpActionResult> DeletePictureBlob(int receiptId)
+        {
+            var receipt = await db.Receipts.FindAsync(receiptId);
+            var userGuid = _identityHelper.GetCurrentUserGuid();
+            if (receipt?.UserObjectId != userGuid)
+                return NotFound();
+
+            var isDeleted = ReceiptPictureHelper.DeleteReceiptPictureBlob(receipt);
+            if (isDeleted == false)
+                return BadRequest("Could Not Delete Blob");
+
+            return Ok("Receipt Picture Blob Deleted.");
         }
 
         protected override void Dispose(bool disposing)

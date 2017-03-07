@@ -26,7 +26,7 @@ namespace HsaDotnetBackend.Controllers
         {
             _identityHelper = identity;
         }
-        // TODO: Get All Stores
+
         [HttpGet]
         [Route("api/stores")]
         public IQueryable<StoreDto> GetAllStores(int skip = 0, int take = 10, string query = null, int? productid = null)
@@ -39,8 +39,7 @@ namespace HsaDotnetBackend.Controllers
                 .Take(take)
                 .ProjectTo<StoreDto>();
         }
-
-        // TODO: Get One Store
+        
         [HttpGet]
         [Route("api/stores/{storeId:int}")]
         public async Task<IHttpActionResult> GetOneStore(int storeId)
@@ -48,8 +47,7 @@ namespace HsaDotnetBackend.Controllers
             var dbStore = await db.Stores.FindAsync(storeId);
             return Ok(Mapper.Map<Store, StoreDto>(dbStore));
         }
-
-        // TODO: Add New Store
+        
         [HttpPost]
         [Route("api/stores")]
         public async Task<IHttpActionResult> PostStore([FromBody] Store store)
@@ -64,8 +62,7 @@ namespace HsaDotnetBackend.Controllers
 
             return Created($"api/stores/{store.StoreId}", Mapper.Map<Store, StoreDto>(store));
         }
-
-        // TODO: Update Store
+        
         [HttpPatch]
         [Route("api/stores/{storeId:int}")]
         public async Task<IHttpActionResult> PatchStore(int storeId, [FromBody] StoreDto storeDto)
@@ -100,9 +97,7 @@ namespace HsaDotnetBackend.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-
-
-        // TODO: Delete Store
+        
         [HttpDelete]
         [Route("api/stores/{storeId:int}")]
         public async Task<IHttpActionResult> DeleteStore(int storeId)

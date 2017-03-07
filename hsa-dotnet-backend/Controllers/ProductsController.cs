@@ -26,7 +26,6 @@ namespace HsaDotnetBackend.Controllers
         {
             _identityHelper = identity;
         }
-        // TODO: Get All Products
         [HttpGet]
         [Route("api/products")]
         public IQueryable<ProductDto> GetAllProducts(int skip = 0, int take = 10, string category = null, string query = null, bool? isHsa = null)
@@ -40,8 +39,7 @@ namespace HsaDotnetBackend.Controllers
                 .Take(take)
                 .ProjectTo<ProductDto>();
         }
-
-        // TODO: Get One Product
+        
         [HttpGet]
         [Route("api/products/{productId:int}")]
         public async Task<IHttpActionResult> GetOneProduct(int productId)
@@ -49,8 +47,7 @@ namespace HsaDotnetBackend.Controllers
             var dbProduct = await db.Products.FindAsync(productId);
             return Ok(Mapper.Map<Product, ProductDto>(dbProduct));
         }
-
-        // TODO: Add New Product
+        
         [HttpPost]
         [Route("api/products")]
         public async Task<IHttpActionResult> PostProduct([FromBody] Product product)
@@ -65,8 +62,7 @@ namespace HsaDotnetBackend.Controllers
 
             return Created($"api/products/{product.ProductId}", Mapper.Map<Product, ProductDto>(product));
         }
-
-        // TODO: Update Product
+        
         [HttpPatch]
         [Route("api/products/{productId:int}")]
         public async Task<IHttpActionResult> PatchProduct(int productId, [FromBody] ProductDto productDto)
@@ -107,9 +103,7 @@ namespace HsaDotnetBackend.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-
-
-        // TODO: Delete Product
+        
         [HttpDelete]
         [Route("api/products/{productId:int}")]
         public async Task<IHttpActionResult> DeleteProduct(int productId)
