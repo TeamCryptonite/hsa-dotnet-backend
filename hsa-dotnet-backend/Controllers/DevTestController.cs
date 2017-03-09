@@ -51,7 +51,7 @@ namespace HsaDotnetBackend.Controllers
             if(message["message"] == null)
                 return BadRequest("Could not find message.");
             CloudStorageAccount storageAccount =
-                CloudStorageAccount.Parse(ConfigurationManager.AppSettings["galaxycommunications"]);
+                CloudStorageAccount.Parse(ConfigurationManager.AppSettings["MessageConnectionString"]);
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
 
             CloudQueue queue = queueClient.GetQueueReference("receiptstoprocess");
