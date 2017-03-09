@@ -1,8 +1,12 @@
-﻿using System.Web.Http;
+﻿using System.Configuration;
+using System.Web.Http;
 using AutoMapper;
 using HsaDotnetBackend.Helpers;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Queue;
+using Newtonsoft.Json.Linq;
 
 namespace HsaDotnetBackend.Controllers
 { 
@@ -38,6 +42,27 @@ namespace HsaDotnetBackend.Controllers
         public string GetBlob()
         {
             return ReceiptPictureHelper.GetReceiptPictureUrl("20170216_140140[1].jpg");
+        }
+
+        [Route("devtest/messagequeue")]
+        [HttpPost]
+        public IHttpActionResult AddToMessageQueue([FromBody] JObject message)
+        {
+            if(message["message"] == null)
+                return BadRequest("Could not find message.");
+            CloudStorageAccount storageAccount =
+                CloudStorageAccount.Parse(ConfigurationManager.AppSettings["galaxycommunications"]);
+            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+
+            CloudQueue queue = queueClient.GetQueueReference("receiptstoprocess");
+
+            queue.CreateIfNotExists();
+
+            CloudQueueMessage newMessage = new CloudQueueMessage((string)message["message"]);
+
+            queue.AddMessage(newMessage);
+
+            return Ok("Message saved to queue");
         }
     }
 }
