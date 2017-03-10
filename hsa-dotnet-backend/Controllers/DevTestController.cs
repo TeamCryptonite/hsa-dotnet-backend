@@ -58,7 +58,7 @@ namespace HsaDotnetBackend.Controllers
 
             queue.CreateIfNotExists();
 
-            CloudQueueMessage newMessage = new CloudQueueMessage((string)message);
+            CloudQueueMessage newMessage = new CloudQueueMessage(message.ToString());
 
             queue.AddMessage(newMessage);
 
