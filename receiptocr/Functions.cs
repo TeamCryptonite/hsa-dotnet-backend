@@ -22,12 +22,12 @@ namespace receiptocr
         // on an Azure Queue called queue.
         public static void ProcessQueueMessage([QueueTrigger("receiptstoprocess")] string message, TextWriter log)
         {
-            string blobUri = "";
+            string imageBlobReference = "";
             string resultReference = "";
             try
             {
                 JObject jMessage = JObject.Parse(message);
-                blobUri = (string) jMessage["blobUri"];
+                imageBlobReference = (string) jMessage["imageBlobReference"];
                 resultReference = (string) jMessage["resultReference"];
             }
             catch (Exception ex)
@@ -36,7 +36,7 @@ namespace receiptocr
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(blobUri) || string.IsNullOrWhiteSpace(resultReference))
+            if (string.IsNullOrWhiteSpace(imageBlobReference) || string.IsNullOrWhiteSpace(resultReference))
             {
                 log.WriteLine("Missing blobUri or resultReference.");
                 return;
@@ -49,14 +49,18 @@ namespace receiptocr
 
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
 
-            CloudBlobContainer container =
-                blobClient.GetContainerReference(ConfigurationManager.AppSettings["receiptocrresults"]);
+            CloudBlobContainer resultContainer =
+                blobClient.GetContainerReference("receiptocrresults");
 
-            container.CreateIfNotExists();
+            resultContainer.CreateIfNotExists();
 
-            CloudBlockBlob blob = container.GetBlockBlobReference(resultReference);
+            CloudBlockBlob resultBlob = resultContainer.GetBlockBlobReference(resultReference);
 
-            if (blob == null)
+            CloudBlobContainer imageContainer =
+                blobClient.GetContainerReference(ConfigurationManager.AppSettings["ReceiptContainer"]);
+            CloudBlockBlob imageBlob = imageContainer.GetBlockBlobReference(imageBlobReference);
+
+            if (resultBlob == null)
             {
                 log.WriteLine("Empty blob at blob resultReference.");
                 return;
@@ -64,7 +68,7 @@ namespace receiptocr
 
             // Download blob
             MemoryStream stream = new MemoryStream();
-            blob.DownloadToStream(stream);
+            imageBlob.DownloadToStream(stream);
 
             // ImageMagick img
             var magickImg = new MagickImage(stream);
@@ -101,7 +105,7 @@ namespace receiptocr
 
             var textAnnotations = content["responses"][0]["textAnnotations"][0];
 
-            blob.UploadText(textAnnotations["description"].ToString());
+            resultBlob.UploadText(textAnnotations["description"].ToString());
 
 
             log.WriteLine(magickImg.ToBase64());
