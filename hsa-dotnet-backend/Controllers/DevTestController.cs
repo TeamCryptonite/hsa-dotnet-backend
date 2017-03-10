@@ -48,8 +48,8 @@ namespace HsaDotnetBackend.Controllers
         [HttpPost]
         public IHttpActionResult AddToMessageQueue([FromBody] JObject message)
         {
-            if(message["message"] == null)
-                return BadRequest("Could not find message.");
+            if(message["imageBlobReference"] == null || message["resultReference"] == null)
+                return BadRequest("Missing required params.");
             CloudStorageAccount storageAccount =
                 CloudStorageAccount.Parse(ConfigurationManager.AppSettings["MessageConnectionString"]);
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
@@ -58,7 +58,7 @@ namespace HsaDotnetBackend.Controllers
 
             queue.CreateIfNotExists();
 
-            CloudQueueMessage newMessage = new CloudQueueMessage((string)message["message"]);
+            CloudQueueMessage newMessage = new CloudQueueMessage((string)message);
 
             queue.AddMessage(newMessage);
 
