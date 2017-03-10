@@ -9,8 +9,10 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.Configuration;
 using System.Drawing;
+using System.Net;
 using ImageMagick;
 using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace receiptocr
 {
@@ -54,14 +56,18 @@ namespace receiptocr
 
             CloudBlockBlob blob = container.GetBlockBlobReference(resultReference);
 
+            if (blob == null)
+            {
+                log.WriteLine("Empty blob at blob resultReference.");
+                return;
+            }
+
             // Download blob
             MemoryStream stream = new MemoryStream();
             blob.DownloadToStream(stream);
 
-            Bitmap img = new Bitmap(stream);
-
             // ImageMagick img
-            var magickImg = new MagickImage(img);
+            var magickImg = new MagickImage(stream);
             magickImg.Deskew(new Percentage(50));
             magickImg.Grayscale(PixelIntensityMethod.Rec709Luminance);
             magickImg.Enhance();
@@ -69,6 +75,33 @@ namespace receiptocr
             magickImg.Sharpen();
 
             // Start API to Google Vision
+            string googleApiKey = ConfigurationManager.AppSettings["GoogleApiKey"];
+
+            // Create request body
+            var body =
+                JObject.Parse(
+                    "{\"requests\":[{\"image\":{\"content\":\"\"},\"features\":[{\"type\":\"TEXT_DETECTION\",\"maxResults\":1}]}]}");
+            body["requests"][0]["image"]["content"] = magickImg.ToBase64();
+
+            // Create REST Call
+            var client = new RestClient("https://vision.googleapis.com/v1");
+            var request = new RestRequest("images:annotate", Method.POST);
+            request.RequestFormat = DataFormat.Json;
+            request.AddQueryParameter("key", googleApiKey);
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+
+            IRestResponse response = client.Execute(request);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                log.WriteLine("GoogleAPI Status did not return ok.");
+                throw new Exception("GoogleAPI Status did not return OK");
+            }
+
+            var content = JObject.Parse(response.Content);
+
+            var textAnnotations = content["responses"][0]["textAnnotations"][0];
+
+            blob.UploadText(textAnnotations["description"].ToString());
 
 
             log.WriteLine(magickImg.ToBase64());
