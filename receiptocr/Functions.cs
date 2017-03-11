@@ -104,7 +104,7 @@ namespace receiptocr
 
             var content = JObject.Parse(response.Content);
 
-            var textAnnotations = content["responses"][0]["textAnnotations"][0].ToString();
+            var textAnnotations = content["responses"][0]["textAnnotations"][0]["description"].ToString();
 
             string pattern =
                 @"(?<pline>(?<price>\d+\.\d\d)\s*(?:[TXR]\s)?\s*)?(?<name>[a-zA-Z].+)\s(?<UPC>\d+\s+)?[F]?\s*(?(pline)|(?<price2>\d+\.\d\d)\s*(?:[TXR]\s)?)";
