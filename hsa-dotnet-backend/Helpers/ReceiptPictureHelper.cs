@@ -28,7 +28,7 @@ namespace HsaDotnetBackend.Helpers
             return container.GetBlockBlobReference(BlockBlobReference);
         }
 
-        private static SharedAccessBlobPolicy GenerateSasPolicy(int urlValidForMinutes = 30, bool writeAccess = false, bool deleteAccess = false)
+        public static SharedAccessBlobPolicy GenerateSasPolicy(int urlValidForMinutes = 30, bool writeAccess = false, bool deleteAccess = false)
         {
             // https://azure.github.io/azure-sdk-for-java/com/microsoft/azure/storage/blob/SharedAccessBlobPolicy.html
             // A String that represents the shared access permissions. The string must contain one or more of the following values. Note they must all be lowercase.
@@ -100,7 +100,7 @@ namespace HsaDotnetBackend.Helpers
             return false;
             
         }
-        public static string GetReceiptPictureUrl(string receiptBlobId, int urlValidForMinutes = 30)
+        public static string GetReceiptImageUrl(string receiptBlobId, int urlValidForMinutes = 30)
         {
             // Check the receiptBlobId
             if (string.IsNullOrEmpty(receiptBlobId))

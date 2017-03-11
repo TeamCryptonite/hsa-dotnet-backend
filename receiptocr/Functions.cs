@@ -67,10 +67,17 @@ namespace receiptocr
                 return;
             }
 
+            // Set status in resultblob
+            var resultJson = new JObject();
+            resultJson.Add("Status", "Started");
+            resultBlob.UploadText(resultJson.ToString());
+
             // Download blob
             MemoryStream stream = new MemoryStream();
             imageBlob.DownloadToStream(stream);
 
+            resultJson["Status"] = "Image Processing";
+            resultBlob.UploadText(resultJson.ToString());
             // ImageMagick img
             var magickImg = new MagickImage(stream);
             magickImg.Deskew(new Percentage(50));
@@ -79,6 +86,9 @@ namespace receiptocr
             magickImg.Despeckle();
             magickImg.Sharpen();
 
+
+            resultJson["Status"] = "OCR Running";
+            resultBlob.UploadText(resultJson.ToString());
             // Start API to Google Vision
             string googleApiKey = ConfigurationManager.AppSettings["GoogleApiKey"];
 
@@ -98,7 +108,9 @@ namespace receiptocr
             IRestResponse response = client.Execute(request);
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                log.WriteLine("GoogleAPI Status did not return ok.");
+                resultJson["Status"] = "Failed";
+                resultJson.Add("Message", "Could not receive OCR results.");
+                resultBlob.UploadText(resultJson.ToString());
                 throw new Exception("GoogleAPI Status did not return OK");
             }
 
