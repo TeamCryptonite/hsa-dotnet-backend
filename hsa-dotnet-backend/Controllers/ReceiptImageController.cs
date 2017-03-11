@@ -83,7 +83,7 @@ namespace HsaDotnetBackend.Controllers
 
         // OCR
         [HttpPost]
-        [Route("api/receipts/{recieptId:int}/receiptimageocr")]
+        [Route("api/receipts/{receiptId:int}/receiptimageocr")]
         public async Task<IHttpActionResult> StartReceiptImageOcr(int receiptId)
         {
             var receipt = await db.Receipts.FindAsync(receiptId);
