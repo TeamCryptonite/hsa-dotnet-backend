@@ -10,6 +10,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using System.Configuration;
 using System.Drawing;
 using System.Net;
+using System.Text.RegularExpressions;
 using ImageMagick;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -103,12 +104,43 @@ namespace receiptocr
 
             var content = JObject.Parse(response.Content);
 
-            var textAnnotations = content["responses"][0]["textAnnotations"][0];
+            var textAnnotations = content["responses"][0]["textAnnotations"][0].ToString();
 
-            resultBlob.UploadText(textAnnotations["description"].ToString());
+            string pattern =
+                @"(?<pline>(?<price>\d+\.\d\d)\s*(?:[TXR]\s)?\s*)?(?<name>[a-zA-Z].+)\s(?<UPC>\d+\s+)?[F]?\s*(?(pline)|(?<price2>\d+\.\d\d)\s*(?:[TXR]\s)?)";
+            MatchCollection matches = Regex.Matches(textAnnotations, pattern);
+            var buildJson = new JArray();
+            foreach (Match match in matches)
+            {
+                if (match.Success)
+                {
+                    var lineItem = new JObject();
+                    Match upcNameMatch = Regex.Match(match.Groups["name"].Value, @"(?<name>.*)\s+(?<upc>\d+)[^\.]");
+                    if (upcNameMatch.Success)
+                    {
+                        if (upcNameMatch.Groups["name"].Success)
+                            lineItem.Add("name", upcNameMatch.Groups["name"].Value);
+                        if (upcNameMatch.Groups["upc"].Success)
+                            lineItem.Add("upc", upcNameMatch.Groups["upc"].Value);
+                    }
+                    else
+                    {
+                        if (match.Groups["name"].Success)
+                            lineItem.Add("name", match.Groups["name"].Value);
+                    }
+                    if (match.Groups["price"].Success)
+                        lineItem.Add("price", match.Groups["price"].Value);
+                    else if (match.Groups["price2"].Success)
+                        lineItem.Add("price", match.Groups["price2"].Value);
 
+                    buildJson.Add(lineItem);
+                }
+            }
 
-            log.WriteLine(magickImg.ToBase64());
+            resultBlob.UploadText(buildJson.ToString());
+
+            // Kindof works: (?<pline>(?<price>\d+\.\d\d)\s*(?:[TXR]\s)?\s*)?(?<name>[a-zA-Z].+)\s(?<UPC>\d+\s+)?[F]?\s*(?(pline)|(?<price2>\d+\.\d\d)\s*(?:[TXR]\s)?)
+            //log.WriteLine(magickImg.ToBase64());
         }
     }
 }
