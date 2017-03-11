@@ -102,41 +102,54 @@ namespace receiptocr
                 throw new Exception("GoogleAPI Status did not return OK");
             }
 
+            // Convert GoogleAPI Response into a JObject
             var content = JObject.Parse(response.Content);
+            var googleContentComplete = content["responses"][0]["textAnnotations"][0]["description"].ToString();
 
-            var textAnnotations = content["responses"][0]["textAnnotations"][0]["description"].ToString();
-
+            // Regex Pattern matching to pull out important details
             string pattern =
                 @"(?<pline>(?<price>\d+\.\d\d)\s*(?:[TXR]\s)?\s*)?(?<name>[a-zA-Z].+)\s(?<UPC>\d+\s+)?[F]?\s*(?(pline)|(?<price2>\d+\.\d\d)\s*(?:[TXR]\s)?)";
-            MatchCollection matches = Regex.Matches(textAnnotations, pattern);
-            var buildJson = new JArray();
+            MatchCollection matches = Regex.Matches(googleContentComplete, pattern);
+            var buildJson = new JObject();
+            buildJson.Add("Status", "Completed");
+
+            var lineItems = new JArray();
             foreach (Match match in matches)
             {
                 if (match.Success)
                 {
                     var lineItem = new JObject();
-                    Match upcNameMatch = Regex.Match(match.Groups["name"].Value, @"(?<name>.*)\s+(?<upc>\d+)[^\.]");
+                    var product = new JObject();
+                    Match upcNameMatch = Regex.Match(match.Groups["name"].Value, @"(?<name>.*)\s+(?<upc>\d+)(?!\d*\.\d*)");
+
                     if (upcNameMatch.Success)
                     {
                         if (upcNameMatch.Groups["name"].Success)
-                            lineItem.Add("name", upcNameMatch.Groups["name"].Value);
+                            product.Add("Name", upcNameMatch.Groups["name"].Value);
                         if (upcNameMatch.Groups["upc"].Success)
-                            lineItem.Add("upc", upcNameMatch.Groups["upc"].Value);
+                            product.Add("Upc", upcNameMatch.Groups["upc"].Value);
                     }
                     else
                     {
                         if (match.Groups["name"].Success)
-                            lineItem.Add("name", match.Groups["name"].Value);
+                            product.Add("Name", match.Groups["name"].Value);
+                        if (match.Groups["upc"].Success)
+                            product.Add("Upc", match.Groups["upc"].Value);
                     }
                     if (match.Groups["price"].Success)
-                        lineItem.Add("price", match.Groups["price"].Value);
+                        lineItem.Add("Price", match.Groups["price"].Value);
                     else if (match.Groups["price2"].Success)
-                        lineItem.Add("price", match.Groups["price2"].Value);
+                        lineItem.Add("Price", match.Groups["price2"].Value);
 
-                    buildJson.Add(lineItem);
+                    lineItem.Add("Product", product);
+                    lineItems.Add(lineItem);
                 }
             }
 
+            // Add lineItems to buildJson
+            buildJson.Add("LineItems", lineItems);
+
+            // Upload results to resultBlob
             resultBlob.UploadText(buildJson.ToString());
 
             // Kindof works: (?<pline>(?<price>\d+\.\d\d)\s*(?:[TXR]\s)?\s*)?(?<name>[a-zA-Z].+)\s(?<UPC>\d+\s+)?[F]?\s*(?(pline)|(?<price2>\d+\.\d\d)\s*(?:[TXR]\s)?)
