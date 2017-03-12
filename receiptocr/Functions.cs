@@ -154,7 +154,7 @@ namespace receiptocr
                         lineItem.Add("Price", match.Groups["price2"].Value);
 
                     lineItem.Add("Product", product);
-                    IEnumerable<string> namesToSkip = new List<string>() { "tax", "total", "cash", "tend", "pay" };
+                    IEnumerable<string> namesToSkip = new List<string>() { "tax", "total", "cash", "tend", "pay", "change" };
                     if (!namesToSkip.Any(lineItem["Product"]["Name"].ToString().ToLower().Contains))
                     {
                         lineItems.Add(lineItem);
