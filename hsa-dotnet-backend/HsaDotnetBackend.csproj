@@ -83,6 +83,10 @@
       <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Types.11.0.2\lib\net20\Microsoft.SqlServer.Types.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
@@ -153,6 +157,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App_Data\fortresstest.mdf" />
+    <None Include="App_Data\fortresstest_log.ldf">
+      <DependentUpon>fortresstest.mdf</DependentUpon>
+    </None>
     <Content Include="..\packages\Microsoft.SqlServer.Types.11.0.2\nativeBinaries\x64\msvcr100.dll">
       <Link>SqlServerTypes\x64\msvcr100.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -169,10 +177,6 @@
       <Link>SqlServerTypes\x86\SqlServerSpatial110.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="App_Data\fortresstest.mdf" />
-    <None Include="App_Data\fortresstest_log.ldf">
-      <DependentUpon>fortresstest.mdf</DependentUpon>
-    </None>
     <Content Include="App_Data\Assets\missingreceipt.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Models\HsaServiceModel.Context.tt">
@@ -218,6 +222,7 @@
     </Compile>
     <Compile Include="Models\DTOs\CategoryDto.cs" />
     <Compile Include="Models\DTOs\LineItemDto.cs" />
+    <Compile Include="Models\DTOs\LocationDto.cs" />
     <Compile Include="Models\DTOs\ProductDto.cs" />
     <Compile Include="Models\DTOs\ReceiptPatchDto.cs" />
     <Compile Include="Models\DTOs\ReceiptDto.cs" />

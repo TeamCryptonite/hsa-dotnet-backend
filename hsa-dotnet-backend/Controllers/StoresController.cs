@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Spatial;
+using System.Data.Entity.SqlServer;
+using System.EnterpriseServices.Internal;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -29,9 +33,13 @@ namespace HsaDotnetBackend.Controllers
 
         [HttpGet]
         [Route("api/stores")]
-        public IQueryable<StoreDto> GetAllStores(int skip = 0, int take = 10, string query = null, int? productid = null)
+        public IQueryable<StoreDto> GetAllStores(int skip = 0, int take = 10, string query = null, int? productid = null, int? radius = null, double? userLat = null, double? userLong = null)
         {
+            DbGeography userLocation = null;
+            if(userLat.HasValue && userLong.HasValue)
+                userLocation = DbGeography.FromText($"POINT({userLong.Value.ToString()} {userLat.Value.ToString()})");
             return db.Stores
+                .Where(s => radius.HasValue || userLat.HasValue || userLong.HasValue || userLocation.Distance(s.Location) < radius * 1609.344)
                 .Where(s => query == null || s.Name.Contains(query))
                 .Where(s => productid == null || s.Products.Any(p => p.ProductId == productid.Value))
                 .OrderBy(s => s.Name)
@@ -50,17 +58,18 @@ namespace HsaDotnetBackend.Controllers
         
         [HttpPost]
         [Route("api/stores")]
-        public async Task<IHttpActionResult> PostStore([FromBody] Store store)
+        public async Task<IHttpActionResult> PostStore([FromBody] StoreDto store)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Model not valid.");
             }
 
-            db.Stores.Add(store);
+            var dbStore = Mapper.Map<StoreDto, Store>(store);
+            db.Stores.Add(dbStore);
             await db.SaveChangesAsync();
 
-            return Created($"api/stores/{store.StoreId}", Mapper.Map<Store, StoreDto>(store));
+            return Created($"api/stores/{dbStore.StoreId}", Mapper.Map<Store, StoreDto>(dbStore));
         }
         
         [HttpPatch]
@@ -77,7 +86,7 @@ namespace HsaDotnetBackend.Controllers
             if (storeDto.Name != null)
                 dbStore.Name = storeDto.Name;
             if (storeDto.Location != null)
-                dbStore.Location = storeDto.Location;
+                dbStore.Location = DbGeography.FromText($"POINT({storeDto.Location.Longitude?.ToString(CultureInfo.InvariantCulture)} {storeDto.Location.Latitude?.ToString(CultureInfo.InvariantCulture)})");
 
             try
             {
