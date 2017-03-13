@@ -33,6 +33,7 @@ namespace HsaDotnetBackend.Controllers
         {
             var userGuid = _identityHelper.GetCurrentUserGuid();
 
+
             if (query == null) // Simple paginated query
                 return db.Receipts
                     .Where(receipt => receipt.UserObjectId == userGuid)
@@ -93,7 +94,7 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(void))]
         [HttpPatch]
         [Route("api/receipts/{id:int}")]
-        public async Task<IHttpActionResult> PatchReceipt(int id, [FromBody] ReceiptPatchDto patchReceipt)
+        public async Task<IHttpActionResult> PatchReceipt(int id, [FromBody] ReceiptDto patchReceipt)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Error: Model is not valid");
