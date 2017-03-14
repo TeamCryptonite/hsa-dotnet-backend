@@ -26,8 +26,8 @@ namespace HsaDotnetBackend.Helpers
                     //DisplayName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").Value,
                     DisplayName = "No Display Name",
                     EmailAddress  = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "emails")?.Value,
-                    GivenName = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "givenname")?.Value,
-                    SurName = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "surname")?.Value
+                    GivenName = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value,
+                    SurName = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value
                 };
 
                 db.Users.Add(user);
