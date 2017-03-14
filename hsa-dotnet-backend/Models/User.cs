@@ -24,6 +24,10 @@ namespace HsaDotnetBackend.Models
         public System.Guid UserObjectId { get; set; }
         public bool IsEmployee { get; set; }
         public bool IsActiveUser { get; set; }
+        public string DisplayName { get; set; }
+        public string EmailAddress { get; set; }
+        public string GivenName { get; set; }
+        public string SurName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Receipt> Receipts { get; set; }

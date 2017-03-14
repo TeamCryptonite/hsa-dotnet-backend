@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/27/2017 16:55:39
+-- Date Created: 03/14/2017 12:39:56
 -- Generated from EDMX file: C:\Users\pah9qd\Documents\TeamCryptonite\hsa-dotnet-backend\hsa-dotnet-backend\Models\HsaServiceModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
---GO
---USE [fortresstest];
+GO
+USE [fortresstest];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -32,6 +32,9 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_Receipts_Stores]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Receipts] DROP CONSTRAINT [FK_Receipts_Stores];
 GO
+IF OBJECT_ID(N'[dbo].[FK_Receipts_Users]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Receipts] DROP CONSTRAINT [FK_Receipts_Users];
+GO
 IF OBJECT_ID(N'[dbo].[FK_ReimbursementReceipts_Receipt]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[ReimbursementReceipts] DROP CONSTRAINT [FK_ReimbursementReceipts_Receipt];
 GO
@@ -43,6 +46,9 @@ IF OBJECT_ID(N'[dbo].[FK_ShoppingListItem_Products]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_ShoppingListItem_ShoppingLists]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[ShoppingListItems] DROP CONSTRAINT [FK_ShoppingListItem_ShoppingLists];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ShoppingLists_Users]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ShoppingLists] DROP CONSTRAINT [FK_ShoppingLists_Users];
 GO
 IF OBJECT_ID(N'[dbo].[FK_StoreProducts_Product]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[StoreProducts] DROP CONSTRAINT [FK_StoreProducts_Product];
@@ -143,7 +149,8 @@ CREATE TABLE [dbo].[Receipts] (
     [DateTime] datetime  NULL,
     [IsScanned] bit  NULL,
     [StoreId] int  NULL,
-    [ImageId] varchar(max)  NULL
+    [ImageRef] varchar(max)  NULL,
+    [OcrRef] varchar(max)  NULL
 );
 GO
 
@@ -189,12 +196,13 @@ GO
 
 -- Creating table 'Users'
 CREATE TABLE [dbo].[Users] (
-    [UserId] int IDENTITY(1,1) NOT NULL,
-    [Username] varchar(30)  NULL,
-    [Password] varchar(max)  NULL,
-    [FirstName] varchar(30)  NULL,
-    [LastName] varchar(30)  NULL,
-    [PrefName] varchar(30)  NULL
+    [UserObjectId] uniqueidentifier  NOT NULL,
+    [IsEmployee] bit  NOT NULL,
+    [IsActiveUser] bit  NOT NULL,
+    [DisplayName] varchar(max)  NOT NULL,
+    [EmailAddress] varchar(max)  NOT NULL,
+    [GivenName] varchar(max)  NULL,
+    [SurName] varchar(max)  NULL
 );
 GO
 
@@ -270,10 +278,10 @@ ADD CONSTRAINT [PK_Stores]
     PRIMARY KEY CLUSTERED ([StoreId] ASC);
 GO
 
--- Creating primary key on [UserId] in table 'Users'
+-- Creating primary key on [UserObjectId] in table 'Users'
 ALTER TABLE [dbo].[Users]
 ADD CONSTRAINT [PK_Users]
-    PRIMARY KEY CLUSTERED ([UserId] ASC);
+    PRIMARY KEY CLUSTERED ([UserObjectId] ASC);
 GO
 
 -- Creating primary key on [Receipts_ReceiptId], [Reimbursements_ReimbursementId] in table 'ReimbursementReceipts'
@@ -382,6 +390,21 @@ ON [dbo].[Receipts]
     ([StoreId]);
 GO
 
+-- Creating foreign key on [UserObjectId] in table 'Receipts'
+ALTER TABLE [dbo].[Receipts]
+ADD CONSTRAINT [FK_Receipts_Users]
+    FOREIGN KEY ([UserObjectId])
+    REFERENCES [dbo].[Users]
+        ([UserObjectId])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_Receipts_Users'
+CREATE INDEX [IX_FK_Receipts_Users]
+ON [dbo].[Receipts]
+    ([UserObjectId]);
+GO
+
 -- Creating foreign key on [ShoppingListId] in table 'ShoppingListItems'
 ALTER TABLE [dbo].[ShoppingListItems]
 ADD CONSTRAINT [FK_ShoppingListItem_ShoppingLists]
@@ -410,6 +433,21 @@ GO
 CREATE INDEX [IX_FK_StoreProducts_Stores]
 ON [dbo].[ShoppingListItems]
     ([StoreId]);
+GO
+
+-- Creating foreign key on [UserObjectId] in table 'ShoppingLists'
+ALTER TABLE [dbo].[ShoppingLists]
+ADD CONSTRAINT [FK_ShoppingLists_Users]
+    FOREIGN KEY ([UserObjectId])
+    REFERENCES [dbo].[Users]
+        ([UserObjectId])
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ShoppingLists_Users'
+CREATE INDEX [IX_FK_ShoppingLists_Users]
+ON [dbo].[ShoppingLists]
+    ([UserObjectId]);
 GO
 
 -- Creating foreign key on [Receipts_ReceiptId] in table 'ReimbursementReceipts'
