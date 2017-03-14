@@ -18,9 +18,9 @@ namespace HsaDotnetBackend.Helpers
             Guid userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
             //var DisplayName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").Value;
             var EmailAddress =
-                identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
-            var GivenName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value;
-            var SurName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname").Value;
+                identity.FindFirst(ClaimTypes.Email).Value;
+            var GivenName = identity.FindFirst(ClaimTypes.GivenName).Value;
+            var SurName = identity.FindFirst(ClaimTypes.Surname).Value;
 
             if (db.Users.Find(userGuid) == null)
             {
@@ -28,9 +28,9 @@ namespace HsaDotnetBackend.Helpers
                 {
                     UserObjectId = userGuid,
                     //DisplayName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").Value,
-                    EmailAddress = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value,
-                    GivenName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value,
-                    SurName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname").Value
+                    EmailAddress = identity.FindFirst(ClaimTypes.Email).Value,
+                    GivenName = identity.FindFirst(ClaimTypes.GivenName).Value,
+                    SurName = identity.FindFirst(ClaimTypes.Surname).Value
                 };
 
                 db.Users.Add(user);
