@@ -26,11 +26,13 @@ namespace HsaDotnetBackend.Models
         public Nullable<System.DateTime> DateTime { get; set; }
         public Nullable<bool> IsScanned { get; set; }
         public Nullable<int> StoreId { get; set; }
-        public string ImageId { get; set; }
+        public string ImageRef { get; set; }
+        public string OcrRef { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LineItem> LineItems { get; set; }
         public virtual Store Store { get; set; }
+        public virtual User User { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Reimbursement> Reimbursements { get; set; }
     }

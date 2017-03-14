@@ -14,11 +14,20 @@ namespace HsaDotnetBackend.Models
     
     public partial class User
     {
-        public int UserId { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string PrefName { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public User()
+        {
+            this.Receipts = new HashSet<Receipt>();
+            this.ShoppingLists = new HashSet<ShoppingList>();
+        }
+    
+        public System.Guid UserObjectId { get; set; }
+        public bool IsEmployee { get; set; }
+        public bool IsActiveUser { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Receipt> Receipts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ShoppingList> ShoppingLists { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace HsaDotnetBackend.Helpers
     {
         public class CreateEmptyReceiptReturn
         {
-            public string ReceiptId { get; set; }
+            public string ReceiptRef { get; set; }
             public string SasUrl { get; set; }
         }
 
@@ -50,8 +50,8 @@ namespace HsaDotnetBackend.Helpers
         
         public static CreateEmptyReceiptReturn CreateEmptyReceiptPictureBlob(Receipt receipt, string imageType = "jpg", int urlValidForMinutes = 30)
         {
-            string receiptImageId = GenerateNewReceiptImageName() + "." + imageType;
-            CloudBlockBlob blockBlob = GetCloudBlockBlob(receiptImageId);
+            string receiptImageRef = GenerateNewReceiptImageName() + "." + imageType;
+            CloudBlockBlob blockBlob = GetCloudBlockBlob(receiptImageRef);
 
             using (var fileStream = System.IO.File.OpenRead(HostingEnvironment.MapPath("~/App_Data/Assets/missingreceipt.jpg")))
                 blockBlob.UploadFromStream(fileStream);
@@ -59,17 +59,17 @@ namespace HsaDotnetBackend.Helpers
             if (!blockBlob.Exists())
                 return null;
 
-            receipt.ImageId = receiptImageId;
+            receipt.ImageRef = receiptImageRef;
 
             SharedAccessBlobPolicy policy = GenerateSasPolicy(urlValidForMinutes, true);
             string sasBlobToken = blockBlob.GetSharedAccessSignature(policy);
 
-            return new CreateEmptyReceiptReturn(){ReceiptId = receiptImageId, SasUrl = blockBlob.Uri + sasBlobToken};
+            return new CreateEmptyReceiptReturn(){ReceiptRef = receiptImageRef, SasUrl = blockBlob.Uri + sasBlobToken};
         }
 
         public static string GetEditReceiptPictureBlob(Receipt receipt, int urlValidForMinutes = 30)
         {
-            string receiptImageId = receipt.ImageId;
+            string receiptImageId = receipt.ImageRef;
             if (string.IsNullOrEmpty(receiptImageId))
                 return null;
 
@@ -86,7 +86,7 @@ namespace HsaDotnetBackend.Helpers
 
         public static bool DeleteReceiptPictureBlob(Receipt receipt, int urlValidForMinutes = 30)
         {
-            string receiptImageId = receipt.ImageId;
+            string receiptImageId = receipt.ImageRef;
             if (string.IsNullOrEmpty(receiptImageId))
                 return false;
 

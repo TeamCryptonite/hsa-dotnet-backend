@@ -37,12 +37,12 @@ namespace HsaDotnetBackend.Controllers
                 return NotFound();
 
             var newBlobObj = ReceiptPictureHelper.CreateEmptyReceiptPictureBlob(receipt, imagetype);
-            receipt.ImageId = newBlobObj.ReceiptId;
+            receipt.ImageRef = newBlobObj.ReceiptRef;
 
             if (newBlobObj == null)
                 return BadRequest("Could Not Create Blob");
 
-            receipt.ImageId = newBlobObj.ReceiptId;
+            receipt.ImageRef = newBlobObj.ReceiptRef;
             await db.SaveChangesAsync();
 
             return Ok(new { PictureUrl = newBlobObj.SasUrl });
@@ -101,9 +101,9 @@ namespace HsaDotnetBackend.Controllers
             queue.CreateIfNotExists();
 
             var message = new JObject();
-            if (string.IsNullOrWhiteSpace(receipt.ImageId))
+            if (string.IsNullOrWhiteSpace(receipt.ImageRef))
                 return BadRequest("Receipt does not include image id");
-            message.Add("imageBlobReference", receipt.ImageId);
+            message.Add("imageBlobReference", receipt.ImageRef);
 
             
 
@@ -118,7 +118,7 @@ namespace HsaDotnetBackend.Controllers
 
             resultContainer.CreateIfNotExists();
 
-            string resultBlobReference = receipt.ImageId.Replace("rec", "result") + ".json";
+            string resultBlobReference = receipt.ImageRef.Replace("rec", "result") + ".json";
 
             CloudBlockBlob resultBlob = resultContainer.GetBlockBlobReference(resultBlobReference);
 
