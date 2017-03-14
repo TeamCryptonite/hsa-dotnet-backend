@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Web;
 using HsaDotnetBackend.Models;
@@ -17,10 +18,10 @@ namespace HsaDotnetBackend.Helpers
 
             Guid userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
             //var DisplayName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").Value;
+            var GivenName = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "givenname");
+            var SurName = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "surname");
             var EmailAddress =
-                identity.FindFirst(ClaimTypes.Email).Value;
-            var GivenName = identity.FindFirst(ClaimTypes.GivenName).Value;
-            var SurName = identity.FindFirst(ClaimTypes.Surname).Value;
+                identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "emailaddress");
 
             if (db.Users.Find(userGuid) == null)
             {
