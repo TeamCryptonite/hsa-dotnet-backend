@@ -16,6 +16,11 @@ namespace HsaDotnetBackend.Helpers
                 return Guid.Empty;
 
             Guid userGuid = new Guid(identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value);
+            var DisplayName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").Value;
+            var EmailAddress =
+                identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
+            var GivenName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").Value;
+            var SurName = identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname").Value;
 
             if (db.Users.Find(userGuid) == null)
             {
