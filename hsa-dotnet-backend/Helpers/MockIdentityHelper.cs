@@ -19,10 +19,9 @@ namespace HsaDotnetBackend.Helpers
                 User user = new User()
                 {
                     UserObjectId = userGuid,
-                    DisplayName = "pah9qd",
                     EmailAddress = "pah9qd@mail.missouri.edu",
                     GivenName = "Pearse",
-                    SurName = "Hutson",
+                    Surname = "Hutson",
                     IsEmployee = true,
                     IsActiveUser = true
                 };
