@@ -1,4 +1,5 @@
-﻿using System.Data.Entity.Spatial;
+﻿using System;
+using System.Data.Entity.Spatial;
 using System.Globalization;
 using System.Web;
 using System.Web.Http;
@@ -51,6 +52,16 @@ namespace HsaDotnetBackend
                 cfg.CreateMap<ShoppingList, ShoppingListDto>().ReverseMap();
                 cfg.CreateMap<ShoppingListItem, ShoppingListItemDto>().ReverseMap();
                 cfg.CreateMap<Category, CategoryDto>().ReverseMap();
+                cfg.CreateMap<User, UserDto>()
+                    .ForMember(
+                        dest => dest.UserGuid,
+                        opt => opt.MapFrom(src =>
+                            src.UserObjectId.ToString()));
+                cfg.CreateMap<UserDto, User>()
+                    .ForMember(
+                        dest => dest.UserObjectId,
+                        opt => opt.MapFrom(src =>
+                            Guid.Parse(src.UserGuid)));
             });
             //amConfig.AssertConfigurationIsValid();
             //Mapper.Initialize(amConfig);

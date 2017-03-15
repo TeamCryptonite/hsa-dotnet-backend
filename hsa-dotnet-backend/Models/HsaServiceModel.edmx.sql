@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/14/2017 12:39:56
+-- Date Created: 03/14/2017 20:15:34
 -- Generated from EDMX file: C:\Users\pah9qd\Documents\TeamCryptonite\hsa-dotnet-backend\hsa-dotnet-backend\Models\HsaServiceModel.edmx
 -- --------------------------------------------------
 
@@ -64,6 +64,9 @@ GO
 -- Dropping existing tables
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[__RefactorLog]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[__RefactorLog];
+GO
 IF OBJECT_ID(N'[dbo].[Accounts]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Accounts];
 GO
@@ -104,6 +107,12 @@ GO
 -- --------------------------------------------------
 -- Creating all tables
 -- --------------------------------------------------
+
+-- Creating table 'C__RefactorLog'
+CREATE TABLE [dbo].[C__RefactorLog] (
+    [OperationKey] uniqueidentifier  NOT NULL
+);
+GO
 
 -- Creating table 'Accounts'
 CREATE TABLE [dbo].[Accounts] (
@@ -199,10 +208,9 @@ CREATE TABLE [dbo].[Users] (
     [UserObjectId] uniqueidentifier  NOT NULL,
     [IsEmployee] bit  NOT NULL,
     [IsActiveUser] bit  NOT NULL,
-    [DisplayName] varchar(max)  NOT NULL,
     [EmailAddress] varchar(max)  NOT NULL,
     [GivenName] varchar(max)  NULL,
-    [SurName] varchar(max)  NULL
+    [Surname] varchar(max)  NULL
 );
 GO
 
@@ -223,6 +231,12 @@ GO
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
 -- --------------------------------------------------
+
+-- Creating primary key on [OperationKey] in table 'C__RefactorLog'
+ALTER TABLE [dbo].[C__RefactorLog]
+ADD CONSTRAINT [PK_C__RefactorLog]
+    PRIMARY KEY CLUSTERED ([OperationKey] ASC);
+GO
 
 -- Creating primary key on [AccountId] in table 'Accounts'
 ALTER TABLE [dbo].[Accounts]

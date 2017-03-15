@@ -211,6 +211,7 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\OpenIdConnectCachingSecurityTokenProvider.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DevTestController.cs" />
     <Compile Include="Controllers\LoginTestController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Models\DTOs\ShoppingListItemDto.cs" />
     <Compile Include="Models\DTOs\StoreDto.cs" />
     <Compile Include="Models\DTOs\StoreWithProductsDto.cs" />
+    <Compile Include="Models\DTOs\UserDto.cs" />
     <Compile Include="Models\HsaServiceModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
