@@ -146,22 +146,26 @@ namespace HsaDotnetBackend.Controllers
         [ResponseType(typeof(Receipt))]
         [HttpPost]
         [Route("api/receipts")]
-        public async Task<IHttpActionResult> PostReceipt(Receipt receipt)
+        public async Task<IHttpActionResult> PostReceipt(ReceiptDto receipt)
         {
             // Authorize user
             var userGuid = _identityHelper.GetCurrentUserGuid();
             if (userGuid == Guid.Empty)
                 return Unauthorized();
 
-            // Add user guid to receipt
-            receipt.UserObjectId = userGuid;
-
             if (!ModelState.IsValid)
                 return BadRequest("Model is invalid");
 
+            var dbReceipt = Mapper.Map<ReceiptDto, Receipt>(receipt); 
+
+            // Add user guid to receipt
+            dbReceipt.UserObjectId = userGuid;
+
+            
+
             // TODO: Consider refactoring this into a helper
             // Check for existing products, and create product if none exist
-            foreach (var lineItem in receipt.LineItems)
+            foreach (var lineItem in dbReceipt.LineItems)
                 if (lineItem.ProductId > 0)
                 {
                     var product = db.Products.Find(lineItem.ProductId);
@@ -171,7 +175,7 @@ namespace HsaDotnetBackend.Controllers
 
             try
             {
-                db.Receipts.Add(receipt);
+                db.Receipts.Add(dbReceipt);
                 await db.SaveChangesAsync();
             }
             catch (DbEntityValidationException e)
@@ -181,7 +185,7 @@ namespace HsaDotnetBackend.Controllers
                                e.EntityValidationErrors.First().ValidationErrors.First().ErrorMessage);
             }
 
-            return Created($"api/receipts/{receipt.ReceiptId}", Mapper.Map<Receipt, ReceiptDto>(receipt));
+            return Created($"api/receipts/{receipt.ReceiptId}", Mapper.Map<Receipt, ReceiptDto>(dbReceipt));
         }
 
         [HttpGet]

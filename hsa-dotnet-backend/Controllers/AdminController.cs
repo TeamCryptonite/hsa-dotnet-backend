@@ -53,12 +53,12 @@ namespace HsaDotnetBackend.Controllers
         [Route("api/admin/users/{userGuid:guid}")]
         public async Task<IHttpActionResult> UpdateUser(Guid userGuid, [FromBody] UserDto user)
         {
-            var currUserGuid = _identityHelper.GetCurrentUserGuid();
-            if (currUserGuid == Guid.Empty)
+            var adminGuid = _identityHelper.GetCurrentUserGuid();
+            if (adminGuid == Guid.Empty)
                 return Unauthorized();
 
-            var currUser = await db.Users.FindAsync(currUserGuid);
-            if (currUser == null || currUser.IsEmployee == false)
+            var admin = await db.Users.FindAsync(adminGuid);
+            if (admin == null || admin.IsEmployee == false)
                 return Unauthorized();
 
             var dbUser = await db.Users.FindAsync(userGuid);

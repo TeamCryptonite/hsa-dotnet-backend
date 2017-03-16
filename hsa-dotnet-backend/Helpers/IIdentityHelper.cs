@@ -9,5 +9,6 @@ namespace HsaDotnetBackend.Helpers
     public interface IIdentityHelper
     {
         Guid GetCurrentUserGuid();
+        // TODO: Add methods to verify user status from database
     }
 }
