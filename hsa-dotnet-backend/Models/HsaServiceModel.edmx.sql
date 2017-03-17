@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/17/2017 12:45:28
+-- Date Created: 03/17/2017 14:11:09
 -- Generated from EDMX file: C:\Users\pah9qd\Documents\TeamCryptonite\hsa-dotnet-backend\hsa-dotnet-backend\Models\HsaServiceModel.edmx
 -- --------------------------------------------------
 
@@ -64,9 +64,6 @@ GO
 -- Dropping existing tables
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[__RefactorLog]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[__RefactorLog];
-GO
 IF OBJECT_ID(N'[dbo].[Accounts]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Accounts];
 GO
@@ -107,12 +104,6 @@ GO
 -- --------------------------------------------------
 -- Creating all tables
 -- --------------------------------------------------
-
--- Creating table 'C__RefactorLog'
-CREATE TABLE [dbo].[C__RefactorLog] (
-    [OperationKey] uniqueidentifier  NOT NULL
-);
-GO
 
 -- Creating table 'Accounts'
 CREATE TABLE [dbo].[Accounts] (
@@ -163,6 +154,14 @@ CREATE TABLE [dbo].[Receipts] (
 );
 GO
 
+-- Creating table 'ReimbursementReceipts'
+CREATE TABLE [dbo].[ReimbursementReceipts] (
+    [ReceiptId] int  NOT NULL,
+    [ReimbursementId] int  NOT NULL,
+    [Amount] decimal(18,2)  NULL
+);
+GO
+
 -- Creating table 'Reimbursements'
 CREATE TABLE [dbo].[Reimbursements] (
     [ReimbursementId] int IDENTITY(1,1) NOT NULL,
@@ -195,6 +194,14 @@ CREATE TABLE [dbo].[ShoppingLists] (
 );
 GO
 
+-- Creating table 'StoreProducts'
+CREATE TABLE [dbo].[StoreProducts] (
+    [ProductId] int  NOT NULL,
+    [StoreId] int  NOT NULL,
+    [UPC] varchar(max)  NULL
+);
+GO
+
 -- Creating table 'Stores'
 CREATE TABLE [dbo].[Stores] (
     [StoreId] int IDENTITY(1,1) NOT NULL,
@@ -214,29 +221,9 @@ CREATE TABLE [dbo].[Users] (
 );
 GO
 
--- Creating table 'ReimbursementReceipts'
-CREATE TABLE [dbo].[ReimbursementReceipts] (
-    [Receipts_ReceiptId] int  NOT NULL,
-    [Reimbursements_ReimbursementId] int  NOT NULL
-);
-GO
-
--- Creating table 'StoreProducts'
-CREATE TABLE [dbo].[StoreProducts] (
-    [Products_ProductId] int  NOT NULL,
-    [Stores_StoreId] int  NOT NULL
-);
-GO
-
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
 -- --------------------------------------------------
-
--- Creating primary key on [OperationKey] in table 'C__RefactorLog'
-ALTER TABLE [dbo].[C__RefactorLog]
-ADD CONSTRAINT [PK_C__RefactorLog]
-    PRIMARY KEY CLUSTERED ([OperationKey] ASC);
-GO
 
 -- Creating primary key on [AccountId] in table 'Accounts'
 ALTER TABLE [dbo].[Accounts]
@@ -268,6 +255,12 @@ ADD CONSTRAINT [PK_Receipts]
     PRIMARY KEY CLUSTERED ([ReceiptId] ASC);
 GO
 
+-- Creating primary key on [ReceiptId], [ReimbursementId] in table 'ReimbursementReceipts'
+ALTER TABLE [dbo].[ReimbursementReceipts]
+ADD CONSTRAINT [PK_ReimbursementReceipts]
+    PRIMARY KEY CLUSTERED ([ReceiptId], [ReimbursementId] ASC);
+GO
+
 -- Creating primary key on [ReimbursementId] in table 'Reimbursements'
 ALTER TABLE [dbo].[Reimbursements]
 ADD CONSTRAINT [PK_Reimbursements]
@@ -286,6 +279,12 @@ ADD CONSTRAINT [PK_ShoppingLists]
     PRIMARY KEY CLUSTERED ([ShoppingListId] ASC);
 GO
 
+-- Creating primary key on [ProductId], [StoreId] in table 'StoreProducts'
+ALTER TABLE [dbo].[StoreProducts]
+ADD CONSTRAINT [PK_StoreProducts]
+    PRIMARY KEY CLUSTERED ([ProductId], [StoreId] ASC);
+GO
+
 -- Creating primary key on [StoreId] in table 'Stores'
 ALTER TABLE [dbo].[Stores]
 ADD CONSTRAINT [PK_Stores]
@@ -296,18 +295,6 @@ GO
 ALTER TABLE [dbo].[Users]
 ADD CONSTRAINT [PK_Users]
     PRIMARY KEY CLUSTERED ([UserObjectId] ASC);
-GO
-
--- Creating primary key on [Receipts_ReceiptId], [Reimbursements_ReimbursementId] in table 'ReimbursementReceipts'
-ALTER TABLE [dbo].[ReimbursementReceipts]
-ADD CONSTRAINT [PK_ReimbursementReceipts]
-    PRIMARY KEY CLUSTERED ([Receipts_ReceiptId], [Reimbursements_ReimbursementId] ASC);
-GO
-
--- Creating primary key on [Products_ProductId], [Stores_StoreId] in table 'StoreProducts'
-ALTER TABLE [dbo].[StoreProducts]
-ADD CONSTRAINT [PK_StoreProducts]
-    PRIMARY KEY CLUSTERED ([Products_ProductId], [Stores_StoreId] ASC);
 GO
 
 -- --------------------------------------------------
@@ -389,6 +376,15 @@ ON [dbo].[ShoppingListItems]
     ([ProductId]);
 GO
 
+-- Creating foreign key on [ProductId] in table 'StoreProducts'
+ALTER TABLE [dbo].[StoreProducts]
+ADD CONSTRAINT [FK_StoreProducts_Product]
+    FOREIGN KEY ([ProductId])
+    REFERENCES [dbo].[Products]
+        ([ProductId])
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+GO
+
 -- Creating foreign key on [StoreId] in table 'Receipts'
 ALTER TABLE [dbo].[Receipts]
 ADD CONSTRAINT [FK_Receipts_Stores]
@@ -417,6 +413,30 @@ GO
 CREATE INDEX [IX_FK_Receipts_Users]
 ON [dbo].[Receipts]
     ([UserObjectId]);
+GO
+
+-- Creating foreign key on [ReceiptId] in table 'ReimbursementReceipts'
+ALTER TABLE [dbo].[ReimbursementReceipts]
+ADD CONSTRAINT [FK_ReimbursementReceipts_Receipt]
+    FOREIGN KEY ([ReceiptId])
+    REFERENCES [dbo].[Receipts]
+        ([ReceiptId])
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+GO
+
+-- Creating foreign key on [ReimbursementId] in table 'ReimbursementReceipts'
+ALTER TABLE [dbo].[ReimbursementReceipts]
+ADD CONSTRAINT [FK_ReimbursementReceipts_Reimbursement]
+    FOREIGN KEY ([ReimbursementId])
+    REFERENCES [dbo].[Reimbursements]
+        ([ReimbursementId])
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_ReimbursementReceipts_Reimbursement'
+CREATE INDEX [IX_FK_ReimbursementReceipts_Reimbursement]
+ON [dbo].[ReimbursementReceipts]
+    ([ReimbursementId]);
 GO
 
 -- Creating foreign key on [ShoppingListId] in table 'ShoppingListItems'
@@ -464,52 +484,19 @@ ON [dbo].[ShoppingLists]
     ([UserObjectId]);
 GO
 
--- Creating foreign key on [Receipts_ReceiptId] in table 'ReimbursementReceipts'
-ALTER TABLE [dbo].[ReimbursementReceipts]
-ADD CONSTRAINT [FK_ReimbursementReceipts_Receipt]
-    FOREIGN KEY ([Receipts_ReceiptId])
-    REFERENCES [dbo].[Receipts]
-        ([ReceiptId])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating foreign key on [Reimbursements_ReimbursementId] in table 'ReimbursementReceipts'
-ALTER TABLE [dbo].[ReimbursementReceipts]
-ADD CONSTRAINT [FK_ReimbursementReceipts_Reimbursement]
-    FOREIGN KEY ([Reimbursements_ReimbursementId])
-    REFERENCES [dbo].[Reimbursements]
-        ([ReimbursementId])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_ReimbursementReceipts_Reimbursement'
-CREATE INDEX [IX_FK_ReimbursementReceipts_Reimbursement]
-ON [dbo].[ReimbursementReceipts]
-    ([Reimbursements_ReimbursementId]);
-GO
-
--- Creating foreign key on [Products_ProductId] in table 'StoreProducts'
-ALTER TABLE [dbo].[StoreProducts]
-ADD CONSTRAINT [FK_StoreProducts_Product]
-    FOREIGN KEY ([Products_ProductId])
-    REFERENCES [dbo].[Products]
-        ([ProductId])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating foreign key on [Stores_StoreId] in table 'StoreProducts'
+-- Creating foreign key on [StoreId] in table 'StoreProducts'
 ALTER TABLE [dbo].[StoreProducts]
 ADD CONSTRAINT [FK_StoreProducts_Store]
-    FOREIGN KEY ([Stores_StoreId])
+    FOREIGN KEY ([StoreId])
     REFERENCES [dbo].[Stores]
         ([StoreId])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ON DELETE CASCADE ON UPDATE NO ACTION;
 GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_StoreProducts_Store'
 CREATE INDEX [IX_FK_StoreProducts_Store]
 ON [dbo].[StoreProducts]
-    ([Stores_StoreId]);
+    ([StoreId]);
 GO
 
 -- --------------------------------------------------

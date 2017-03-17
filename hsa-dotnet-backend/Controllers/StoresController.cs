@@ -39,14 +39,16 @@ namespace HsaDotnetBackend.Controllers
             if(userLat.HasValue && userLong.HasValue)
                 userLocation = DbGeography.FromText($"POINT({userLong.Value.ToString()} {userLat.Value.ToString()})");
 
-            return db.Stores
+            var test = db.Stores
                 .Where(s => radius == null || userLat == null || userLong == null || userLocation.Distance(s.Location) < radius * 1609.344)
                 .Where(s => query == null || s.Name.Contains(query))
-                .Where(s => productid == null || s.Products.Any(p => p.ProductId == productid.Value))
+                .Where(s => productid == null || s.StoreProducts.Any(p => p.ProductId == productid.Value))
                 .OrderBy(s => s.Name)
                 .Skip(skip)
                 .Take(take)
                 .ProjectTo<StoreDto>();
+            var something = db.Stores.Where(s => s.StoreId == 2);
+            return test;
 
             //return Ok(dbStore);
         }

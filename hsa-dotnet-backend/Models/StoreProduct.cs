@@ -12,8 +12,13 @@ namespace HsaDotnetBackend.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class C__RefactorLog
+    public partial class StoreProduct
     {
-        public System.Guid OperationKey { get; set; }
+        public int ProductId { get; set; }
+        public int StoreId { get; set; }
+        public string UPC { get; set; }
+    
+        public virtual Product Product { get; set; }
+        public virtual Store Store { get; set; }
     }
 }

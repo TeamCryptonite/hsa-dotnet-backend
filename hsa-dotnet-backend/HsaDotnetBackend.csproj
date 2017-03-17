@@ -233,9 +233,6 @@
     <Compile Include="Models\Category.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\C__RefactorLog.cs">
-      <DependentUpon>HsaServiceModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\DTOs\CategoryDto.cs" />
     <Compile Include="Models\DTOs\LineItemDto.cs" />
     <Compile Include="Models\DTOs\LocationDto.cs" />
@@ -273,6 +270,9 @@
     <Compile Include="Models\Reimbursement.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ReimbursementReceipt.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ShoppingList.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
@@ -280,6 +280,9 @@
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Store.cs">
+      <DependentUpon>HsaServiceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StoreProduct.cs">
       <DependentUpon>HsaServiceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
