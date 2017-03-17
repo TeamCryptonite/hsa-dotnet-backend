@@ -33,21 +33,22 @@ namespace HsaDotnetBackend.Controllers
 
         [HttpGet]
         [Route("api/stores")]
-        public IHttpActionResult GetAllStores(int skip = 0, int take = 10, string query = null, int? productid = null, int? radius = null, double? userLat = null, double? userLong = null)
+        public IQueryable<StoreDto> GetAllStores(int skip = 0, int take = 10, string query = null, int? productid = null, int? radius = null, double? userLat = null, double? userLong = null)
         {
             DbGeography userLocation = null;
             if(userLat.HasValue && userLong.HasValue)
                 userLocation = DbGeography.FromText($"POINT({userLong.Value.ToString()} {userLat.Value.ToString()})");
-            var dbStore = db.Stores
-                .Where(s => radius.HasValue || userLat.HasValue || userLong.HasValue || userLocation.Distance(s.Location) < radius * 1609.344)
+
+            return db.Stores
+                .Where(s => radius == null || userLat == null || userLong == null || userLocation.Distance(s.Location) < radius * 1609.344)
                 .Where(s => query == null || s.Name.Contains(query))
-                .Where(s => productid.HasValue || s.Products.Any(p => p.ProductId == productid.Value))
+                .Where(s => productid == null || s.Products.Any(p => p.ProductId == productid.Value))
                 .OrderBy(s => s.Name)
                 .Skip(skip)
                 .Take(take)
                 .ProjectTo<StoreDto>();
 
-            return Ok(dbStore);
+            //return Ok(dbStore);
         }
         
         [HttpGet]
