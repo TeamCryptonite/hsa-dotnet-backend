@@ -186,10 +186,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\Assets\missingreceipt.jpg" />
-    <Content Include="App_Data\fortresstest.mdf" />
-    <Content Include="App_Data\fortresstest_log.ldf">
+    <None Include="App_Data\fortresstest.mdf" />
+    <None Include="App_Data\fortresstest_log.ldf">
       <DependentUpon>fortresstest.mdf</DependentUpon>
-    </Content>
+    </None>
     <Content Include="Global.asax" />
     <Content Include="Models\HsaServiceModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
