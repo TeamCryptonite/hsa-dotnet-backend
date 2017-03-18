@@ -50,17 +50,19 @@ namespace HsaDotnetBackend.Controllers
         
         [HttpPost]
         [Route("api/products")]
-        public async Task<IHttpActionResult> PostProduct([FromBody] Product product)
+        public async Task<IHttpActionResult> PostProduct([FromBody] ProductDto product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Model not valid.");
             }
 
-            db.Products.Add(product);
+            var dbProduct = Mapper.Map<ProductDto, Product>(product);
+
+            db.Products.Add(dbProduct);
             await db.SaveChangesAsync();
 
-            return Created($"api/products/{product.ProductId}", Mapper.Map<Product, ProductDto>(product));
+            return Created($"api/products/{product.ProductId}", Mapper.Map<Product, ProductDto>(dbProduct));
         }
         
         [HttpPatch]
