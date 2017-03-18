@@ -241,7 +241,6 @@
     <Compile Include="Models\DTOs\ShoppingListDto.cs" />
     <Compile Include="Models\DTOs\ShoppingListItemDto.cs" />
     <Compile Include="Models\DTOs\StoreDto.cs" />
-    <Compile Include="Models\DTOs\StoreWithProductsDto.cs" />
     <Compile Include="Models\DTOs\UserDto.cs" />
     <Compile Include="Models\HsaServiceModel.Context.cs">
       <AutoGen>True</AutoGen>
