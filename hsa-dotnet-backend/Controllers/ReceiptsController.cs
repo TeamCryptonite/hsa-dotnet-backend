@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
@@ -29,29 +30,22 @@ namespace HsaDotnetBackend.Controllers
         // GET: api/Receipts
         [HttpGet]
         [Route("api/receipts")]
-        public IQueryable<ReceiptDto> GetReceipts(int skip = 0, int take = 10, string query = null)
+        public IHttpActionResult GetReceipts(int skip = 0, int take = 10, string query = null)
         {
             var userGuid = _identityHelper.GetCurrentUserGuid();
 
 
-            if (query == null) // Simple paginated query
-                return db.Receipts
-                    .Where(receipt => receipt.UserObjectId == userGuid)
-                    .OrderByDescending(x => x.DateTime)
-                    .Skip(skip)
-                    .Take(take)
-                    .ProjectTo<ReceiptDto>();
-            return db.Receipts
+            var dbReceipt = db.Receipts
                 .Where(receipt => receipt.UserObjectId == userGuid)
-                .Where(receipt =>
-                    receipt.LineItems.Any(
-                        li => li.Product.Name.Contains(query) || li.Product.Description.Contains(query))
-                    || receipt.Store.Name.Contains(query)
-                )
+                .Where(receipt => query == null || receipt.LineItems.Any(
+                                      li =>
+                                          li.Product.Name.Contains(query) || li.Product.Description.Contains(query))
+                                  || receipt.Store.Name.Contains(query))
                 .OrderByDescending(x => x.DateTime)
                 .Skip(skip)
-                .Take(take)
-                .ProjectTo<ReceiptDto>();
+                .Take(take);
+
+            return Ok(Mapper.Map<IEnumerable<Receipt>, IEnumerable<ReceiptDto>>(dbReceipt));
         }
 
         // GET: api/Receipts/5
@@ -156,12 +150,14 @@ namespace HsaDotnetBackend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Model is invalid");
 
-            var dbReceipt = Mapper.Map<ReceiptDto, Receipt>(receipt); 
+            var dbReceipt = Mapper.Map<ReceiptDto, Receipt>(receipt);
 
             // Add user guid to receipt
             dbReceipt.UserObjectId = userGuid;
 
-            
+            // If DateTime is null, add current DateTime
+            if(dbReceipt.DateTime == null)
+                dbReceipt.DateTime = DateTime.Now;
 
             // TODO: Consider refactoring this into a helper
             // Check for existing products, and create product if none exist
@@ -294,7 +290,7 @@ namespace HsaDotnetBackend.Controllers
                 return InternalServerError(ex);
             }
         }
-        
+
         [HttpDelete]
         [Route("api/receipts/{receiptId:int}/lineitems/{lineItemId:int}")]
         public async Task<IHttpActionResult> DeleteLineItem(int receiptId, int lineItemId)
@@ -346,8 +342,6 @@ namespace HsaDotnetBackend.Controllers
             return Ok(new {});
         }
 
-
-        
 
         protected override void Dispose(bool disposing)
         {

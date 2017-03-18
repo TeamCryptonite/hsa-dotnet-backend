@@ -14,8 +14,8 @@ namespace HsaDotnetBackend.Models.DTOs
         public StoreDto Store { get; set; }
         public DateTime? DateTime { get; set; }
         public bool? IsScanned { get; set; }
-        public string ImageId { get; set; }
-        public string ImageUrl => ReceiptPictureHelper.GetReceiptImageUrl(ImageId);
+        public string ImageUrl { get; set; }
+        public string OcrUrl { get; set; }
         public ICollection<LineItemDto> LineItems { get; set; }
     }
 }

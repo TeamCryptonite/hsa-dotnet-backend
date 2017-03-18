@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Web;
 using System.Web.Http;
 using AutoMapper;
+using HsaDotnetBackend.Helpers;
 using HsaDotnetBackend.Models;
 using HsaDotnetBackend.Models.DTOs;
 using Newtonsoft.Json;
@@ -23,12 +24,18 @@ namespace HsaDotnetBackend
                 .SerializerSettings
                 .ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 
-            // AutoMapper
+            // DbGeography assemblies
             Utilities.LoadNativeAssemblies(Server.MapPath("~/bin"));
 
+            // TODO: Consider moving to it's own config file
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Receipt, ReceiptDto>().ReverseMap();
+                cfg.CreateMap<Receipt, ReceiptDto>()
+                    .ForMember(dest => dest.ImageUrl,
+                        opt => opt.MapFrom(src =>
+                            AzureBlobHelper.GetReceiptImageUrl(src.ImageRef)
+                        ));
+                cfg.CreateMap<ReceiptDto, Receipt>();
                 cfg.CreateMap<LineItem, LineItemDto>().ReverseMap();
                 cfg.CreateMap<Product, ProductDto>().ReverseMap();
                 cfg.CreateMap<Store, StoreDto>().ReverseMap();
@@ -63,6 +70,7 @@ namespace HsaDotnetBackend
                         opt => opt.MapFrom(src =>
                             Guid.Parse(src.UserGuid)));
             });
+
             //amConfig.AssertConfigurationIsValid();
             //Mapper.Initialize(amConfig);
         }

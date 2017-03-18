@@ -41,7 +41,7 @@ namespace HsaDotnetBackend.Controllers
         [HttpGet]
         public string GetBlob()
         {
-            return ReceiptPictureHelper.GetReceiptImageUrl("20170216_140140[1].jpg");
+            return AzureBlobHelper.GetReceiptImageUrl("20170216_140140[1].jpg");
         }
 
         [Route("devtest/messagequeue")]

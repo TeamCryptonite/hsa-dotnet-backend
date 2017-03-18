@@ -36,7 +36,7 @@ namespace HsaDotnetBackend.Controllers
             if (receipt?.UserObjectId != userGuid)
                 return NotFound();
 
-            var newBlobObj = ReceiptPictureHelper.CreateEmptyReceiptPictureBlob(receipt, imagetype);
+            var newBlobObj = AzureBlobHelper.CreateEmptyReceiptPictureBlob(receipt, imagetype);
             receipt.ImageRef = newBlobObj.ReceiptRef;
 
             if (newBlobObj == null)
@@ -57,7 +57,7 @@ namespace HsaDotnetBackend.Controllers
             if (receipt?.UserObjectId != userGuid)
                 return NotFound();
 
-            var blobUrl = ReceiptPictureHelper.GetEditReceiptPictureBlob(receipt);
+            var blobUrl = AzureBlobHelper.GetEditReceiptPictureBlob(receipt);
             if (blobUrl == null)
                 return BadRequest("Could Not Find Blob");
 
@@ -73,7 +73,7 @@ namespace HsaDotnetBackend.Controllers
             if (receipt?.UserObjectId != userGuid)
                 return NotFound();
 
-            var isDeleted = ReceiptPictureHelper.DeleteReceiptPictureBlob(receipt);
+            var isDeleted = AzureBlobHelper.DeleteReceiptPictureBlob(receipt);
             if (isDeleted == false)
                 return BadRequest("Could Not Delete Blob");
 
@@ -82,6 +82,7 @@ namespace HsaDotnetBackend.Controllers
 
 
         // OCR
+        // TODO: REFACTOR
         [HttpPost]
         [Route("api/receipts/{receiptId:int}/receiptimageocr")]
         public async Task<IHttpActionResult> StartReceiptImageOcr(int receiptId)
@@ -105,8 +106,6 @@ namespace HsaDotnetBackend.Controllers
                 return BadRequest("Receipt does not include image id");
             message.Add("imageBlobReference", receipt.ImageRef);
 
-            
-
             // Access the results blob storage account
             CloudStorageAccount blobStorageAccount =
                 CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
@@ -118,9 +117,13 @@ namespace HsaDotnetBackend.Controllers
 
             resultContainer.CreateIfNotExists();
 
-            string resultBlobReference = receipt.ImageRef.Replace("rec", "result") + ".json";
+            string ocrResultBlobReference = receipt.ImageRef.Replace("rec", "result") + ".json";
 
-            CloudBlockBlob resultBlob = resultContainer.GetBlockBlobReference(resultBlobReference);
+            // Save ocrRef to Receipt
+            receipt.OcrRef = ocrResultBlobReference;
+            await db.SaveChangesAsync();
+
+            CloudBlockBlob resultBlob = resultContainer.GetBlockBlobReference(ocrResultBlobReference);
 
             // Set inital JSON Result
             var result = new JObject();
@@ -130,14 +133,14 @@ namespace HsaDotnetBackend.Controllers
             resultBlob.UploadText(result.ToString());
 
             // Finish message and add message to queue
-            message.Add("resultReference", resultBlobReference);
+            message.Add("resultReference", ocrResultBlobReference);
 
             CloudQueueMessage newMessage = new CloudQueueMessage(message.ToString());
 
             queue.AddMessage(newMessage);
 
             // Return URL for result reference
-            var policy = ReceiptPictureHelper.GenerateSasPolicy();
+            var policy = AzureBlobHelper.GenerateSasPolicy();
             string sasBlobToken = resultBlob.GetSharedAccessSignature(policy);
 
             return Ok(resultBlob.Uri + sasBlobToken);
