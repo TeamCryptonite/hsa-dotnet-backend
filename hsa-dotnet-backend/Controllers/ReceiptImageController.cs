@@ -36,16 +36,28 @@ namespace HsaDotnetBackend.Controllers
             if (receipt?.UserObjectId != userGuid)
                 return NotFound();
 
-            var newBlobObj = AzureBlobHelper.CreateEmptyReceiptPictureBlob(receipt, imagetype);
-            receipt.ImageRef = newBlobObj.ReceiptRef;
+            if (string.IsNullOrWhiteSpace(receipt.ImageRef))
+            {
+                var newBlobObj = AzureBlobHelper.CreateEmptyReceiptPictureBlob(receipt, imagetype);
+                receipt.ImageRef = newBlobObj.ReceiptRef;
 
-            if (newBlobObj == null)
-                return BadRequest("Could Not Create Blob");
+                if (newBlobObj == null)
+                    return BadRequest("Could Not Create Blob");
 
-            receipt.ImageRef = newBlobObj.ReceiptRef;
-            await db.SaveChangesAsync();
+                receipt.ImageRef = newBlobObj.ReceiptRef;
+                await db.SaveChangesAsync();
 
-            return Ok(new { PictureUrl = newBlobObj.SasUrl });
+                return Ok(new { PictureUrl = newBlobObj.SasUrl });
+            }
+            else
+            {
+                var blobUrl = AzureBlobHelper.GetEditReceiptPictureBlob(receipt);
+                if (blobUrl == null)
+                    return BadRequest("Could Not Find Blob");
+
+                return Ok(new { PictureUrl = blobUrl });
+            }
+            
         }
 
         [HttpPatch]
