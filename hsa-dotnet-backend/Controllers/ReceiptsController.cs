@@ -42,6 +42,7 @@ namespace HsaDotnetBackend.Controllers
                                           li.Product.Name.Contains(query) || li.Product.Description.Contains(query))
                                   || receipt.Store.Name.Contains(query))
                 .OrderByDescending(x => x.DateTime)
+                .ThenByDescending(x => x.ReceiptId)
                 .Skip(skip)
                 .Take(take);
 
