@@ -152,12 +152,26 @@ namespace HsaDotnetBackend.Controllers
 
             var dbReceipt = Mapper.Map<ReceiptDto, Receipt>(receipt);
 
+            // Add store to receipt
+            Store dbStore = null;
+            if (receipt.Store.StoreId > 0)
+                dbStore = await db.Stores.FindAsync(receipt.Store.StoreId);
+
+            if (dbStore != null)
+                dbReceipt.Store = dbStore;
+            else
+                dbReceipt.Store = string.IsNullOrWhiteSpace(receipt.Store.Name)
+                    ? null
+                    : Mapper.Map<StoreDto, Store>(receipt.Store);
+
             // Add user guid to receipt
             dbReceipt.UserObjectId = userGuid;
 
             // If DateTime is null, add current DateTime
-            if(dbReceipt.DateTime == null)
+            if (dbReceipt.DateTime == null)
                 dbReceipt.DateTime = DateTime.Now;
+
+            // Find Store if id available
 
             // TODO: Consider refactoring this into a helper
             // Check for existing products, and create product if none exist
