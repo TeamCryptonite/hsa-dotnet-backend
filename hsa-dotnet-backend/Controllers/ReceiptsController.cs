@@ -176,14 +176,16 @@ namespace HsaDotnetBackend.Controllers
 
             // TODO: Consider refactoring this into a helper
             // Check for existing products, and create product if none exist
-            foreach (var lineItem in dbReceipt.LineItems)
-                if (lineItem.ProductId > 0)
-                {
-                    var product = db.Products.Find(lineItem.ProductId);
-                    if (product != null)
-                        lineItem.Product = product;
-                }
-
+            if (dbReceipt.LineItems != null)
+            {
+                foreach (var lineItem in dbReceipt.LineItems)
+                    if (lineItem.ProductId > 0)
+                    {
+                        var product = db.Products.Find(lineItem.ProductId);
+                        if (product != null)
+                            lineItem.Product = product;
+                    }
+            }
             try
             {
                 db.Receipts.Add(dbReceipt);
@@ -281,6 +283,7 @@ namespace HsaDotnetBackend.Controllers
 
             if (dbReceipt?.UserObjectId != userGuid)
                 return NotFound();
+
 
             var dbLineItem = Mapper.Map<LineItemDto, LineItem>(lineItem);
 
