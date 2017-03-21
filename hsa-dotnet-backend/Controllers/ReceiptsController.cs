@@ -161,7 +161,7 @@ namespace HsaDotnetBackend.Controllers
             if (dbStore != null)
                 dbReceipt.Store = dbStore;
             else
-                dbReceipt.Store = string.IsNullOrWhiteSpace(receipt.Store.Name)
+                dbReceipt.Store = string.IsNullOrWhiteSpace(receipt.Store?.Name)
                     ? null
                     : Mapper.Map<StoreDto, Store>(receipt.Store);
 
