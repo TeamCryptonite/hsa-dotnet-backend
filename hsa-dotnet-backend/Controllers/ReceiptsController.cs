@@ -151,14 +151,11 @@ namespace HsaDotnetBackend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Model is invalid");
 
-            if (receipt.LineItems == null)
-                receipt.LineItems = new List<LineItemDto>();
-
             var dbReceipt = Mapper.Map<ReceiptDto, Receipt>(receipt);
 
             // Add store to receipt
             Store dbStore = null;
-            if (receipt.Store.StoreId > 0)
+            if (receipt.Store?.StoreId > 0)
                 dbStore = await db.Stores.FindAsync(receipt.Store.StoreId);
 
             if (dbStore != null)
@@ -179,13 +176,16 @@ namespace HsaDotnetBackend.Controllers
 
             // TODO: Consider refactoring this into a helper
             // Check for existing products, and create product if none exist
-            foreach (var lineItem in dbReceipt.LineItems)
-                if (lineItem.ProductId > 0)
-                {
-                    var product = db.Products.Find(lineItem.ProductId);
-                    if (product != null)
-                        lineItem.Product = product;
-                }
+            if (dbReceipt.LineItems != null)
+            {
+                foreach (var lineItem in dbReceipt.LineItems)
+                    if (lineItem.ProductId > 0)
+                    {
+                        var product = db.Products.Find(lineItem.ProductId);
+                        if (product != null)
+                            lineItem.Product = product;
+                    }
+            }
             try
             {
                 db.Receipts.Add(dbReceipt);
