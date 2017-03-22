@@ -87,6 +87,11 @@ namespace receiptocr
             magickImg.Sharpen();
 
 
+            while (magickImg.ToByteArray().Length > 3888888)
+            {
+                magickImg.Thumbnail(new Percentage(95));
+            }
+
             resultJson["Status"] = "OCR Running";
             resultBlob.UploadText(resultJson.ToString());
             // Start API to Google Vision
