@@ -40,8 +40,16 @@ namespace HsaDotnetBackend.Controllers
                         radius == null || userLat == null || userLong == null ||
                         userLocation.Distance(s.Location) < radius * 1609.344)
                 .Where(s => query == null || s.Name.Contains(query))
-                .Where(s => productid == null || s.Products.Any(p => p.ProductId == productid.Value))
-                .OrderBy(s => s.Name)
+                .Where(s => productid == null || s.Products.Any(p => p.ProductId == productid.Value));
+
+            if(userLocation != null)
+                dbStores = dbStores
+                    .Where(s => s.Location != null)
+                    .OrderBy(s => userLocation.Distance(s.Location));
+            else
+                dbStores = dbStores.OrderBy(s => s.Name);
+
+            dbStores = dbStores
                 .Skip(skip)
                 .Take(take);
 
