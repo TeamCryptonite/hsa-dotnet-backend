@@ -1,4 +1,5 @@
-﻿using System.Data.Entity.Infrastructure;
+﻿using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Spatial;
 using System.Globalization;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace HsaDotnetBackend.Controllers
             if (userLat.HasValue && userLong.HasValue)
                 userLocation = DbGeography.FromText($"POINT({userLong.Value} {userLat.Value})");
 
-            var test = db.Stores
+            var dbStores = db.Stores
                 .Where(
                     s =>
                         radius == null || userLat == null || userLong == null ||
@@ -42,12 +43,21 @@ namespace HsaDotnetBackend.Controllers
                 .Where(s => productid == null || s.Products.Any(p => p.ProductId == productid.Value))
                 .OrderBy(s => s.Name)
                 .Skip(skip)
-                .Take(take)
-                .ProjectTo<StoreDto>();
+                .Take(take);
 
-            return test;
+            if (userLocation != null)
+            {
+                var storeList = new List<StoreDto>();
+                foreach (var dbStore in dbStores)
+                {
+                    var reStore = Mapper.Map<Store, StoreDto>(dbStore);
+                    reStore.DistanceToUser = userLocation.Distance(dbStore.Location) / 1609.344;
+                    storeList.Add(reStore);
+                }
+                return storeList.AsQueryable();
+            }
 
-            //return Ok(dbStore);
+            return dbStores.ProjectTo<StoreDto>();
         }
 
         [HttpGet]
