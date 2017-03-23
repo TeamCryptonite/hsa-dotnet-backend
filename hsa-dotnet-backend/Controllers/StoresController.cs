@@ -51,7 +51,8 @@ namespace HsaDotnetBackend.Controllers
                 foreach (var dbStore in dbStores)
                 {
                     var reStore = Mapper.Map<Store, StoreDto>(dbStore);
-                    reStore.DistanceToUser = userLocation.Distance(dbStore.Location) / 1609.344;
+                    if(dbStore.Location != null)
+                        reStore.DistanceToUser = userLocation.Distance(dbStore.Location) / 1609.344;
                     storeList.Add(reStore);
                 }
                 return storeList.AsQueryable();
