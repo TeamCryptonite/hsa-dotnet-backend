@@ -85,6 +85,9 @@ namespace receiptocr
             magickImg.Enhance();
             magickImg.Despeckle();
             magickImg.Sharpen();
+            magickImg.WhiteThreshold(new Percentage(50));
+            magickImg.Trim();
+            magickImg.AutoOrient();
 
 
             while (magickImg.ToByteArray().Length > 3888888)
@@ -94,6 +97,10 @@ namespace receiptocr
 
             resultJson["Status"] = "OCR Running";
             resultBlob.UploadText(resultJson.ToString());
+
+
+
+
             // Start API to Google Vision
             string googleApiKey = ConfigurationManager.AppSettings["GoogleApiKey"];
 
@@ -119,51 +126,102 @@ namespace receiptocr
                 throw new Exception("GoogleAPI Status did not return OK");
             }
 
+
+
+
+
+
             // Convert GoogleAPI Response into a JObject
             var content = JObject.Parse(response.Content);
-            var googleContentComplete = content["responses"][0]["textAnnotations"][0]["description"].ToString();
-
-            // Regex Pattern matching to pull out important details
-            string pattern =
-                @"(?<pline>(?<price>\d+\.\d\d)\s*(?:[A-Z]\s)?\s*)?(?<name>[a-zA-Z].+)\s(?<UPC>\d+\s+)?[F]?\s*(?(pline)|(?<price2>\d+\.\d\d)\s*(?:[A-Z]\s)?)";
-            MatchCollection matches = Regex.Matches(googleContentComplete, pattern);
+            
             var buildJson = new JObject();
             buildJson.Add("Status", "Completed");
 
             var lineItems = new JArray();
-            foreach (Match match in matches)
+            var linesDictionary = new SortedDictionary<double, List<string>>();
+            var blocks = content["responses"][0]["fullTextAnnotation"]["pages"][0]["blocks"];
+            foreach (var block in blocks)
             {
-                if (match.Success)
+                // double in dictionary is the y value of a word's midline
+
+                var paragraphs = block["paragraphs"];
+                foreach (var paragraph in paragraphs)
+                {
+                    var words = paragraph["words"];
+                    foreach (var word in words)
+                    {
+                        // Build each word
+                        var wordStr = "";
+                        var symbols = word["symbols"];
+                        foreach (var symbol in symbols)
+                            wordStr += symbol["text"] != null ? symbol["text"].Value<string>() : "";
+
+                        // Find midline for each word
+                        var yValues = new List<int>();
+                        foreach (var vertex in word["boundingBox"]["vertices"])
+                            if (vertex["y"] != null)
+                                yValues.Add(vertex["y"].Value<int>());
+                        var wordMidline = yValues.Average();
+
+                        // Determine if there is a dictionary key within this word's midline
+                        var addFlag = false;
+                        foreach (var line in linesDictionary)
+                            if (line.Key <= yValues.Max() && line.Key >= yValues.Min())
+                            {
+                                linesDictionary[line.Key].Add(wordStr);
+                                addFlag = true;
+                                break;
+                            }
+                        // Create new dictionary entry if no suitable one is found
+                        if (!addFlag)
+                            linesDictionary.Add(wordMidline, new List<string> { wordStr });
+                    }
+                }
+            }
+
+            foreach (var line in linesDictionary)
+            {
+                var lineString = "";
+                foreach (var str in line.Value)
+                {
+                    lineString += str + " ";
+                }
+                //Condense prices so they don't include spaces.
+                lineString = Regex.Replace(lineString, @"\s(\d+)\s*\.\s*(\d\d)\s", " $1.$2 ");
+
+                var stopReceiptWords = new List<string> { "total", "debit", "credit", "change" };
+                if (stopReceiptWords.Any(word => lineString.ToLower().Contains(word)))
+                    break;
+
+                var pricePattern = new Regex(@"(\d+\.\d\d)");
+                var priceMatch = pricePattern.Match(lineString);
+                if (priceMatch.Success)
                 {
                     var lineItem = new JObject();
-                    var product = new JObject();
-                    Match upcNameMatch = Regex.Match(match.Groups["name"].Value, @"(?<name>.*)\s+(?<upc>\d+)(?!\d*\.\d*)");
+                    lineItem.Add("Price", priceMatch.Groups[1].Value);
 
-                    if (upcNameMatch.Success)
+                    // Remove the price from the string
+                    lineString = lineString.Replace(priceMatch.Groups[1].Value, "").Trim();
+
+                    // Remove any pattern of numbers greater than 5 (Like a UPC)
+                    lineString = Regex.Replace(lineString, @"[\dO]{5,}", "");
+
+                    // Remove anything after two spaces
+                    lineString = Regex.Replace(lineString, @"\s\s.*", "");
+
+                    var productPattern = new Regex(@"(.*)");
+                    var productMatch = productPattern.Match(lineString);
+                    if (productMatch.Success)
                     {
-                        if (upcNameMatch.Groups["name"].Success)
-                            product.Add("Name", upcNameMatch.Groups["name"].Value);
-                        if (upcNameMatch.Groups["upc"].Success)
-                            product.Add("Upc", upcNameMatch.Groups["upc"].Value);
+                        var product = new JObject();
+                        product.Add("Name", productMatch.Groups[1].Value);
+                        lineItem.Add("Product", product);
                     }
                     else
                     {
-                        if (match.Groups["name"].Success)
-                            product.Add("Name", match.Groups["name"].Value);
-                        if (match.Groups["upc"].Success)
-                            product.Add("Upc", match.Groups["upc"].Value);
+                        lineItem.Add("Product", null);
                     }
-                    if (match.Groups["price"].Success)
-                        lineItem.Add("Price", match.Groups["price"].Value);
-                    else if (match.Groups["price2"].Success)
-                        lineItem.Add("Price", match.Groups["price2"].Value);
-
-                    lineItem.Add("Product", product);
-                    IEnumerable<string> namesToSkip = new List<string>() { "tax", "total", "cash", "tend", "pay", "change" };
-                    if (!namesToSkip.Any(lineItem["Product"]["Name"].ToString().ToLower().Contains))
-                    {
-                        lineItems.Add(lineItem);
-                    }
+                    lineItems.Add(lineItem);
                 }
             }
 
@@ -172,9 +230,6 @@ namespace receiptocr
 
             // Upload results to resultBlob
             resultBlob.UploadText(buildJson.ToString());
-
-            // Kindof works: (?<pline>(?<price>\d+\.\d\d)\s*(?:[TXR]\s)?\s*)?(?<name>[a-zA-Z].+)\s(?<UPC>\d+\s+)?[F]?\s*(?(pline)|(?<price2>\d+\.\d\d)\s*(?:[TXR]\s)?)
-            //log.WriteLine(magickImg.ToBase64());
         }
     }
 }
