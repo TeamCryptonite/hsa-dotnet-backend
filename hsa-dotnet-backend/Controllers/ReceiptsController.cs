@@ -101,8 +101,8 @@ namespace HsaDotnetBackend.Controllers
                 return NotFound();
 
             // A User has accepted an OCR entry
-            if (dbReceipt.Provisional == false)
-                dbReceipt.Provisional = true;
+            if (dbReceipt.Provisional)
+                dbReceipt.Provisional = false;
 
             if (patchReceipt.DateTime.HasValue)
                 dbReceipt.DateTime = patchReceipt.DateTime;
