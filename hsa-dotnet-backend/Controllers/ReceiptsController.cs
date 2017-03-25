@@ -100,15 +100,9 @@ namespace HsaDotnetBackend.Controllers
             if (dbReceipt?.UserObjectId != userGuid)
                 return NotFound();
 
-            // Assumes Properties from ReceiptPatchDto match EXACTLY with Receipt.
-            //foreach (PropertyInfo property in patchReceipt.GetType().GetProperties())
-            //{
-            //    var propertyValue = property.GetValue(patchReceipt, null);
-            //    if (propertyValue != null)
-            //    {
-            //        db.Entry(dbReceipt).Property(property.Name).CurrentValue = propertyValue;
-            //    }
-            //}
+            // A User has accepted an OCR entry
+            if (dbReceipt.Provisional == false)
+                dbReceipt.Provisional = true;
 
             if (patchReceipt.DateTime.HasValue)
                 dbReceipt.DateTime = patchReceipt.DateTime;
@@ -116,11 +110,17 @@ namespace HsaDotnetBackend.Controllers
                 dbReceipt.IsScanned = patchReceipt.IsScanned;
             if (patchReceipt.Store != null)
             {
+                // Add store to receipt
                 Store dbStore = null;
-                if (patchReceipt.Store.StoreId > 0)
+                if (patchReceipt.Store?.StoreId > 0)
                     dbStore = await db.Stores.FindAsync(patchReceipt.Store.StoreId);
-                // TODO: Reconsider allowing users to add stores
-                dbReceipt.Store = dbStore ?? Mapper.Map<StoreDto, Store>(patchReceipt.Store);
+
+                if (dbStore != null)
+                    dbReceipt.Store = dbStore;
+                else
+                    dbReceipt.Store = string.IsNullOrWhiteSpace(patchReceipt.Store?.Name)
+                        ? null
+                        : Mapper.Map<StoreDto, Store>(patchReceipt.Store);
             }
 
             try
@@ -136,6 +136,8 @@ namespace HsaDotnetBackend.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
+
+        []
 
         // POST: api/Receipts
         [ResponseType(typeof(Receipt))]
@@ -344,22 +346,6 @@ namespace HsaDotnetBackend.Controllers
 
             return Ok("Receipt Deleted");
         }
-
-
-        // TODO Reconsider this separate route
-        [HttpGet]
-        [Route("api/receipts/{receiptId:int}/pictureurl")]
-        public async Task<object> GetReadWritePictureUrl(int receiptId)
-        {
-            var receipt = await db.Receipts.FindAsync(receiptId);
-            var userGuid = _identityHelper.GetCurrentUserGuid();
-
-            if (receipt?.UserObjectId != userGuid)
-                return NotFound();
-
-            return Ok(new {});
-        }
-
 
         protected override void Dispose(bool disposing)
         {

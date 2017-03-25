@@ -141,27 +141,5 @@ namespace HsaDotnetBackend.Controllers
         {
             return db.Stores.Count(e => e.StoreId == id) > 0;
         }
-
-        [HttpGet]
-        [Route("api/stores/{storeId:int}/distanceToStore")]
-        public async Task<IHttpActionResult> DistanceToStore(int storeId, double? userLat = null,
-            double? userLong = null)
-        {
-            if (!userLat.HasValue || !userLong.HasValue)
-                return BadRequest("Must supply user's Latitude and Logitude");
-
-            var dbStore = await db.Stores.FindAsync(storeId);
-            if (dbStore == null)
-                return NotFound();
-            if (dbStore.Location == null)
-                return BadRequest("Store does not include location data");
-
-            var userLocation = DbGeography.FromText($"POINT({userLong.Value} {userLat.Value})");
-
-            return Ok(new
-            {
-                DistanceToStore = userLocation.Distance(dbStore.Location) / 1609.344
-            });
-        }
     }
 }

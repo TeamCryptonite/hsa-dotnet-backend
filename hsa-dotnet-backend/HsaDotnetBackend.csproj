@@ -218,6 +218,7 @@
     <Compile Include="Controllers\ReceiptAggregateController.cs" />
     <Compile Include="Controllers\ReceiptImageController.cs" />
     <Compile Include="Controllers\ReceiptsController.cs" />
+    <Compile Include="Controllers\ReceiptOcrController.cs" />
     <Compile Include="Controllers\ShoppingListsController.cs" />
     <Compile Include="Controllers\StoresController.cs" />
     <Compile Include="Global.asax.cs">
