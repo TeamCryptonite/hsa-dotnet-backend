@@ -28,6 +28,8 @@ namespace HsaDotnetBackend.Models
         public Nullable<int> StoreId { get; set; }
         public string ImageRef { get; set; }
         public string OcrRef { get; set; }
+        public bool WaitingForOcr { get; set; }
+        public bool Provisional { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LineItem> LineItems { get; set; }

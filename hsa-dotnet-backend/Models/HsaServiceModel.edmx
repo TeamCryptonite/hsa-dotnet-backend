@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Accounts">
           <Key>
             <PropertyRef Name="AccountId" />
@@ -53,6 +53,8 @@
           <Property Name="StoreId" Type="int" />
           <Property Name="ImageRef" Type="varchar(max)" />
           <Property Name="OcrRef" Type="varchar(max)" />
+          <Property Name="WaitingForOcr" Type="bit" Nullable="false" />
+          <Property Name="Provisional" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ReimbursementReceipts">
           <Key>
@@ -509,6 +511,8 @@
           <NavigationProperty Name="Store" Relationship="Model.FK_Receipts_Stores" FromRole="Receipt" ToRole="Store" />
           <NavigationProperty Name="User" Relationship="Model.FK_Receipts_Users" FromRole="Receipt" ToRole="User" />
           <NavigationProperty Name="ReimbursementReceipts" Relationship="Model.FK_ReimbursementReceipts_Receipt" FromRole="Receipt" ToRole="ReimbursementReceipt" />
+          <Property Name="WaitingForOcr" Type="Boolean" Nullable="false" />
+          <Property Name="Provisional" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="ReimbursementReceipt">
           <Key>
@@ -798,6 +802,8 @@
           <EntitySetMapping Name="Receipts">
             <EntityTypeMapping TypeName="Model.Receipt">
               <MappingFragment StoreEntitySet="Receipts">
+                <ScalarProperty Name="Provisional" ColumnName="Provisional" />
+                <ScalarProperty Name="WaitingForOcr" ColumnName="WaitingForOcr" />
                 <ScalarProperty Name="OcrRef" ColumnName="OcrRef" />
                 <ScalarProperty Name="ImageRef" ColumnName="ImageRef" />
                 <ScalarProperty Name="StoreId" ColumnName="StoreId" />

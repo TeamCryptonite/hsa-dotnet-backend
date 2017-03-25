@@ -15,6 +15,8 @@ namespace HsaDotnetBackend.Models.DTOs
         public bool? IsScanned { get; set; }
         public string ImageUrl { get; set; }
         public string OcrUrl { get; set; }
+        public bool WaitingForOcr { get; set; }
+        public bool Provisional { get; set; }
         public ICollection<LineItemDto> LineItems { get; set; }
     }
 }
