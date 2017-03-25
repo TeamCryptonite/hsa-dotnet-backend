@@ -137,8 +137,6 @@ namespace HsaDotnetBackend.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        []
-
         // POST: api/Receipts
         [ResponseType(typeof(Receipt))]
         [HttpPost]
