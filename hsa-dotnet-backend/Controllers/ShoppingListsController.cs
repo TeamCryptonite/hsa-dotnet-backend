@@ -35,7 +35,7 @@ namespace HsaDotnetBackend.Controllers
 
             return db.ShoppingLists
                 .Where(sl => sl.UserObjectId == userGuid)
-                .OrderByDescending(x => x.DateTime)
+                .OrderByDescending(x => x.Name)
                 .Skip(skip)
                 .Take(take)
                 .ProjectTo<ShoppingListDto>();
