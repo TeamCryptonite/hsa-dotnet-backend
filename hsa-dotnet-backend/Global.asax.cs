@@ -38,7 +38,6 @@ namespace HsaDotnetBackend
                 cfg.CreateMap<ReceiptDto, Receipt>()
                     .ForMember(dest => dest.Provisional, opt => opt.Ignore())
                     .ForMember(dest => dest.WaitingForOcr, opt => opt.Ignore());
-                cfg.CreateMap<Receipt, ReceiptDto>();
                 cfg.CreateMap<LineItem, LineItemDto>().ReverseMap();
                 cfg.CreateMap<Product, ProductDto>().ReverseMap();
                 cfg.CreateMap<Store, StoreDto>().ReverseMap();
