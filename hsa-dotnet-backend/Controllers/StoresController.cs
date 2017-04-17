@@ -137,6 +137,36 @@ namespace HsaDotnetBackend.Controllers
             return Ok("Store Deleted");
         }
 
+        [HttpPost]
+        [Route("api/stores/{storeId:int}/addproducts")]
+        public async Task<IHttpActionResult> AddProductToStore(int storeId, [FromUri] int[] products)
+        {
+            List<string> productsAdded = new List<string>();
+
+            var dbStore = await db.Stores.FindAsync(storeId);
+            if (dbStore == null)
+                return NotFound();
+
+            foreach (var productId in products)
+            {
+                var dbProduct = await db.Products.FindAsync(productId);
+                if (dbProduct != null)
+                {
+                    dbStore.Products.Add(dbProduct);
+                    productsAdded.Add(dbProduct.Name);
+                }
+            }
+
+            await db.SaveChangesAsync();
+
+            string returnStr = "Products Added. Products:";
+            foreach (var productName in productsAdded)
+            {
+                returnStr += " " + productName;
+            }
+            return Ok(returnStr);
+        }
+
         private bool StoreExists(int id)
         {
             return db.Stores.Count(e => e.StoreId == id) > 0;
