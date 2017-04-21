@@ -101,7 +101,18 @@ namespace receiptocr
             // Convert GoogleAPI Response into a JObject
             var content = JObject.Parse(response.Content);
             var linesDictionary = new SortedDictionary<double, List<string>>();
-            var blocks = content["responses"][0]["fullTextAnnotation"]["pages"][0]["blocks"];
+            try
+            {
+                var blocks = content["responses"][0]["fullTextAnnotation"]["pages"][0]["blocks"];
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception: " + ex.Message);
+
+                dbReceipt.Provisional = true;
+                dbReceipt.WaitingForOcr = false;
+                db.SaveChanges();
+            }
             foreach (var block in blocks)
             {
                 // double in dictionary is the y value of a word's midline
