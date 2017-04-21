@@ -275,9 +275,6 @@ namespace HsaDotnetBackend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (lineItem.ReceiptId == 0 || lineItem.ReceiptId != receiptId)
-                return BadRequest("URI and Body do not match: ReceiptId");
-
             var dbReceipt = await db.Receipts.FindAsync(receiptId);
             var userGuid = _identityHelper.GetCurrentUserGuid();
 
@@ -285,7 +282,7 @@ namespace HsaDotnetBackend.Controllers
                 return NotFound();
 
 
-            var dbLineItem = Mapper.Map<LineItemDto, LineItem>(lineItem);
+            var mappedLineItem = Mapper.Map<LineItemDto, LineItem>(lineItem);
 
             try
             {
@@ -294,14 +291,14 @@ namespace HsaDotnetBackend.Controllers
                 if (dbProduct == null)
                     dbProduct = Mapper.Map<ProductDto, Product>(lineItem.Product);
 
-                dbLineItem.Product = dbProduct;
+                mappedLineItem.Product = dbProduct;
 
-                dbReceipt.LineItems.Add(dbLineItem);
+                dbReceipt.LineItems.Add(mappedLineItem);
 
                 await db.SaveChangesAsync();
 
-                return Created($"api/receipts/{dbReceipt.ReceiptId}/lineitems/{dbLineItem.LineItemId}",
-                    Mapper.Map<LineItem, LineItemDto>(dbLineItem));
+                return Created($"api/receipts/{dbReceipt.ReceiptId}/lineitems/{mappedLineItem.LineItemId}",
+                    Mapper.Map<LineItem, LineItemDto>(mappedLineItem));
             }
             catch (Exception ex)
             {
