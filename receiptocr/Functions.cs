@@ -101,7 +101,22 @@ namespace receiptocr
             // Convert GoogleAPI Response into a JObject
             var content = JObject.Parse(response.Content);
             var linesDictionary = new SortedDictionary<double, List<string>>();
-            var blocks = content["responses"][0]["fullTextAnnotation"]["pages"][0]["blocks"];
+            JToken blocks;
+            try
+            {
+                blocks = content["responses"][0]["fullTextAnnotation"]["pages"][0]["blocks"];
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception on blocks! " + ex.Message);
+
+                dbReceipt.Provisional = true;
+                dbReceipt.WaitingForOcr = false;
+                db.SaveChanges();
+
+                return;
+            }
+
             if (blocks == null || !blocks.HasValues)
             {
                 Console.WriteLine("Google Response Has No Return Blocks!");
