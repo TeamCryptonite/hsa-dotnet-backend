@@ -120,7 +120,7 @@
           <Property Name="UserObjectId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="IsEmployee" Type="bit" Nullable="false" />
           <Property Name="IsActiveUser" Type="bit" Nullable="false" />
-          <Property Name="EmailAddress" Type="varchar(max)" Nullable="false" />
+          <Property Name="EmailAddress" Type="varchar(max)" />
           <Property Name="GivenName" Type="varchar(max)" />
           <Property Name="Surname" Type="varchar(max)" />
         </EntityType>
@@ -582,7 +582,7 @@
           <Property Name="UserObjectId" Type="Guid" Nullable="false" />
           <Property Name="IsEmployee" Type="Boolean" Nullable="false" />
           <Property Name="IsActiveUser" Type="Boolean" Nullable="false" />
-          <Property Name="EmailAddress" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="EmailAddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="GivenName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Surname" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Receipts" Relationship="Model.FK_Receipts_Users" FromRole="User" ToRole="Receipt" />
