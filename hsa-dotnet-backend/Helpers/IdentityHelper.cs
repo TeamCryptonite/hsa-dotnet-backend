@@ -23,7 +23,6 @@ namespace HsaDotnetBackend.Helpers
                 User user = new User()
                 {
                     UserObjectId = userGuid,
-                    EmailAddress  = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "emails")?.Value,
                     GivenName = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value,
                     Surname = identity.Claims.SingleOrDefault(m => m.Type.ToLower() == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value
                 };
